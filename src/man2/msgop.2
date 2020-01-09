@@ -1,0 +1,367 @@
+.\" Copyright 1993 Giorgio Ciucci <giorgio@crcc.it>
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Tue Oct 22 16:40:11 1996 by Eric S. Raymond <esr@thyrsus.com>
+.TH MSGOP 2 "1993년 11월 1일" "Linux 0.99.13" "리눅스 프로그래머 매뉴얼" 
+.SH 이름
+msgop \- 메세지 작동들
+.SH 사용법
+.nf
+.B
+# include <sys/types.h>
+.br
+.B
+# include <sys/ipc.h>
+.br
+.B
+# include <sys/msg.h>
+.fi
+.sp
+.BI "int msgsnd ( int " msqid ,
+.BI "struct msgbuf *" msgp ,
+.BI "int " msgsz ,
+.BI "int " msgflg " )"
+.sp
+.BI "int msgrcv ( int " msqid ,
+.BI "struct msgbuf *" msgp ,
+.BI "int " msgsz ,
+.BI  "long " msgtyp ,
+.BI "int " msgflg " )"
+.SH 설명
+메세지를 보내고 받기 위해서, 호출 프로세스는 다음과 같은 구조체를 할당해야 
+한다.
+.sp
+.B
+	struct msgbuf {
+.br
+.B
+		long	mtype;	
+/* 메세지 타입, 0 보다 커야 한다 */
+.br
+.B
+		char	mtext[1];	
+/* 메세지 데이터 */
+.br
+.B
+	};
+.sp
+그러나 배열
+.B mtext
+가 가지고 있는
+.IR msgsz 의 
+크기는 양수 값이어야 한다.
+구조체 멤버
+.B mtype
+은 호출 프로세스가 메세지 선택을 위해 사용할수 있도록 확실히 양수값이어야 한다.
+(
+.BR msgrcv 를
+참조해라).
+.PP
+호출 프로세스는 큐에 있는 메세지를 보내기 위해 쓰기 접근을 가지고 있어야 하며 
+메세지를 받기 위해 읽기 허가권을 가지고 있어야 한다.
+.PP
+.B msgsnd
+시스템 콜은 
+.I msgp
+인자가 가리키고 있는 메세지의 복사본을 식별자가
+.I msqid
+인자 값인 메세지 큐에 넣는다.
+.PP
+.I msgflg
+인자는 들어온 새 메세지가 만일 큐에서
+.B msg_qbytes
+이상을 요구한다면 시스템 콜의 행동을 지정한다.
+.B IPC_NOWAIT
+가 명시되었다면 메세지는 보내지지 않으며 시스템 콜은 
+.B errno
+를 
+.BR EAGAIN 으로 
+설정하고 실패를 리턴한다. 만약 그렇지 않으면 프로세스는 중지상태가 더이상 존재하지 않을때까지나(메세지가 보내지고 시스템 호출이 성공했을 경우), 큐가 제거되었거나(시스템 호출이 
+.B errno
+를 
+.BR EIDRM 로
+설정하고 실패했을 경우), 프로세스가 신호를 받을때까지 일시 중지된다(시스템 
+호출이 
+.B errno
+를 
+.BR EINTR 로
+설정하고 실패했을 경우).
+.PP
+성공시 메세지 큐 데이터 구조는 다음과 같이 갱신된다:
+.IP
+.B msg_lspid
+는 호출 프로세스의 프로세스-\ID로 설정된다.
+.IP
+.B msg_qnum
+는 1 증가한다.
+.IP
+.B msg_stime
+는 현재 시간으로 설정된다.
+.PP
+.B msgrcv
+시스템 호출은 
+.I msqid
+가 가리키는 메세지 큐에서 메세지를 읽어서 
+.I msgp
+인자가 가리키는 
+.B msgbuf
+로 복사하며, 성공시 메세지 큐에서 읽은 해당 메세지는 삭제된다.
+.PP
+인자
+.I msgsz
+는 
+.I msgp
+인자가 가리키는 구조체에서
+.B mtext
+멤버의 최대 크기 바이트를 가리킨다.
+메세지 텍스트가 
+.IR msgsz 보다
+큰 길이를 가지고
+.I msgflg
+인자에
+.BR MSG_NOERROR 가
+명시되어 있다면 메세지 텍스트는 잘린다(그리고 잘려진 부분을 잃는다).
+만일 그렇지 않으면 메세지는 큐에서 제거 되지 않으며 시스템 콜은 
+.B errno
+를 
+.BR E2BIG 으로
+설정하고 실패를 반환한다.
+.PP
+인자
+.I msgtyp
+는 다음과 같은 메세지 타입을 지정한다.
+.IP
+만일
+.I msgtyp
+가 
+.BR 0 이면,
+큐의 앞에 있는 메세지를 읽는다.
+.IP
+만일
+.I msgtyp
+가
+.BR 0 보다
+크고
+.B MSG_EXCEPT
+가 
+.I msgflg
+인자에 의해 지정되어 있지 않다면,
+.I msgtyp
+타입 큐의 처음 메세지가 읽혀진다.
+만일 그렇지 않으면 
+.I msgtyp
+과 같지 않은 타입의 큐에 있는 처음 메세지를 읽는다.
+.IP
+만일
+.I msgtyp
+이 
+.BR 0 보다
+작다면, 
+.I msgtyp
+절대값보다 작거나 같은 타입의 큐에 있는 처음 메세지가 읽혀진다.
+.PP
+.I msgflg
+인자는 다음과 같은 플래그중 하나도 없거나, 하나 또는 그 이상을(또는 
+그것들 중에서)지정한다:
+.IP
+.B IPC_NOWAIT
+요구된 타입의 메세지가 큐에 없다면 즉시 리턴한다. 시스템 콜은 errno를
+.BR ENOMSG 으로
+설정하고 실패한다.
+.IP
+.B MSG_EXCEPT
+.IR msgtyp 과
+다른 메세지 타입을 가지고 있는 큐의 처음 메세지를 읽기 위해 
+.B 0
+보다 큰 
+.I msgtyp
+을 사용한다.
+.IP
+.B MSG_NOERROR
+.I msgsz
+바이트보다 크다면 메세지 텍스트를 자른다.
+.PP
+만일 요구된 타입의 메세지를 이용할수 없으며 
+.B IPC_NOWAIT
+가 
+.IR msgflg 에
+지정되어 있지 않다면, 호출 프로세스는 다음 조건중 하나가 일어날때까지 블럭
+된다.
+.IP
+원하는 타입의 메세지가 큐에 있다.
+.IP
+메세지 큐는 시스템에서 제거 되었다.
+그런 경우 시스템 호출은 
+.B errno
+를 
+.BR EIDRM 으로
+설정하고 실패한다.
+.IP
+호출 프로세스가 잡을 수 있는 신호를 받았다.
+그런 경우 시스템 호출은 
+.B errno
+를  
+.BR EINTR 으로
+설정하고 실패한다.
+.PP
+성공시, 메세지 큐 데이터 구조는 다음과 같이 갱신된다:
+.IP
+.B msg_lrpid
+는 호출 프로세스의 프로세스-\ID로 설정된다.
+.IP
+.B msg_qnum
+는 1 감소한다.
+.IP
+.B msg_rtime
+는 현재 시간으로 설정된다.
+.SH 반환값
+실패시 두함수 모두 
+.B \-1
+을 리턴한다.
+.B errno
+는 에러를 가리킨다.
+만일 그렇지 않으면 
+.B msgsnd
+는
+.B 0
+을 반환하며 
+.B msgrvc
+는 
+.B mtext
+배열로 실제로 복사된 바이트수를 반환한다.
+
+.SH 에러
+.B msgsnd
+가 실패하면, 반환시 
+.B errno
+는 다음중 하나로 설정된다.
+.TP 11
+.B EAGAIN
+메세지를 큐의 
+.B msg_qbytes
+제한 값 때문에 보낼수 없다. 그리고 
+.B IPC_NOWAIT
+는 
+.IR mgsflg 인자에
+지정되어 있다.
+.TP
+.B EACCES
+호출 프로세스는 메세지 큐에 쓰기 접근 허가권을 가지고 있지 않다.
+.TP
+.B EFAULT
+.I msgp
+가 가리키고 있는 주소를 접근할수 없다.
+.TP
+.B EIDRM
+메세지 큐가 제거 되었다.
+.TP
+.B EINTR
+모든 메세지 큐가 잠든 상태일때 프로세스가 잡을수 있는 신호를 받았다.
+.TP
+.B EINVAL
+유효하지 않은 
+.I msqid
+값이나 음수의 
+.I mtype
+값이나, 유효하지 않은 
+.I msgsz
+값(0보다 작거나 시스템 값
+.BR MSGMAX 보다
+클 경우).
+.TP
+.B ENOMEM
+시스템이 제공된 
+.BR msgbuf 에
+복사할 충분한 메모리를 가지고 있지 않다.
+.PP
+.B msgrcv
+가 실패할때, 반환시 
+.B errno
+는 다음 값중 하나로 설정된다.
+.TP 11
+.B E2BIG
+메세지 텍스트 길이가 
+.I msgsz
+보다 크고 
+.B MSG_NOERROR
+가 
+.IR msgflg 에
+지정되어 있지 않다.
+.TP
+.B EACCES
+호출 프로세스가 메세지 큐에 대한 읽기 접근 허가권을 가지고 있지 않다.
+.TP
+.B EFAULT
+.I msgp
+가 가리키고 있는 주소를 접근할수 없다.
+.TP
+.B EIDRM
+프로세스가 메세지를 받기 위해 잠든 동안, 메세지 큐가 제거 되었다.
+.TP
+.B EINTR
+프로세스가 메세지를 받기 위해 잠든 동안, 프로세스가 잡을수 있는 신호를 받았다.
+.TP
+.B EINVAL
+유효하지 않은 
+.I msgqid
+값이나, 
+.I msgsz
+가 
+.BR 0 보다
+작다.
+.TP
+.B ENOMSG
+.B IPC_NOWAIT
+가 
+.I msgflg
+에 지정되어 있고 요청된 타입의 메세지가 메세지 큐에 존재하지 않는다.
+.SH 주의
+다음은 
+.B msgsnd
+시스템 콜에 영향을 주는 시스템 제한값들이다:
+.TP 11
+.B MSGMAX
+메세지 텍스트의 최대 크기: 수행시 이 값은 
+4080 bytes로 설정된다.
+.TP
+.B MSGMNB
+메세지 큐의 기본 최대 크기: 정책에 의존적이며, 슈퍼\-유저는 
+.B msgctl
+시스템 호출로 메세지 큐의 크기를
+.B MSGMNB
+이상으로 증가시킬수 있다.
+.PP
+수행은 메세지 헤더의 시스템 전역 최대 수
+.RB ( MSGTQL )
+와 메세지 풀
+.RB ( MSGPOOL )
+의 시스템 전역 최대 크기를 위한 어떤 내부적 제한값을 가지고 있지 않다.
+.SH 호환
+SVr4, SVID.
+.SH 관련 항목
+.BR ipc (5),
+.BR msgctl (2),
+.BR msgget (2),
+.BR msgrcv (2),
+.BR msgsnd (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 6월 24일

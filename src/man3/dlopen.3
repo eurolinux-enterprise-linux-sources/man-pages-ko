@@ -1,0 +1,187 @@
+.\" -*- nroff -*-
+.\" Copyright 1995 Yggdrasil Computing, Incorporated.
+.\" written by Adam J. Richter (adam@yggdrasil.com),
+.\" with typesetting help from Daniel Quinlan (quinlan@yggdrasil.com).
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.TH DLOPEN 3 "1995년 5월 16일" "리눅스" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+dlclose, dlerror, dlopen, dlsym \- 동적 링크 로더에 대한 프로그래밍 인터페이스.
+.SH 사용법
+.B #include <dlfcn.h>
+.sp
+.BI "void *dlopen (const char *" "filename" ", int " flag ");
+.br
+.BI "const char *dlerror(void);"
+.br
+.BI "void *dlsym(void *"handle ", char *"symbol ");
+.br
+.BI "int dlclose (void *"handle ");
+.sp
+특수 기호:
+\fB_init\fR, \fB_fini\fR. 
+.SH 설명
+.BR dlopen 은 
+null로 끝나는 문자열인 파일 이름 
+.IR filename 으로부터 
+동적 라이브러리를 읽어온다. 동적 라이브러리를 위해 정해지지 않은 "handle"을 리턴한다.
+만약
+.I filename
+이 상대경로 ("/" 로 시작하지 않는) 라면, 다음 위치에서 화일을 찾는다:
+.RS
+.PP
+사용자의 \fBLD_LIBRARY_PATH\fR 환경변수에 콜론(:)으로 구분되어 있는 디렉토리 리스트
+.PP
+\fl/etc/ld.so.cache\fP에 저장된 라이브러리 리스트
+.PP
+\fI/lib\fP가 뒤따르는, \fI/usr/lib\fP.
+.RE
+.PP
+만약
+.IR filename 이 
+NULL 포인터이면, 반환된 핸들은 메인 프로그램에 해당하는 것이다.
+.PP
+라이브러리에 있는 외부 참조는 이 라이브러리의 의존관계 목록에 있는 라이브러리와 전에  
+.B RTLD_GLOBAL
+플래그로 열린 다른 라이브러리를 사용하는 것으로 해결된다.
+만약 실행 파일이 "-rdynamic" 플래그로 연결되었다면, 실행 파일에 있는 전역 심볼은 동적으로 탑재된 라이브러리의 참조를 해결한다.
+.PP
+.IR flag 는 
+반드시 
+.BR RTLD_LAZY
+- 동적 라이브러리의 코드가 실행되어 정의되지 않은 심볼을 해결하는 것을 의미 - 또는 
+.BR RTLD_NOW
+- 
+.B dlopen
+이 반환되기 전에 정의하지 않은 모든 심볼을 해결하는 것을 의미 - 이어야만 한다. 그리고 이 과정이 수행되지 않으면 실패할 것이다.
+추가적으로,
+.BR RTLD_GLOBAL 은 
+라이브러리안에 정의된 외부 심볼이 뒤이은 라이브러리가 탑재되는 것이 가능하게 할 경우에 
+.IR flag 와 
+OR 될 수 있다.
+.PP
+만약 라이브러리가 
+.BR _init 이라는 
+루틴에 전달될 경우, 라이브러리에 있는 코드는 \fBdlopen\fR이 반환되기 전에 수행될 것이다.
+만약 같은 이름의 라이브러리가 
+.BR dlopen() 으로 
+두 번 적재된다면 같은 파일 핸들을 리턴한다. dl 라이브러리는 동적 파일 핸들의 링크 수를 관리한다. 그래서 동적 라이브러리가 
+.BR dlopen 에 
+의해 성공적으로 호출된 만큼 
+.BR dlclose 을 
+호출할 때까지 할당한 것을 해제하지 않는다.
+.PP
+만약
+.BR dlopen 이 
+어떤 이유에서라도 실패를 한다면 NULL을 반환한다.
+dl 루틴 (dlopen, dlsym, dlclose) 에 의해 발생한 가장 최근의 에러를 보기 위해서는
+.BR dlerror() 을 
+호출해야 한다.
+.BR dlerror 은 
+초기화 이후 또는 이 함수가 마지막으로 호출 (연속적으로 이 함수가 두번 호출되면 두번째 호출의 반환값은 항상 NULL이다.) 된 후 아무런 에러가 발생하지 않았다면 NULL을 반환한다. 
+
+.BR dlsym 은 
+dlopen에서 리턴된 동적 라이브러리의 핸들과 null로 끝나는 symbol 이름을 취하고 이 심볼의 적재된 주소를 반환한다. 만약 심볼을 찾지 못하면, NULL을 반환한다; 그러나
+.BR dlsym 에 
+의해 발생한 에러를 정확히 알아보는 방법은
+.BR dlerror 에 
+의한 결과값이 NULL이 아닌 경우 그 값을 검사하는 것이다.
+이렇게 하는 이유는 심볼의 값이 실제로 NULL이 되는 경우가 있기 때문이다.
+그리고
+.BR dlerror 이 
+다시 호출될 때에는 NULL을 반환하기 때문에,
+필요하다면 
+.BR dlerror 의 
+결과값를 저장해야만 한다.
+.PP
+.BR dlclose 은 
+동적 라이브러리 핸들인
+.IR handle 에 
+대한 참조계수를 하나 감소시킨다.
+만약 참조계수가 0이 되고 다른 어떤 적재된 라이브러리들이 적재를 취소하고자 하는 동적 라이브러리에 있는 심볼을 사용하지 않으면, 동적 라이브러리는 적재가 취소된다. 만약 동적 라이브러리가
+.BR _fini 라는 
+루틴에 전달될 경우, 라이브러리의 적재가 취소되기 바로 전에 이 루틴이 호출될 것이다.
+.SH 예제
+.B math 라이브러리를 적재하고, 코사인 2.0을 출력한다:
+.RS
+.nf
+.if t .ft CW
+#include <dlfcn.h>
+
+int main(int argc, char **argv) {
+    void *handle = dlopen ("/lib/libm.so", RTLD_LAZY);
+    double (*cosine)(double) = dlsym(handle, "cos");
+    printf ("%f\\n", (*cosine)(2.0));
+    dlclose(handle);
+}
+.if t .ft P
+.fi
+.PP
+만약 프로그램 이름이 "foo.c"라면 다음과 같은 명령어로 프로그램을 컴파일할 수 있다:
+.RS
+.LP
+gcc -rdynamic -o foo foo.c -ldl
+.RE
+.RE
+.LP
+.B 같은 방법으로 하자. 그러나 매단계마다 에러 체크를 하자:
+.RS
+.nf
+.if t .ft CW
+#include <stdio.h>
+#include <dlfcn.h>
+
+int main(int argc, char **argv) {
+    void *handle;
+    double (*cosine)(double);
+    char *error;
+
+    handle = dlopen ("/lib/libm.so", RTLD_LAZY);
+    if (!handle) {
+        fputs (dlerror(), stderr);
+        exit(1);
+    }
+
+    cosine = dlsym(handle, "cos");
+    if ((error = dlerror()) != NULL)  {
+        fprintf (stderr, "%s\n", error);
+        exit(1);
+    }
+
+    printf ("%f\\n", (*cosine)(2.0));
+    dlclose(handle);
+}
+.if t .ft P
+.fi
+.RE
+.SH 감사
+dlopen 인터페이스 표준은 솔라리스에서 부터 시작되었다.
+리눅스의 dlopen에 대한 구현은 Mitch D'Souza, David Engel, Hongjiu Lu, Andreas Schwab와 그외 다수의 도움을 받아 Eric Youngdale이 하였다.
+이 매뉴얼 페이지는 Adam Richter가 작성하였다.
+.SH 관련 항목
+.BR ld(1) ,
+.BR ld.so(8) ,
+.BR ldconfig(8) ,
+.BR ldd(1) ,
+.BR ld.so.info .
+.SH 역자
+정동현 <dhjung@serome.co.kr>, 2000년 4월 22일

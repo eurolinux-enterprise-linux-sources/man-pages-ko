@@ -1,0 +1,45 @@
+.\" mcookie.1 -- 
+.\" Public Domain 1995 Rickard E. Faith (faith@cs.unc.edu)
+.TH MCOOKIE 1 "25 September 1995" "" "Linux Programmer's Manual"
+.SH 이름
+mcookie \- xauth를 위한 magic cookies를 생성한다.
+.SH 사용법
+.BI "mcookie [\-v] [\-f " filename " ]"
+.SH 설명
+.B mcookie
+명령은 X authority system에서 사용하기 위해 128비트 무작위 16진수를 
+생성한다. 전형적으로 다음과 같은 명령형식으로 사용된다.
+.RS
+xauth add :0 . `mcookie`
+.RE
+.PP
+무작위로 생성되는 16진수는 MD5 메시지를 담고 있는데, 
+그 메시지는 현재 시간, 프로세스 ID, 상위 프로세스, 
+.B \-f
+옵션에서 지정한 파일의 내용, 
+.IR /dev/urandom ", " /dev/random ", " /dev/audio 
+장치들의 정보를 담고 있는 여러 바이트들이다.
+.I /proc
+경로 안에 있는 여러 파일들이 또한 사용되기도 한다.
+.SH 벌레
+The entropy in the generated 128-bit is probably quite small (and,
+therefore, vulnerable to attack) unless a non-pseudorandom number generator
+is used (e.g.,
+.I /dev/random
+under Linux).
+.PP
+It is assumed that none of the devices opened will block.
+.SH FILES
+.I /dev/random
+.br
+.I /dev/urandom
+.br
+.I /dev/audio
+.br
+.I /proc/stat
+.br
+.I /proc/loadavg
+.SH "SEE ALSO"
+.BR X (1),
+.BR xauth (1),
+.BR md5sum (1)

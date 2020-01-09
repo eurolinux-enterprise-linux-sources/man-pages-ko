@@ -1,0 +1,96 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sat Jul 24 16:56:20 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Mon Oct 21 21:38:51 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" (and some more by aeb)
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH HD 4 "17 December 1992" "Linux" "Linux Programmer's Manual"
+.SH 이름
+hd \- MFM/IDE 하드 디스크 장치
+.SH 설명
+\fBHd*\fP는 포멧되지 않은 MFM/IDE하드에 억세스하기 위한 블록 장치이다.
+프라이머리 IDE 콘트롤러에 있는 마스터 드라이브는(주 장치 번호 3번)
+\fBhda\fR이다;슬레이브는 \fBhdb\fR이다. 세컨드 콘트롤러에 있는 
+마스터 드라이브는(주 장치 번호 22번)\fBhdc\fR이다. 
+그리고 슬레이브는 \fBhdd\fR이다.
+.LP
+일반적인 IDE 블록 장치이름은 아래와 같은 형태를 가진다.
+.BI hd X\c
+, 혹은
+.BI hd XP\c, 이 경우
+.I X
+는 물리적인 드라이브를 표시하고,
+.I P
+는 물리적인 드라이브상의 파티션을 표시하는 번호이다.
+첫번째 형태인,
+.BI hd X,
+는 전체 드라이브를 표시하는데 쓰인다.
+파티션 번호는 파티션이 발견된 순서에 따라 할당되고, 
+비어이 있지않고, 확장 파티션이 아니어야 번호를 받을 수 있다.
+하지만 그것이 쓰이지 않거나 확장된 것임에 상관없이 
+1-4까지의 파티션 번호는 MBR(프라이머리 파티션)상의 
+4개의 파티션에게 할당된다, 그래서 첫번째 논리적 파티션은
+.BI hd X 5\c
+이 된다.
+\&.
+DOS 타입의 파티션과, BSD-disklabel 파티션이 모두 지원된다
+거의 63개의 파티션을 만들 수 있다..
+.LP
+예를들어,
+.B /dev/hda
+는 시스템상의 첫번째 IDE 드라이브 전체를 나타낸다; 그리고
+.B /dev/hdb3
+는 세컨드 드라이브의 세번째 도스 프라이머리 파티션을 뜻한다.
+.LP
+대체로 아래와 같이 만들어진다:
+.RS
+.sp
+mknod -m 660 /dev/hda b 3 0
+.br
+mknod -m 660 /dev/hda1 b 3 1
+.br
+mknod -m 660 /dev/hda2 b 3 2
+.br
+\&...
+.br
+mknod -m 660 /dev/hda8 b 3 8
+.br
+mknod -m 660 /dev/hdb b 3 64
+.br
+mknod -m 660 /dev/hdb1 b 3 65
+.br
+mknod -m 660 /dev/hdb2 b 3 66
+.br
+\&...
+.br
+mknod -m 660 /dev/hdb8 b 3 72
+.br
+chown root:disk /dev/hd*
+.RE
+.SH 파일
+/dev/hd*
+.SH 관련 항목
+.BR mknod "(1), " chown "(1), " mount "(8), " sd "(4)"

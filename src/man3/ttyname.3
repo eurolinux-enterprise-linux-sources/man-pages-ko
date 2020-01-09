@@ -1,0 +1,45 @@
+.\" Copyright (c) 1995 Jim Van Zandt <jrv@vanzandt.mv.com>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.TH TTYNAME 3 "1995년 4월 20일" "Linux" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+ttyname \- 터미널 이름을 반환한다.
+.SH 사용법
+.ad l
+.nf
+.B #include <unistd.h>
+.sp
+.BI "char *ttyname ( int " desc " );"
+.fi
+.ad b
+.SH 설명
+파일 기술자 \fIdesc\fP를 열은 터미널 장치의 경로이름에 대한 포인터를
+반환하거나 에러(예를 들어, 만일 \fIdesc\fP 가 터미널에 연결되어 있지 않다면)
+라면 \fBNULL\fP을 반환한다.
+.SH 호환
+POSIX.1
+.\" don't know about these: SVID, AT&T, X/OPEN, BSD 4.3
+.SH 관련 항목
+.BR fstat (2),
+.BR isatty (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 5월 1일

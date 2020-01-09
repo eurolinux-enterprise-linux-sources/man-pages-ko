@@ -1,0 +1,56 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:11:47 1993 by Rik Faith (faith@cs.unc.edu)
+.TH STRCAT 3  "1993년 4월 11일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+strcat, strncat \- 두 문자열을 연결시킨다.
+.SH 사용법
+.nf
+.B #include <string.h>
+.sp
+.BI "char *strcat(char *" dest ", const char *" src );
+.sp
+.BI "char *strncat(char *" dest ", const char *" src ", size_t " n );
+.fi
+.SH 설명
+\fBstrcat()\fP 함수는 \fIdest\fP의 마지막 `\\0' 문자를 겹쳐서 
+\fIsrc\fP 문자열을 \fIdest\fP 문자열에 추가시킨다. 그리고
+마지막에 `\\0' 문자를 추가시킨다.
+문자열은 중첩되지 않으며 \fIdest\fP 문자열은 결과를 위해 충분한 
+공간을 가지고 있어야 한다.
+.PP
+\fBstrncat()\fP 함수는 \fIsrc\fP의 처음 \fIn\fP문자들만 \fIdest\fP에
+추가시키는것을 제외하고는 비슷하다.
+.SH 반환값
+\fBstrcat()\fP와 \fBstrncat()\fP 함수는 결과 스트링 \fIdest\fP에 대한
+포인터를 반환한다.
+.SH 호환
+SVID 3, POSIX, BSD 4.3, ISO 9899
+.SH 관련 항목
+.BR bcopy "(3), " memccpy "(3), " memcpy "(3), " strcpy "(3), " strncpy (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 2월 24일

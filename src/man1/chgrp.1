@@ -1,0 +1,39 @@
+.TH CHGRP 1 "GNU File Utilities" "FSF" \" -*- nroff -*-
+.SH NAME
+chgrp \- 파일의 사용자 그룹을 바꾼다.
+.SH SYNOPSIS
+.B chgrp
+[\-Rcfv] [\-\-recursive] [\-\-changes]
+[\-\-silent] [\-\-quiet] [\-\-verbose] [\-\-help] [\-\-version] group file...
+.SH DESCRIPTION
+이 문서는 더이상 최신 정보를 담고 있지않다. 그래서, 
+몇몇 틀릴 경우도 있고, 부족한 경우도 있을 것이다. 
+완전한 매뉴얼을 원하면, Texinfo 문서를 참조하기 바란다.
+.PP
+이 매뉴얼 페이지는 
+.BR chgrp
+명령의 GNU 버전에 대한 것이다.
+.B chgrp
+명령은 주워진 file의 그룹을 지정한 group으로 바꾼다. 
+여기서 group으로 사용될 수 있는 것은 그 그룹의 이름이나, 
+그 그룹의 ID이다.
+.SS OPTIONS
+.TP
+.I "\-c, \-\-changes"
+작업 상태를 자세히 보여주나, 바뀌어 지는 것만 보여준다.
+.TP
+.I "\-f, \-\-silent, \-\-quiet"
+그룹이 바뀌어 지지 않는 파일들에 대한 오류 메시지를 보여주지 않는다.
+.TP
+.I "\-v, \-\-verbose"
+작업 진행 상태를 자세하게 보여준다.
+.TP
+.I "\-R, \-\-recursive"
+주로 file 이름으로 경로를 사용해서, 그 안에 있는 모든 
+파일도 함께 gourp으로 바꾼다.
+.TP
+.I "\-\-help"
+사용법과 그 옵션들의 설명들을 보여주고 풀그림을 끝낸다.
+.TP
+.I "\-\-version"
+버전 정보를 보여주고 풀그림을 끝낸다.

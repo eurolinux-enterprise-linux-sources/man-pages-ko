@@ -1,0 +1,65 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Portions extracted from linux/mm/swap.c:
+.\"                Copyright (C) 1991, 1992  Linus Torvalds
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified 21 Aug 1994 by Michael Chastain <mec@shell.portal.com>:
+.\"   Added text about calling restriction (new in kernel 1.1.20 I believe).
+.\"   N.B. calling "idle" from user process used to hang process!
+.\" Modified Thu Oct 31 14:41:15 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" "
+.TH IDLE 2 "1994년 8월 21일" "리눅스 1.1.46" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+idle \- 0번 프로세스를 idle 상태로 만든다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.B int idle(void);
+.SH 설명
+.BR idle 은
+부팅되는 동안 사용되는 내부 시스템 콜이다.
+이 시스템 콜은 스왑가능 하도록 프로세스의 페이지을 만들고, 우선권을
+낮추며, 메인 스케줄링 루프로 들어간다.
+.BR idle 은
+결코 리턴하지 않는다.
+.PP
+0번 프로세스만이 
+.BR idle 을
+호출할 수 있다.
+슈퍼 유저 권한을 가지고 있는 프로세스 조차 
+.BR EPERM 을 
+받을 것이다.
+.SH 반환값
+.BR idle 은
+프로세스 0에서는 리턴하지 않으며, 유저 프로세스에서는 항상 \-1을 리턴한다.
+.SH 에러
+.TP
+.B EPERM
+유저 프로세스일 경우 항상.
+.SH 호환
+이 함수는 리눅스에 한하며, 호환성을 염두에 둔 프로그램에서 사용해서는 안 된다.
+.SH 주의
+2.3.13이후 이 시스템 콜은 더 이상 존재하지 않는다. 
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 5월 2일

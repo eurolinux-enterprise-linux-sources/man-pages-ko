@@ -1,0 +1,75 @@
+.\" Copyright (c) 1997 John S. Kallal (kallal@voicenet.com)
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" Some changes by tytso and aeb.
+.\"
+.\"
+.\" 한국어 번역: ASPLINUX<man@asp-linux.co.kr> 2000년 7월 29일
+.\"
+.\" r1.2 2005-02-14 14:53:04 +10-16 윤현호
+.\" r1.1 2004-08-18 11:00:59  211.218.50.85
+.\"
+.TH RANDOM 4 "1997년 8월 1일" "리눅스" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+random, urandom \- 커널 random number 소스장치
+.SH 설명
+\fB/dev/random\fP와 \fB/dev/urandom\fP 는 커널의 난수생성기에 인터페이스를
+제공한다. \fB/dev/random\fP는 메이저 장치번호1이고 마이너 장치번호 8이다.
+\fB/dev/urandom\fP은 메이저 장치번호 1이고 마이너 장치 번호 9이다.
+.LP
+난수생성기는 장치 드라이버와 엔트로피풀안의 다른 소스들로부터 노이즈를 모은다.
+생성기는 또한 엔트로피 풀안 노이즈의 비트수를 계산한다. 이것으로 부터 엔트로피
+풀 난수는 생성된다.
+.LP
+.SH 설정
+여러분 시스템에 \fB/dev/random\fP와 \fB/dev/urandom\fP가 없다면,
+아래의 명령으로 생성된다.
+
+.nf
+        mknod -m 644 /dev/random c 1 8
+        mknod -m 644 /dev/urandom c 1 9
+        chown root:root /dev/random /dev/urandom
+.fi
+
+리눅스시스템이 오퍼레이터 작용없이 시작될때, 엔트로피 풀은 정확히 알수 없는 상태
+일런지 모른다. 이것은 계산치보다 엔트로피풀안의 노이즈의 실제양을 줄인다. 이런 영
+향때문에 셧다운과 시작시 엔트로피 풀 정보를 가져오는 걸 돕는다. 이렇게 하기위해,
+리눅스 시스템이 시작할때 동작하는 적당한 스크립트에 다음행을 추가한다.
+
+.nf
+	echo "Initializing kernel random number generator..."
+	# Initialize kernel random number generator with random seed
+	# from last shut-down (or start-up) to this start-up.  Load and
+	# then save 512 bytes, which is the size of the entropy pool.
+ 	if [ -f /var/random-seed ]; then
+		cat /var/random-seed >/dev/urandom
+ 	fi
+	dd if=/dev/urandom of=/var/random-seed count=1
+.fi
+
+또한 리눅스가 셧다운 할때 동작하는 적당한 스크립트에 아래행을 추가한다.
+
+.nf
+ 	# Carry a random seed from shut-down to start-up for the random
+	# number generator.  Save 512 bytes, which is the size of the
+	# random number generator's entropy pool.
+ 	echo "Saving random seed..."
+ 	dd if=/dev/urandom of=/var/random-seed count=1
+.fi
+
+.SH 파일
+/dev/random
+.br
+/dev/urandom
+.SH 저자
+커널 난수 생성기는 THeodore Ts'o <tytso@athena.mit.edu>가 썼다.
+.SH 관련 항목
+mknod(1)
+.br
+RFC 1750, "Randomness Recommendations for Security"
+.SH 번역
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 14일

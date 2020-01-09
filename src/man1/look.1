@@ -1,0 +1,102 @@
+.\" Copyright (c) 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)look.1	8.1 (Berkeley) 6/14/93
+.\"
+.Dd June 14, 1993
+.Dt LOOK 1
+.Os
+.Sh NAME
+.Nm look
+.Nd 주어진 문자열로 시작하는 줄을 보여준다.
+.Sh SYNOPSIS
+.Nm look
+.Op Fl dfa
+.Op Fl t Ar termchar
+.Ar string
+.Op Ar file
+.Sh DESCRIPTION
+.Nm look
+명령은 
+.Ar file
+에서 
+.Ar string
+으로 시작하는 줄을 찾아 보여준다.
+이진파일 검색일 경우에는,
+.Ar file
+안의 각 줄이 먼저 정열되어야한다.
+.Pp
+.Ar file
+이 지정되지 않으면, 
+.Pa /usr/dict/words
+파일을 사용한다. 
+이 파일은 단지 알파벳 단어만 있으며, 대소문자는 무시된다.
+(이것은 영문 맞춤법 검사에 유용하게 쓰인다.)
+.Pp
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl d
+영문자만을 검색한다.
+.It Fl f
+대소문자를 구분하지 않는다.
+.It Fl a
+대체 사전인 
+.Pa /usr/dict/web2
+파일을 사용한다.
+.It Fl t
+Specify a string termination character, i.e. only the characters
+in
+.Ar string
+up to and including the first occurrence of
+.Ar termchar
+are compared.
+.El
+.Pp
+.Nm look
+명령은 오류 없이 끝나면 0, 오류가 있으면 1보다 큰 수를 리턴하고 마친다.
+.Sh FILES
+.Bl -tag -width /usr/dict/words -compact
+.It Pa /usr/dict/words
+사전
+.It Pa /usr/dict/web2
+대체 사전
+.El
+.Sh SEE ALSO
+.Xr grep 1 ,
+.Xr sort 1
+.Sh COMPATIBILITY
+원래의 매뉴얼 페이지에는 
+.Fl d
+옵션이 지정되었을 때, 탭문자나 공백문자도 검색 대상이 된다고 쓰여져있다.
+이 부분은 틀린 부분이었기에, 여기서 언급한다.
+.Sh HISTORY
+.Nm Look
+명령은 Version 7 AT&T Unix에서 나타났다.

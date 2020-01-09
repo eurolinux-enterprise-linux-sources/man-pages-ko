@@ -1,0 +1,70 @@
+.\" Copyright (C) 1995, Thomas K. Dyas <tdyas@eden.rutgers.edu>
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Created   Sat Aug 21 1995     Thomas K. Dyas <tdyas@eden.rutgers.edu>
+.\" Modified Tue Oct 22 22:09:03 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX    2000년 7월 26일
+.\"
+.TH SIGRETURN 2 "21 August 1995" "Linux 1.3.20" "Linux Programmer's Manual"
+.SH 이름
+sigreturn \- 신호 제어기와 클린업 스텍 프레임으로부터 반환
+.SH 사용법
+.BI "int sigreturn(unsigned long " __unused );
+.SH 설명
+리눅스 커널이 신호 제어기를 위한 스텍 프레임을 생성할 때.
+.B sigreturn
+로의 호출은 신호 제어기가 
+.B sigreturn
+을 리턴상에 호출하기위해
+스텍 프레임에 삽입된다.
+.B sigreturn
+에 삽입된 호출은 신호로 인해 중단되었던 곳에서부터 프로세스를 다시 시작하기위해 스텍을 지운다.
+.SH 반환값
+.B sigreturn
+은 반환값을 가지지 않는다..
+.SH 경고
+The
+.B sigreturn
+호출은 신호 제어기를 사용하기위해 커널에 의해 사용된다.
+이것은 
+.B 절대
+직접 호출할 수 없다. 게다가, 
+.I __unused
+독립 변수의 특별한 사용은 구조에 따라 바뀐다.
+.SH 호환
+.B sigreturn
+는 리눅스에 특화 되었고, 이식을 목적으로 하는 프로그램에는 쓰지 말아야 한다.
+
+.SH 파일.B sigreturn
+upon return. 
+/usr/src/linux/arch/i386/kernel/signal.c
+.br
+/usr/src/linux/arch/alpha/kernel/entry.S
+.SH 관련 항목
+.BR kill (2),
+.BR signal (2),
+.BR signal (7)
+.SH 역자
+ASPLINUX, 2000년 7월 26일
+

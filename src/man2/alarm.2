@@ -1,0 +1,73 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"                               1993 Michael Haardt, Ian Jackson.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Wed Jul 21 19:42:57 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Sun Jul 21 21:25:26 1996 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified Wed Nov  6 03:46:05 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH ALARM 2 "1993년 7월 21일" 리눅스 "리눅스 프로그래머 매뉴얼"
+.SH 이름
+alarm \- 시그널 전달을 위한 알람을 설정한다.
+.SH 사용법
+.nf
+.B #include <unistd.h>
+.sp
+.BI "unsigned int alarm(unsigned int " seconds );
+.fi
+.SH 설명
+.BR alarm 은 
+.IR seconds 초 
+후에 프로세스에 SIGALRM 시그널이 전달되도록 설정한다.
+
+만약 
+.IR seconds 가 
+0이면 
+.BR alarm 이 
+수행되지 않는다.
+
+어떤 경우에도 이전에 설정된
+.BR alarm 은
+은 취소된다.
+.SH 반환값
+.BR alarm 은
+이전에 설정된 알람이 시그널을 전달할 때까지 남은 시간을 초 단위의 
+숫자로 반환하거나, 이전에 설정된 알람이 없다면 0을 반환한다.
+.SH 주의
+.BR alarm " 과 " setitimer 는 
+같은 타이머를 공유한다; 한 쪽을 호출하면 다른 쪽을 간섭할 것이다.
+
+스케줄링 지연이 임의의 시간 동안 프로세스의 수행을 지연시킬 수도 있다.
+.SH 호환
+SVr4, SVID, POSIX, X/OPEN, BSD 4.3
+.SH 관련 항목
+.BR setitimer (2), 
+.BR signal (2),
+.BR sigaction (2), 
+.BR gettimeofday (2), 
+.BR select (2), 
+.BR pause (2),
+.BR sleep (3)
+.SH 역자
+임종균 <hermes44@secsm.org>, 2000년 4월 14일

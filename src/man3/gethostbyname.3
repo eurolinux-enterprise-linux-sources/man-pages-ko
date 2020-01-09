@@ -1,0 +1,220 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat May 22 18:43:54 1993, David Metcalfe
+.\" Modified Sun Jul 25 10:42:30 1993, Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Feb 16 13:23:10 1997, Andries Brouwer (aeb@cwi.nl)
+.\" Modified Mon Dec 21 14:49:33 1998, Andries Brouwer (aeb@cwi.nl)
+.\" Modified Sat Aug 12 18:11:32 2000, Andries Brouwer (aeb@cwi.nl)
+.\"
+.TH GETHOSTBYNAME 3  "2000년 8월 12일" "BSD" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+gethostbyname, gethostbyaddr, sethostent, endhostent, herror, hstrerror \- 
+네트웍 호스트 엔트리를 가져온다.
+.SH 사용법
+.nf
+.B #include <netdb.h>
+.B extern int h_errno;
+.sp
+.BI "struct hostent *gethostbyname(const char *" name );
+.sp
+.B #include <sys/socket.h> "      " /* for AF_INET */
+.BI "struct hostent *gethostbyaddr(const char *" addr ,
+.BI "  int " len ", int " type );
+.sp
+.BI "void sethostent(int " stayopen );
+.sp
+.B void endhostent(void);
+.sp
+.BI "void herror(const char *" s );
+.sp
+.BI "const char * hstrerror(int " err );
+.fi
+.SH 설명
+\fBgethostbyname()\fP 함수는 주어진 호스트 \fIname\fP 에 상응하는 
+\fIhostent\fP 타입의 구조체를 반환한다. 여기서 
+\fIname\fP은 호스트 이름이거나 표준 점 표기법의 IPv4 주소이거나, 
+콜론(그리고 점 표기법도 가능)표기법의 IPv6이다. (IPv6에 대한 기술을 위해 RFC1884를 참조해라.)
+만일 
+.I name
+이 IPv4나 IPv6 주소라면, 어떤 룩업도 행해지지 않고 
+.BR gethostbyname ()는
+단순히 
+.I name
+을 
+.I h_name
+필드에 복사하고 해당 
+.I struct in_addr
+를 반환하는 
+.I hostent
+구조체의 
+.I h_addr_list[0]
+필드에 복사한다.
+만일 \fIname\fP가 점으로 끝나지 않고 환경 변수 
+\fBHOSTALIASES\fP가 설정되어 있다면, \fBHOSTALIASES\fP가 가리키는 얼라이싱 파일이 \fIname\fP을 위해 우선 탐색된다. 
+(파일 형식을 위해 
+.BR hostname (7)을
+참조해라.)
+현재 도메인과 상위 도메인은 \fIname\fP이 점으로 끝나지 않는다면 탐색된다.
+.PP
+\fBgethostbyaddr()\fP 함수는 길이 \fIlen\fP 그리고 주소 타입 
+\fItype\fP인 호스트 주소 \fIaddr\fP에 해당하는 \fIhostent\fP 구조체를 리턴한다.
+유일하게 유효한 주소 타입은 현재 
+.BR AF_INET 이다.
+.PP
+만일 \fIstayopen\fP가 참(1)이라면, 
+\fBsethostent()\fP 함수는 연결된 TCP 소켓이 네임 서버 질의를 위해 사용되어야 한다는것을 가리킨다. 그리고 연결은 연속적은 질의를 동안 계속 열려 있어야 한다.
+그렇지 않으면, 네임 서버 질의를 UDP 데이터그램을 사용할 것이다.
+.PP
+\fBendhostent()\fP 함수는 네임 서버 질의를 위한 TCP 연결의 사용을 끝낸다.
+.PP
+(구식) \fBherror()\fP 함수는 stderr에 현재 값의 \fIh_errno\fP 에 상응하는 
+에러 메세지를 출력한다.
+.PP
+(구식) \fBhstrerror()\fP 함수는 에러(전형적으로 \fIh_errno\fP)
+넘버를 가지며 상응하는 메세지를 반환한다.
+.PP
+도메인 네임 질의는 
+\fBgethostbyname()\fP 에 의해 수행되며 
+\fBgethostbyaddr()\fP는 
+\fI/etc/host.conf\fP에 있는 \fIorder\fP라인의 내용에 의존하여
+\fI/etc/hosts\fP에서 라인을 뽑아내 네임 서버 \fBnamed\fP(8)의 일부나 
+모두의 조합과 네트웍 정보 서비스 (NIS 또는 YP)를 사용한다.
+(
+.BR resolv+ (8)를
+참조해라.)
+기본 행동은 \fI/etc/hosts\fP 다음에 \fBnamed\fP(8)에 질의하는 것이다.
+.PP
+\fIhostent\fP 구조체는 다음과 같이 \fI<netdb.h>\fP에 정의되어 있다:
+.sp
+.RS
+.nf
+.ne 7
+.ta 8n 16n 32n
+struct hostent {
+	char	*h_name;		/* 호스트의 공식 이름 */
+	char	**h_aliases;		/* 별칭 리스트 */
+	int	h_addrtype;		/* 호스트 주소 타입 */
+	int	h_length;		/* 주소의 길이 */
+	char	**h_addr_list;		/* 주소 리스트 */
+}
+#define h_addr	h_addr_list[0]		/* 구 버전과의 호환을 위해 */
+.ta
+.fi
+.RE
+.PP
+\fIhostent\fP 구조체의 멤버는:
+.TP
+.I h_name
+호스트의 공식적인 이름 
+.TP
+.I h_aliases
+호스트를 위해 널로 끝나는 선택적인 이름의 배열 
+.TP
+.I h_addrtype
+주소 타입; 현재는 항상 
+.B AF_INET
+이다.
+.TP
+.I h_length
+바이트로 주소의 길이.
+.TP
+.I h_addr_list
+네트웍 바이트 순서로 호스트를 위한 널로 종료된 네트웍 주소 배열 
+.TP
+.I h_addr
+예전과의 호환을 위해 \fIh_addr_list\fP의 처음 주소 
+.SH 반환값
+\fBgethostbyname()\fP 그리고 \fBgethostbyaddr()\fP 함수는 
+\fIhostent\fP 구조체를 반환하거나 만일 에러가 발생한다면 NULL 포인터를
+반환한다.
+에러시, \fIh_errno\fP 변수는 에러 넘버를 가진다.
+.SH 에러
+변수 \fIh_errno\fP는 다음 값들을 가진다:
+.TP
+.B HOST_NOT_FOUND
+지정된 호스트가 알려지지 않았다.
+.TP
+.BR NO_ADDRESS " 나 " NO_DATA
+요구한 이름이 유효하지만 IP 주소를 가지지 않는다.
+.TP
+.B NO_RECOVERY
+복구 될수 없는 네임 서버 에러가 발생했다.
+.TP
+.B TRY_AGAIN
+임시적 에러로 네임서버 인증시 발생했다. 다시 시도해라.
+.SH 파일
+.TP
+.I /etc/host.conf
+해석 설정 파일.
+.TP
+.I /etc/hosts
+호스트 데이터 베이스 파일 
+.SH 호환
+BSD 4.3.
+.SH 주의
+SUS-v2 표준은 버그이며,
+.I len
+인자를 
+.IR size_t 
+타입으로 선언하였다.(이것은 잘못된 것이다. 왜냐하면 그것은 
+.IR int 
+이지 
+.I size_t
+가 아니기 때문이다. Austin 초안은 
+.IR socklen_t 으로
+했으며 이것은 가능하다.)
+.PP
+Glibc2는 또한  
+.BR gethostbyname() 처럼
+작동하는 
+.sp
+.nf
+.BI "struct hostent *gethostbyname2(const char *" name ", int " af );
+.fi
+.sp
+를 가지고 있다. 그러나 그것은 주소가 속해 있는 주소 가족을 지정하도록 한다.
+.PP
+Austin 초안은 
+.B gethostbyaddr()
+과 
+.B gethostbyname()
+를 상속하는 함수를 만들었으며 다음과 같이 소개하였다.
+.sp
+.nf
+.BI "struct hostent *getipnodebyaddr (const void *restrict " addr ,
+.BI "  socklen_t " len ", int " type ", int *restrict " error_num ");"
+.sp
+.BI "struct hostent *getipnodebyname (const char *" name ,
+.BI "  int " type ", int " flags ", int *" error_num ");"
+.SH 관련 항목
+.BR resolver (3),
+.BR hosts (5),
+.BR hostname (7),
+.BR resolv+ (8),
+.BR named (8)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 4월 30일 

@@ -1,0 +1,54 @@
+.TH SULOGIN 8 "15 May 1996" "" "Linux System Administrator's Manual"
+.SH NAME
+sulogin -- Single-user login
+.SH SYNOPSIS
+.B sulogin
+.RB [ " -t timeout " ]
+.RB [ " tty-device " ]
+.SH DESCRIPTION
+.I sulogin
+명령은 \fIinittab(5)\fP 파일에서 지정한 단일 사용자 모드로 
+시스템이 작동되기 시작할 때 \fBinit(8)\fP에 의해 호출 된다.
+또한  bootmonitor(예, LILO)에서 \fB-b\fP 옵션이 주워져, 
+\fBInit\fP가 실행 될 때도 호출 된다.
+.PP
+이 때 로그인 프롬프트는 다음과 같이 나타난다.
+.IP "" .5i
+Give root password for system maintenance
+.br
+(or type Control-D for normal startup):
+.PP
+\fIsulogin\fP은 현재 터미날에 연결하거나,
+명령행의 옵션으로 지정한 특정 터미날 장치로 연결한다.
+(전형적으로 \fB/dev/console\fP).
+.PP
+단일 사용자 쉘에서 사용자가 로그아웃하거나, 프롬프트 상에서 
+Ctrl-d가 입력되면, 시스템은 초기 runlevel로 부팅 작업을 한다.
+.SH ENVIRONMENT VARIABLES
+\fIsulogin\fP은 사용할 쉘을 지정하기 위해 \fBSUSHELL\fP이나, 
+\fBsushell\fP 환경 변수 값을 찾는다. 
+이 값이 지정되어 있지 않으면, /etc/passwd 파일에서 지정한 
+사용자 쉘을 사용하고, 이 값도 지정되어 있지 않으면, 
+\fB/bin/sh\fP을 사용한다.
+.PP
+이 명령은 init에서 \fB-b\fP 옵션과 함께 매우 유용하게 쓰인다. 
+단일 사용자 모드, 파일 시스템 읽기/쓰기 허용, 사용자 쉘은 
+"failsafe"로 접속하고자 한다면, LILO 프롬프트에서 다음과 같이 
+사용하면 된다.
+.PP
+boot: linux -b rw sushell=/sbin/sash
+.SH FILES
+\fIsulogin\fP 명령은 로그인 과정에서 다음 파일을 찾아, 
+root의 비밀번호를 조사한다. 
+.PP
+/etc/passwd,
+.br
+/etc/shadow (있다면)
+.PP
+이때, 이 비밀번호 필드가 손상되었거나, 없거나, 
+복구 불가능한 상태라면, 비밀번호를 물어보는 프롬프트가 없이 
+바로 로그인 된다.
+.SH AUTHOR
+Miquel van Smoorenburg <miquels@cistron.nl>
+.SH SEE ALSO
+init(1), inittab(4).

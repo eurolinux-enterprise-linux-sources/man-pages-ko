@@ -1,0 +1,47 @@
+.\"             -*-Nroff-*-
+.\"  This page Copyright (C) 1993 Matt Welsh, mdw@sunsite.unc.edu.
+.\"  Freely distributable under the terms of the GPL
+.TH FREE 1 "20 Mar 1993 " "Cohesive Systems" "Linux User's Manual"
+.SH 이름
+free \- 시스템의 빈 메모리와 사용한 메모리의 양을 출력
+.SH 사용법
+.BR "free " [ "\-b" " | " "\-k" " | " "\-m" "] [" "\-o" "] [" "\-s"
+.I delay
+.RB "] [" "\-t" "] [" "\-V" ]
+.SH 설명
+\fBfree\fP 는 시스템의 비어있거나 사용된 물리적인 메모리와 스왑 메모리의
+전체 양을 출력한다. 또한 커널에 의해 사용되는 공유 메모리와
+버퍼도 출력한다.
+.SS Options
+\fB-b\fP 스위치는 메모리의 양을 바이트로 표시한다. 
+\fB-k\fP 스위치는(기본값) 킬로바이트로 표시한다.
+\fB-m\fP 스위치는 메가바이트로 표시한다.
+.PP
+\fB-t\fP 스위치는 총계가 포함된 줄을 출력한다.
+.PP
+\fB-o\fP 스위치는 "버퍼에 조정된" 줄의 출력을 비활성화한다. (이것이)
+지정되지 않는한 \fBfree\fP 는 사용된/빈 메모리 보고서 에서/로 버퍼 메모리를
+뺀다/더한다(개별적으로!).
+.PP
+\fB-s\fP 스위치는 \fIdelay\fP 초마다 계속해서 출력을 하도록 한다.
+실제로 \fIdelay\fP 에 어떤 부동 소수점 수도 사용할 수 있다. 
+.BR usleep (3)
+은 마이크로세컨드 수준의 지연 시간에 사용된다..
+.PP
+\fB\-V\fP 는 버전 정보를 출력한다.
+.SH 파일
+.ta
+.IR /proc/meminfo "\-\- 메모리 정보"
+.fi
+
+.SH 관련 항목
+.BR ps (1),
+.BR top(1)
+
+.SH 저자
+Written by Brian Edmonds. 
+
+Send bug reports to <procps-bugs@redhat.com>
+
+.SH 역자
+서성용 <freepooh@nownuri.net>, 2000년 5월 26일

@@ -1,0 +1,114 @@
+.\" Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be freely distributed.
+.\" " for hilit19
+.TH FSCK 8 "10 January 1994" "Linux 0.99" "Linux Programmer's Manual"
+.SH 이름
+fsck.minix \- minix 파일 시스템 검사
+.SH 사용법
+.B "fsck.minix [ \-larvsmf ]"
+장치이름
+.SH 설명
+.B fsck.minix
+풀그림은 리눅스용 MINIX 파일시스템을 검사하는 풀그림이다.
+이 버전은 14 문자와 30 문자 파일이름 옵션을 지원한다.
+
+이 풀그림은 현재 그 해당 파일 시스템을 사용하지 않고 있을 때 
+사용할 수 있다.즉 현재 마운트 되어 있는 파일시스템에 대해서는 
+검사할 수 없다. 이것은 누군가가 그 파일시스템에 쓰기를 할 수도 있기 
+때문.
+
+\fI장치이름\fR으로 사용될 파일은 일반적으로 다음과 같다:
+.nf
+.RS
+/dev/hda[1-8]
+/dev/hdb[1-8]
+/dev/sda[1-8]
+/dev/sdb[1-8]
+.RE
+.fi
+
+파일 시스템이 바뀌었다면(가령, 수정된 경우), 
+"FILE SYSTEM HAS CHANGED" 메시지를 보이고, 
+종료되기 전에 세번 
+.BR sync (2)
+한다.
+처음으로 파일시스템을 만들고, 검사하는 것이 아니라면, 
+다시 리부팅을 할 필요는 없다.
+.SH 경고
+.B fsck.minix
+명령을 마운트된 파일시스템을 대상으로 사용해서는 안된다.
+만약 이렇게 사용해 버리면, 사용하고 있는 파일이 지워지거나, 
+오히려 아무 문제 없는 파일 시스템에 손상을 가하는 결과를 
+초래할지도 모른다.
+그런데 부득이하게 마운트된 것을 검사해야 할 경우(가령, 루트 파일시스템이
+minix인 경우)에는 검사하는 동안 디스크 쓰기를 하지 말아야하며, 
+"zombies" 파일(유령파일, 고아파일)이 없어야 한다.
+.SH 옵션
+.TP
+.B \-l
+검사하는 파일시스템 안에 있는 모든 파일이름을 보여준다.
+.TP
+.B \-r
+사용자에게 어떻게 할 것인지 물어본다.
+.TP
+.B \-a
+사용자에게 물어보지 않고 문제가 있으면 자동으로 고친다.
+이것은 -r 옵션을 사용했을 때 초기값으로 지정된 그값으로 처리한다.
+이 옵션은 파일 시스템 오류의 예외적인 현상에 대해서는 
+제대로 처리 못할 경우도 있다.
+.TP
+.B \-v
+검사 상황을 자세하게 보여준다.
+.TP
+.B \-s
+슈퍼-블럭 정보를 보여준다.
+.TP
+.B \-m
+"mode not cleared" 경고 메시지를 활성화 한다.
+.TP
+.B \-f
+사용 중인 표시가 있는 파일 시스템에 대해서도 강제로 파일 시스템 검사를 한다.
+(이런 표시는 파일 시스템이 언마운트되었을 때, 커널에 의해서 표시된다.)
+.SH "관련 항목"
+.BR fsck (8),
+.BR fsck.ext (8),
+.BR fsck.ext2 (8),
+.BR fsck.xiafs (8),
+.BR mkfs (8),
+.BR mkfs.minix (8),
+.BR mkfs.ext (8),
+.BR mkfs.ext2 (8),
+.BR mkfs.xiafs (8).
+.BR reboot (8)
+.SH 검사
+여러가지 검사 메시지가 있는데, 일반적으로 사용할 때 나타난다.
+
+지정한 장치가 없을 때(즉, 그런 드라이브, 파티션이 없을 때)는
+"unable to read super block" 메시지를 보여주고, 
+지정한 장치가 있으나, 그것이 MINIX 파일 시스템이 아닐 때는
+"bad magic number in super-block" 메시지를 보여준다.
+.SH "마침 코드"
+.B fsck.minix
+에서 만들어지는 마침 코드(리턴값)는 다음과 같다.
+.IP 0
+오류 없음.
+.IP 3
+파일 시스템 오류 수정. 현제 파일 시스템이 마운트 되어 있는 상태라면, 
+리부팅 해야한다.
+.IP 4
+파일 시스템 오류를 수정하지 못한 것이 남아 있음.
+.IP 8
+작업 수행중에 오류 발생.
+.IP 16
+사용법이나, 문법이 틀림.
+.PP
+위와 같이, 이 풀그림은 0, 3, 4, 7, 8, 16 만 리턴한다.
+.SH 만든이
+Linus Torvalds (torvalds@cs.helsinki.fi)가 처음 만들었고,
+.br
+Rik Faith (faith@cs.unc.edu)가 리턴값 처리 부분 추가,
+.br
+Dr. Wettstein(greg%wind.uucp@plains.nodak.edu)이 \fI장치이름\fR 인자 사용 추가,
+.br
+Daniel Quinlan (quinlan@yggdrasil.com)이 마운트 되어 있는 파일 시스템 검사 
+부분 기능 추가.

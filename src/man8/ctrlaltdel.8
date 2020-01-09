@@ -1,0 +1,37 @@
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH CTRLALTDEL 8 "25 October 1993" "Linux 1.2" "Linux Programmer's Manual"
+.SH 이름
+ctrlaltdel \- Ctrl-Alt-Del 글쇠의 처리를 지정한다.
+.SH 사용법
+.BR "ctrlaltdel hard" " | " soft
+.SH 설명
+.I linux/kernel/sys.c
+소스의 검사 내용에 따라 이 풀그림은 다음 두가지 처리를 지정할 수 있다:
+.br
+.I hard
+리셋. 이것은 \fBsync(2)\fR 함수를 호출하지 않고, 기타 다른 선처리를 
+하지 않고 바로 리부팅을 실시한다. 
+.br
+.I soft
+리셋. 이것은 
+.B init
+프로세스로 SIGINT (interrupt) 시그날을 보낸다.
+이 옵션이 사용하려면, 먼저 
+.B init (8)
+풀그림이 먼저 Ctrl+Alt+Delete 글쇠의 입력을 처리할 할 수 있는 
+기능을 지원해야 한다. 리눅스에서 사용하는  
+.B init (8)
+풀그림에는 여러가지 종류가 있다. 먼저 그 관련 문서를 살펴 보아, 
+이 기능을 지원하는지 알아 보아야한다.  
+.B ctrlaltdel
+명령은 일반적으로 
+.I /etc/rc.local
+파일에서 사용된다.
+.SH "관련 파일"
+.I /etc/rc.local
+.SH "관련 항목"
+.BR simpleinit (8),
+.BR init (8)
+.SH 만든이
+Peter Orbaek (poe@daimi.aau.dk)

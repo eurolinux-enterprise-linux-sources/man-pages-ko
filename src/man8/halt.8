@@ -1,0 +1,62 @@
+.\"{{{}}}
+.\"{{{  Title
+.TH HALT,REBOOT 8 "December 10, 1995" "" "Linux System Administrator's Manual"
+.\"}}}
+.\"{{{  Name
+.SH NAME
+halt, reboot \- 시스템 종료
+.\"}}}
+.\"{{{  Synopsis
+.SH SYNOPSIS
+.B /sbin/halt
+.RB [ \-n ]
+.RB [ \-w ]
+.RB [ \-d ]
+.RB [ \-f ]
+.br
+.B /sbin/reboot
+.RB [ \-n ]
+.RB [ \-w ]
+.RB [ \-d ]
+.RB [ \-f ]
+.\"}}}
+.\"{{{  Description
+.SH DESCRIPTION
+\fBHalt\fP명령은 \fB/var/log/wtmp\fP 파일에 시스템 종료 기록을 남기고, 
+시스템 종료나 리부팅 작업을 한다. 
+만약 runlevel이 \fB0\fP이나 \fB6\fP이 아닌 상태의 시스템에서 
+\fIhalt\fP나 \fIreboot\fP 명령이 사용되면, \fIshutdown(8)\fP 명령이 
+호출된다.(\fB-h\fP나 \fB-r\fP 옵션 기능을 함)
+.\"}}}
+.\"{{{  Options
+.SH OPTIONS
+.IP \fB\-n\fP
+리부트나, 종료 전에 sync(?) 않음.
+.IP \fB\-w\fP
+실질적으로 리부트나 종료는 하지 않지만, wtmp 기록은 남김.
+(\fB/var/log/wtmp\fP 파일에).
+.IP \fB\-d\fP
+wtmp 파일에 기록을 남기지 않음. \fB\-n\fP 옵션은 \fB\-d\fP 옵션을 동반함.
+.IP \fB\-f\fP
+강제로 halt나, reboot함, shutdown을 호출하지 않음.
+.\"}}}
+.\"{{{  Diagnostics
+.SH DIAGNOSTICS
+만약 슈퍼유저가 아니면, `must be superuser' 메시지가 보인다.
+.\"}}}
+.\"{{{  Notes
+.SH NOTES
+이전 \fBsysvinit\fP 판에서는 어떠한 상태에서도 곧바로 
+\fIreboot\fP, \fIhalt\fP를 호출 할 수 없었다. 
+이번 판부터는 시스템의 runlevel이 1-5 값을 가지면, 
+\fIhalt\fP와 \fIreboot\fP는 \fIshutdown\fP을 호출 한다.
+.PP
+.\"}}}
+.\"{{{  Author
+.SH AUTHOR
+Miquel van Smoorenburg, miquels@cistron.nl
+.\"}}}
+.\"{{{  See also
+.SH "SEE ALSO"
+shutdown(8), init(1).
+.\"}}}

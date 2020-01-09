@@ -1,0 +1,59 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Portions from /usr/include/unistd.h are
+.\"               Copyright (C) 1991, 1992 Free Software Foundation, Inc.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Tue Oct 22 00:22:35 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.TH GETPAGESIZE 2 "1993년 7월 23일" "리눅스 0.99.11" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+getpagesize \- 시스템 페이지 크기를 알아낸다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.B size_t getpagesize(void);
+.SH 설명
+한 페이지의 바이트 수를 리턴한다. 이것은 시스템의 페이지 크기이며, 
+하드웨어 페이지 크기와 같을 필요는 없다.
+.SH 주의
+.BR getpagesize 는
+DLL 4.4.1에서 라이브러리 함수처럼 수행된다. 
+라이브러리가 컴파일될 때 정의된 것에 따라서, 이 함수는 
+.B EXEC_PAGESIZE
+(Linux 0.99.11에서 4096으로 설정되었다),
+.B NBPG
+(Linux 0.99.11에서 4096으로 설정되었다) 또는 
+.BR NBPC 을
+(Linux 0.99.11이나 DLL 4.4.1 라이브러리에서 정의하지 않았다)
+리턴한다.
+.SH 버그
+아키텍쳐와 라이브러리 버전에 의존하여, 이 라이브러리 호출은 
+시스템 콜이거나 아닐 수 있다. 리턴되는 값은 시스템 콜에 따라 다르다.
+예를 들어, libc5를 사용하는 sun4에서 이 루틴은 PAGE_SIZE(4096)가 아닌 
+EXEC_PAGESIZE(8192)를 리턴하거나, 또는 시스템 콜의 결과(4096)를 리턴한다.
+.SH 호환
+SVr4, 4.4BSD (이 시스템 콜은 4.2BSD에서 처음으로 나타났다).
+.SH 관련 항목
+.BR sbrk (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 5월 2일

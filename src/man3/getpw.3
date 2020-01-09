@@ -1,0 +1,96 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:23:25 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Mon May 27 21:37:47 1996 by Martin Schulze (joey@linux.de)
+.\"
+.TH GETPW 3 "1996년 5월 27일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+getpw \- 패스워드 라인 엔트리를 다시 생성한다.
+.SH 사용법
+.nf
+.B #include <pwd.h>
+.B #include <sys/types.h>
+.sp
+.BI "int getpw(uid_t " uid ", char *" buf );
+.fi
+.SH 설명
+\fBgetpw()\fP 함수는 버퍼 \fIbuf\fP에 주어진 사용자 \fIuid\fP를 위한 
+패스워드 라인 엔트리를 다시 생성한다.
+반환된 버퍼는 다음과 같은 형식의 라인을 포함한다.
+.sp
+.RS
+.B name:passwd:uid:gid:gecos:dir:shell
+.RE
+.PP
+\fIpasswd\fP 구조체는 다음과 같이 \fI<pwd.h>\fP에 정의되어 있다:
+.sp
+.RS
+.nf
+.ta 8n 16n 32n
+struct passwd {
+        char    *pw_name;		/* 유저 이름 */
+        char    *pw_passwd;		/* 유저 패스워드 */
+        uid_t   pw_uid;			/* 유저 ID */
+        gid_t   pw_gid;			/* 그룹 ID */
+        char    *pw_gecos;      	/* 실제 이름 */
+        char    *pw_dir;  		/* 홈 디렉토리 */
+        char    *pw_shell;      	/* shell 프로그램 */
+};
+.ta
+.fi
+.RE
+.SH 반환값
+\fBgetpw()\fP 함수는 성공시 0을 반환하거나 에러라면 \-1 을 반환한다.
+.SH 에러
+.TP
+.B ENOMEM
+패스워드 구조체를 할당하기 위한 메모리가 충분하지 않다.
+.SH 파일
+.TP
+.I /etc/passwd
+패스워드 데이터베이스 파일 
+.SH 호환
+SYSVr2.
+.SH 버그
+.BR getpw ()
+함수는 제공되는 버퍼 
+.IR buf 
+를 오버플로우 할지 모르기 때문에 위험하다.
+이 함수는 
+.BR getpwuid ()에
+의해 구식이 되었다.
+.SH 관련 항목
+.BR fgetpwent (3),
+.BR getpwent (3),
+.BR setpwent (3),
+.BR endpwent (3),
+.BR getpwnam (3),
+.BR getpwuid (3),
+.BR putpwent (3),
+.BR passwd (5)
+.Sh 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 4월 30일 

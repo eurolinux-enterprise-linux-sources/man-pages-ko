@@ -1,0 +1,47 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:49:23 1993 by Rik Faith (faith@cs.unc.edu)
+.TH MEMSET 3  "April 11, 1993" "GNU" "Linux Programmer's Manual"
+.SH NAME
+memset \- 메모리를 상수 바이트(constant byte)로 채운다.
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.sp
+.BI "void *memset(void *" s ", int " c ", size_t " n );
+.fi
+.SH DESCRIPTION
+\fBmemset()\fP 함수는 \fIs\fP가 가리키고 있는 메모리 영역의 처음 \fIn\fP 바이트를 
+상수 바이트 \fIc\fP로 채운다.
+.SH "RETURN VALUE"
+\fBmemset()\fP 함수는 메모리 영역 \fIs\fP에 대한 포인터를 반환한다.
+.SH "CONFORMING TO"
+SVID 3, BSD 4.3, ISO 9899
+.SH "SEE ALSO"
+.BR bzero "(3), " swab (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 2월 20일

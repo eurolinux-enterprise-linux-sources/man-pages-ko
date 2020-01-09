@@ -1,0 +1,64 @@
+.\" -*- nroff -*-
+.\"
+.\" (C)opyright 1993 by Dan Miner (dminer@nyx.cs.du.edu)
+.\"
+.\"  Permission is granted to freely distribute or modify this file
+.\"  for the purpose of improving Linux or its documentation efforts.
+.\"  If you modify this file, please put a date stamp and HOW you
+.\"  changed this file.  Thanks.   -DM
+.\"
+.\" Modified Sat Jul 24 12:35:12 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 22:29:51 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Mon Aug 25 16:06:11 1997 by Nicolás Lichtmaier <nick@debian.org>
+.\"
+.TH SYSINFO 2 "1997³â 8¿ù 25ÀÏ" "Linux 2.0" "¸®´ª½º ÇÁ·Î±×·¡¸Ó ¸Å´º¾ó"
+.SH ÀÌ¸§
+sysinfo \- ÀüÃ¼ÀûÀÎ ½Ã½ºÅÛ Åë°è Á¤º¸¸¦ ¹İÈ¯ÇÑ´Ù.
+.SH »ç¿ë¹ı
+.B #include <sys/sysinfo.h>
+.sp
+.BI "int sysinfo(struct sysinfo *" info );
+.SH ¼³¸í
+.BR sysinfo ´Â 
+´ÙÀ½ ±¸Á¶Ã¼ ¾È¿¡ Á¤º¸¸¦ ¹İÈ¯ÇÑ´Ù.
+
+.RS
+.nf
+struct sysinfo {
+	long uptime;              /* ºÎÆÃ ÀÌÈÄ Áö³ª°£ ÃÊ´ÜÀ§ ½Ã°£*/
+	unsigned long loads[3];   /* 1, 5, ±×¸®°í 15 ºĞ ºÎÇÏ Æò±Õ*/
+	unsigned long totalram;   /* »ç¿ëÇÒ ¼ö ÀÖ´Â ÃÑ ¸Ş¸ğ¸® Å©±â*/
+	unsigned long freeram;    /* ÀÌ¿ëÇÒ ¼ö ÀÖ´Â ¸Ş¸ğ¸® Å©±â*/
+	unsigned long sharedram;  /* °øÀ¯ ¸Ş¸ğ¸®ÀÇ ¾ç*/
+	unsigned long bufferram;  /* ¹öÆÛ¿¡ ÀÇÇØ »ç¿ëµÈ ¸Ş¸ğ¸®*/
+	unsigned long totalswap;  /* ÃÑ ½º¿Ò °ø°£ÀÇ Å©±â*/
+	unsigned long freeswap;   /* ÀÌ¿ëÇÒ ¼ö ÀÖ´Â ½º¿Ò °ø°£*/
+	unsigned short procs;     /* ÇöÀç ÇÁ·Î¼¼½ºÀÇ ¼ö*/
+	char _f[22];              /* ±¸Á¶Ã¼¸¦ 64 bytes·Î Ã¤¿î´Ù(pad)*/
+};
+.fi
+.RE
+
+.BR sysinfo ´Â 
+ÀüÃ¼ÀûÀÎ ½Ã½ºÅÛ Åë°è Á¤º¸¸¦ °¡Á®¿Ã ¼ö ÀÖ´Â °£´ÜÇÑ ¹æ¹ıÀ» Á¦°øÇÑ´Ù.
+¶ÇÇÑ \fI/dev/kmem\fP¸¦ ÀĞ´Â°Íº¸´Ù ÈÎ¾À È£È¯¼ºÀÌ ÁÁ´Ù.
+»ç¿ë ¿¹¸¦ º¼·Á¸é, intro(2)¸¦ ÂüÁ¶ÇØ¶ó.
+.SH ¹İÈ¯°ª
+¼º°ø½Ã, 0À» ¹İÈ¯ÇÑ´Ù. ¿¡·¯½Ã, \-1À» ¹İÈ¯ÇÏ¸ç,
+.IR errno ´Â 
+Àû´çÇÑ °ªÀ¸·Î ¼³Á¤µÈ´Ù.
+.SH ¿¡·¯
+.TP
+.B EFAULT
+\fIstruct\ sysinfo\fP°¡ °¡¸®Å°´Â Æ÷ÀÎÅÍ°¡ À¯È¿ÇÏÁö ¾Ê´Ù.
+.SH È£È¯
+ÀÌ ÇÔ¼ö´Â ¸®´ª½º¿¡ ÀÇÁ¸ÀûÀÌ¹Ç·Î È£È¯¼ºÀ» ¿°µÎ¿¡ µĞ ÇÁ·Î±×·¥¿¡¼­
+»ç¿ëÇØ¼­´Â ¾ÈµÈ´Ù.
+.sp
+¸®´ª½º Ä¿³ÎÀº 0.98.pl6 ÀÌÈÄ¿¡ sysinfo½Ã½ºÅÛ ÄİÀ» °¡Áö°í ÀÖ´Ù.
+¸®´ª½º libc´Â 5.3.5 ÀÌÈÄ¿¡ sysinfo() ·çÆ¾À» Æ÷ÇÔÇÏ¿´À¸¸ç glibc¿¡¼­´Â
+1.9 ÀÌÈÄ¿¡ Æ÷ÇÔÇÏ¿´´Ù.
+.SH °ü·Ã Ç×¸ñ
+.BR proc (5)
+.SH ¿ªÀÚ
+Á¤°­ÈÆ <skyeyes@soback.kornet.net>, 2000³â 5¿ù 28ÀÏ

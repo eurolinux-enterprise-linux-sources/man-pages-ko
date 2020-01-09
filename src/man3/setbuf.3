@@ -1,0 +1,170 @@
+.\" Copyright (c) 1980, 1991 Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" the American National Standards Committee X3, on Information
+.\" Processing Systems.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)setbuf.3	6.10 (Berkeley) 6/29/91
+.\"
+.\" Converted for Linux, Mon Nov 29 14:55:24 1993, faith@cs.unc.edu
+.\" Added section to BUGS, Sun Mar 12 22:28:33 MET 1995,
+.\"                   Thomas.Koenig@ciw.uni-karlsruhe.de
+.\" Correction,  Sun, 11 Apr 1999 15:55:18, Martin Vicente <martin@netadmin.dgac.fr>
+.\"
+.TH SETBUF 3  "1993년 11월 29일" "BSD MANPAGE" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+setbuf, setbuffer, setlinebuf, setvbuf \- 스트림 버퍼링 작동들
+.SH 사용법
+.na
+.B #include <stdio.h>
+.sp
+.BI "void setbuf(FILE *" stream ", char *" buf );
+.br
+.BI "void setbuffer(FILE *" stream ", char *" buf ", size_t" size );
+.br
+.BI "void setlinebuf(FILE *" stream );
+.br
+.BI "int setvbuf(FILE *" stream ", char *" buf ", int " mode
+.BI ", size_t " size );
+.ad
+.SH 설명
+이용할수 있는 버리핑의 3가지 타입은 비 버퍼링, 블럭 버퍼링 그리고 라인 
+버퍼링이다.
+출력 스트림이 비 버퍼링일때, 정보는 쓰자마자 목적 파일이나 터미널에 나타난다.;
+블럭 버퍼링일때 많은 문자들은 블럭으로써 저장되고 쓰여진다;
+라인 버퍼링일때 문자들은 뉴라인이 출력될때까지나 터미널 장치(stdin)에 부착된 스트림에서 입력이 읽혀질때까지 저장된다.
+함수 
+.BR fflush (3)는
+블럭을 지우도록 강요할때 쓰여진다.(
+.BR fclose (3)를
+참조해라.)
+보통 모든 파일들은 블럭 버퍼링이다. 처음 I/O 작동들이 파일에서 일어날때,
+.BR malloc (3)이
+불려진다. 그리고 버퍼를 얻는다.
+만일 스트림이 터미널에 연계되어 있다면(보통
+.I stdout
+처럼), 스트림은 라인 버퍼링이다. 표준 에러 스트림
+.I stderr
+는 항상 기본적으로 비 버퍼링이다.
+.PP
+.B setvbuf
+함수는 버퍼링을 바꾸기 위해 어떤때든지 열려진 스트림에 사용될수 있다.
+.I mode
+인자는 다음 세 매크로중 하나이어야 한다:
+.RS
+.TP
+.B _IONBF
+비 버퍼링
+.TP
+.B _IOLBF
+라인 버퍼링
+.TP
+.B _IOFBF
+완전히 버퍼링
+.RE
+.PP
+비-버퍼링 파일들을 제외하고, 
+.I buf
+인자는 적어도
+.I size
+바이트 만큼 긴 버퍼를 가리켜야 한다.; 이 버퍼는 현재 버퍼 대신 사용된다.
+만일 인자
+.I buf
+가 
+.BR NULL 이라면,
+단지 모드만이 영향을 받는다; 새로운 버퍼는 다음 읽고 쓰기 작동시 할당된다.
+.I setvbuf
+함수는 어떤때든지 사용가능하지만 ``active''가 아닐때는 스트림의 모드만
+바꿀수 있다: 즉, 어떤 I/O 전이나 
+.BR fflush 호출 
+바로 후에.
+.PP
+다른 세 함수는 
+.BR setvbuf 호출을
+위한 별칭이다.
+.B setbuf
+함수는 정확시 다음 호출과 같다.
+.PP
+.RS
+setvbuf(stream, buf, buf ? _IOFBF : _IONBF, BUFSIZ);
+.RE
+.PP
+.B setbuffer
+함수는 
+버퍼의 크기가 기본값
+.BR BUFSIZ 
+로 결정되는것 보다는 호출자까지라는 것을 제외하고는 같다.
+.B setlinebuf
+함수는 정확히 다음과 같다:
+.PP
+.RS
+setvbuf(stream, (char *)NULL, _IOLBF, 0);
+.RE
+.SH 관련 항목
+.BR fopen "(3), " fclose "(3), " fflush "(3), " fread "(3), " malloc "(3), "
+.BR puts "(3), " printf (3)
+.SH 표준
+.B setbuf
+와
+.B setvbuf
+함수는  ANSI C3.159-1989 (``ANSI C'')에 따른다.
+.SH 버그
+.B setbuffer
+와
+.B setlinebuf
+함수는 4.2BSD 이전버전에는 호환되지 않는다. 그리고 Linux에서는 이용할수
+없다. 4.2BSD와 4.3BSD 시스템에서, 
+.B setbuf
+는 항상 suboptimal 버퍼 사이즈를 사용해야 하며 피해져야 한다.
+.P
+여러분은 
+.I buf
+와 그것이 가리키는 공간은 
+.I stream
+이 닫혀지는 시간에도, 프로그램 종료시에도 여전히 존재하는 곳임을 확실히 
+해야 한다.
+.P
+예를 들어, 다음은 불법적이다:
+.nf
+.sp
+#include <stdio.h>
+int main()
+{
+    char buf[BUFSIZ];
+    setbuf(stdin, buf);
+    printf("Hello, world!\\n");
+    return 0;
+}
+.fi
+.sp
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 2월 26일

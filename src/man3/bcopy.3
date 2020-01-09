@@ -1,0 +1,54 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\"
+.\" Modified Sun Feb 26 14:52:00 1995 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 23:48:10 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" "
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH BCOPY 3  "April 9, 1993" "GNU" "LINUX Programmer's Manual"
+.SH 이름
+bcopy \- 바이트 문자열 복사 
+.SH 사용법
+.nf
+.B #include <string.h>
+.sp
+.BI "void bcopy (const void *" src ", void *" dest ", size_t " n );
+.fi
+.SH 설명
+ \fBbcopy()\fP 함수는 소스 스트링 \fIsrc\fP의 처음 \fIn\fP 바이트를
+ 옮기고자 하는 스트링 \fIdest\fP로 복사한다. \fIn\fP가 0 이면, 
+복사하지 않는다.
+.SH 반환값
+\fBbcopy()\fP 함수는 반환값이 없다.
+.SH 호환
+4.3BSD.  This function is deprecated -- use
+.BR memcpy
+in new programs.  
+.SH 관련 항목
+.BR memccpy "(3), " memcpy "(3), " memmove "(3), " strcpy "(3), " strncpy (3)

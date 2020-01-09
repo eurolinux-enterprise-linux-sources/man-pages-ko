@@ -1,0 +1,98 @@
+.\" Copyright (c) 1997 Martin Schulze (joey@infodrom.north.de)
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.\" Much of the text is copied from the manpage of resolv+(8).
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH HOST.CONF 5 "1997 January 2" "Debian/GNU Linux" "Linux System Administration"
+.SH 이름
+host.conf \- 해석기 설정 파일 
+.SH 설명
+파일
+.I /etc/host.conf은 해석기 라이브러리에 관한 설정 정보를 포함한다. 
+이 파일은 행마다 하나의 설정 키워드를 포함하고, 그 다음에는 적절한 설정 정보가 따른다. 
+인식된 키워드들은 .IR order, trim , multi, nospoof 그리고 reorder이다.
+.TP
+.I order
+이 키워드는 호스트 룩업이 어떻게 수행되어야 하는지를 명시한다. 이에는 하나 혹은 
+이상의 룩업 메쏘드가 따라야 하며, 콤마로 구분된다. 적절한 메소드는 
+.IR bind ", " hosts " and " nis 이다.
+.TP
+이 키워드는 한번 이상 나열될 수 있다. 매번, 단일 도메인 이름이 따라야 한다. 설정되면,
+resolv+ 라이브러리는 자동적으로 DNS를 통해 결정된 호스트 이름의 끝으로부터 주어진 도메인 
+이름을 결정(trim)한다.  이는 로컬 호스트와 도메인들에 사용되도록 의도된 것이다. (참고:
+trim은 NIS 또는 호스트 파일을 통해 모아진 호스트 이름들에 영향을 미치지 않는다.
+호스트 파일 내의 개별 엔트리에 대한 첫번째 호스트 이름이 로컬 설치에 대해 적절하도록 
+전체적으로 제한되던지 제한이 되지 않는다.)
+.TP
+.I multi
+타당한 값들은 .IR on과 off이다.
+.IR on으로 설정되면, resolv+ 라이브러리는 .I /etc/hosts 파일에 나타나는 호스트에 대한 
+모든 타당한 주소들로 리턴한다.
+이는 기본적으로 .I off이다. 왜냐하면, 거대한 호스트 파일들을 갖는 사이트에서
+상당한 성능 손실을 초래할 수 있기 때문이다. 
+.TP
+타당한 값은 .IR on 그리고 off 이다.
+만일 
+.IR on 
+으로 설정되면,
+resolv+ 라이브러리는 .BR rlogin 과 rsh의 보안을 강화시키기 위해서 호스트이름 spoofing을 
+방해하려 한다. 
+이는 다음과 같이 동작한다. 호스트 주소 룩업을 수행한다음, resolv+은 그 
+주소에 대한 호스트이름 룩업을 수행한다. 만일 두개의 호스트 이름들이 
+일치하지 않으면, 그 요청은 실패한다. 
+.TP
+.I spoofalert
+만일 이 옵션이 
+.I on
+으로 설정되고,
+.I nospoof
+옵션으로 역시 설정되면, 
+resolv+은 syslog 기능을 통해 에러 경고 로그를 작성할 것이다. 기본 값은  
+.IR off이다.
+.TP
+.I reorder
+타당한 값은 
+.IR on 과 off 이다.
+만일 
+.IR on 
+으로 설정되면,
+ .BR gethostbyname (3)이 수행될 때, 동일한 하위네트워크에 있는 
+로컬 주소들이 첫째로 나열되기 때문에, resolv+는 호스트 이름들의 순서를 다시 정렬하려고 한다. 
+Reordering(재정렬)은 모든 룩업 메소드에 대해 행해진다. 기본값은  
+.IR off이다.
+.SH 파일
+.TP
+.I /etc/host.conf
+번역자 설정 파일
+.TP
+.I /etc/resolv.conf
+번역자 설정 파일
+.TP
+.I /etc/hosts
+로컬 호스트 데이터베이스
+.SH 관련 항목
+.BR gethostbyname (3),
+.BR hostname (7),
+.BR resolv+ (8),
+.BR named (8)

@@ -1,0 +1,496 @@
+'\" t
+.\" Copyright (c) 1996 Andries Brouwer <aeb@cwi.nl>, Mon Oct 31 22:13:04 1996
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" This is combined from many sources.
+.\" For Linux, the definitive source is of course console.c.
+.\" About vt100-like escape sequences in general there are
+.\" the ISO 6429 and ISO 2022 norms, the descriptions of
+.\" an actual vt100, and the xterm docs (ctlseqs.ms).
+.\" Substantial portions of this text are derived from a write-up
+.\" by Eric S. Raymond <esr@thyrsus.com>.
+.\"
+.\" Tiny correction, aeb, 961107.
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH CONSOLE_CODES 4 "October 31, 1996" "Linux" "Linux Programmer's Manual"
+.SH NAME
+console_codes \- 리눅스 콘솔 제어문자와 제어 순서 구조
+.SH DESCRIPTION
+리눅스 콘솔은 VT102와 ECMA-48/ISO6429/ANSI X3.64 터미널 콘트롤의 
+많은 부분이 적용된다. 여기에 칼라 팔레트나 문자 설정 맵핑 등의 변화 같은
+비공식적인 모드의 시퀀스가 더해진다.
+아래 표에서, 두번째 컬럼은 주어진 함수에 대해 ECMA-48이나 DEC
+mnemonic (DEC 접두사가 붙어있는 글씨)를 주었다.
+mnemonic이 없는 시퀀스는 ECMA-48나 VT102도 아니다.
+.LP
+모든 출력과정이 끝나고 문자들이 콘솔 드라이버에 
+실제 프린팅을 위해 도착한 후에, 가장 먼저 일어나는 일은
+진행을 위해 쓰인 코드들이 프린팅을 위한 코드들로 바뀌는 것이다.
+.LP
+콘솔이 UTF-8모드라면, 들어오는 바이트들은 처음으로 
+16-bit Unicode로 결집된다. 아니면 각각의 바이트가 
+현제의 멥핑 테이블에따라 옮겨진다( 이것은 Unicode 값으로
+바뀐다).아래에서 CHARACTER SETS을 참조하자.
+.LP
+일반적인 경우, Unicode 값은 폰트 인덱스로 바뀌어서,
+비디오 메모리에 저장된다. 그래서 대응하는 glyph
+(비디오 ROM에 있는 것과 같이)가 화면에 나타난다.
+Unicode의 사용(과 PC hardware의 디자인)에서는
+512가지 다른 glyph를 동시에 사용할 수 있다.
+.LP
+현제 Unicode 값이 제어 문자라면, 혹은 현제 escape sequence
+를 실행하고 있다면, 그 값은 특별히 다뤄질 것이다. 폰트 인덱스로
+바뀌거나 glyph로 되는 대신, 커서를 움직이게 하거나 다른 제어 기능을 한다.
+아래에서 LINUX CONSOLE CONTROLS 섹션을 보자.
+.LP
+hard-wire terminal control을 프로그램에 넣는 것은 일반적으로 좋은 일은 아니다.
+리눅스는 터미널 기능의
+.BR terminfo (5)
+데이터 베이스를 지원한다.  
+콘솔 escape 시퀀스를 직접 내보내는 것 보단, terminfo을 사용하려 할 것이다.
+-스크린 라이브러리와.
+.BR ncurses (3),
+.BR tput (1), 
+혹은
+.BR reset (1).
+를 알고 난다면.
+.SH LINUX CONSOLE CONTROLS
+
+이 섹션에선 리눅스 콘솔 상에서 특별한 기능들을(예를 들자면 
+현제 커서 위치에서 plyph를 쓰는 것 같은) 하는 모든 제어문자와 
+escape 시퀀스를 다루었다.
+.SS "Control characters"
+맵핑 테이블에 따라 변환되기 전에 
+00 (NUL), 07 (BEL), 08 (BS), 09 (HT), 0a (LF), 0b (VT),
+0c (FF), 0d (CR), 0e (SO), 0f (SI), 18 (CAN), 1a (SUB),
+1b (ESC), 7f (DEL)와 같은 14가지 코드들 중 하나를 
+가지고 있는 문자가 제어 문자이다.
+`디스플레이 제어 문자' 모드를 설정할 수 있다 (아래 참조),
+그리고 07, 09, 0b, 18, 1a, 7f는 glyph로 디스플레이 될 수 있다.
+반면, 어떤 '디스플레이 제어 문자'에 관계없이 UTF-8 모드에선 
+00-1f까지의 모든 문자를 제어 문자로 할 수 있다. 
+
+제어 문자를 가지고 있다면, 그것은 즉시 적용되고 사라진다.
+(그것이 escape 시퀀스 중에 있다 하더라도.)
+그리고 escape 시퀀스는 다음 문자로 계속된다.
+(하지만, ESC는 어떻게든 아직 끝나지 않은 이전의 것을 중지시키고, 
+새로운 escape 시퀀스를 시작한다. 그리고 CAN과 SUB는 
+어떤 escape 시퀀스라도 끝낸다.)
+인증된 제어 문자는 BEL, BS, HT, LF, VT, FF, CR, SO, SI, 
+CAN, SUB, ESC, DEL, CSI.이다. 이것들은 의도대로 동작한다: 
+.HP
+BEL (0x07, ^G)은 소리를 낸다;
+.HP
+BS (0x08, ^H)는 한 컬럼 역행한다.
+(단, 행의 시작은 지나치지 않는다);
+.HP
+HT (0x09, ^I)는 다음 텝의 마지막으로 가거나 
+이전 텝의 마지막이 없다면 줄의 끝으로 간다;
+.HP
+LF (0x0A, ^J), VT (0x0B, ^K)와 FF (0x0C, ^L)는 모두 개행 문자를 준다;
+.HP
+CR (0x0D, ^M)은 케리지를 리턴한다;
+.HP
+SO (0x0E, ^N)는 G1문자군을 활성화하고,
+LF/NL (new line mode) 역시 케리지를 리턴시킨다;
+.HP
+SI (0x0F, ^O)는 G0문자군을 활성화한다;
+.HP
+CAN (0x18, ^X)과 SUB (0x1A, ^Z)는 escape 시퀀스를 중지시킨다;
+.HP
+ESC (0x1B, ^[]는 escape  시퀀스를 시작한다;
+.HP
+DEL (0x7F)은 무시된다;
+.HP
+CSI (0x9B)는 ESC에 해당된다. [.
+.LP
+
+.SS "ESC-CSI가 아닌-시퀀스"
+.TS
+l l l.
+ESC c	RIS	리셋.
+ESC D	IND	개행 문자.
+ESC E	NEL	새 줄.
+ESC H	HTS	텝을 현제 컬럼에 고정시킨다.
+ESC M	RI	역 개행 문자.
+ESC Z	DECID	DEC와 비슷. 커널은 스트링 ESC [ ? 6 c를 반환한다,
+                이것은 VT102임을 요구한다.
+ESC 7	DECSC	현제 상태를 저장한다. (커서의 좌표,
+		속성, 문자군).
+ESC 8	DECRC 가장 최근의 저장상태로 되돌린다.
+ESC [	CSI	제어 시퀀스를 소개한다.
+ESC %		선택한 문자군의 시퀀스를 시작한다.
+ESC % @		\0\0\0 디폴트(ISO 646 / ISO 8859-1)를 선택한다
+ESC % G		\0\0\0 UTF-8을 선택한다.
+ESC % 8		\0\0\0 UTF-8 (obsolete)을 선택한다.
+ESC # 8	DECALN	DEC 스크린 정렬 테스트 - 스크린을 E's으로 채운다.
+ESC (		G0 문자군을 정의하는 시퀀스를 시작한다.
+ESC ( B		\0\0\0 디폴트(ISO 8859-1 mapping)를 선택한다.
+ESC ( 0		\0\0\0 vt100 그래픽 맵핑을 선택한다.
+ESC ( U		\0\0\0 널 맵핑을 선택한다. - 문자 ROM으로 바로ESC ( K		\0\0\0 유저 맵핑을 선택한다.- 
+		\0\0\0 \fBmapscrn\fP(8)유틸리티로 로드되는 맵.
+ESC )		G1을 정의하는 시퀀스를 시작한다.
+		(위와 같이 B, 0, U, K의 하나를 따라야 한다.).
+ESC >	DECPNM	숫자 키패드 모드를 설정한다
+ESC =	DECPAM	어플리케이션 키패드 모드를 설정한다.
+ESC ]	OSC	(Should be: 운영체제 명령어)
+		ESC ] P \fInrrggbb\fP: 색상표를 마지막 p 이후의 
+7개의16 진수로 이루어진 매개 변수로 조절한다.
+		여기서 \fIn\fP 은 색(0-16), 그리고 
+적/녹/청 값(0-255)을 나타내는\fIrrggbb\fP이다. 
+		ESC ] R: 색상표를 리셋한다.
+.TE
+.SS "ECMA-48 CSI sequences"
+
+CSI (or ESC []는 세미콜론으로 구분되는 십진수 
+매개 변수의(거의 NPAR(16)) 시퀀스로 실행된다. 
+비어있는 매개 변수는 0값이 주어진다.
+매개 변수의 시퀀셜은 앞에 하나의 물음표를 붙여놓았을 것이다.
+ 
+하지만, CSI [ (or ESC [ []뒤에선 문자 하나가 읽히고,
+이 모든 시퀀스가 무시된다. (발상은 반항되는 기능키를 무시하는 것이다.)
+
+CSI 시퀀스는 그것의 마지막 문자에 의해 결정된다.
+
+.TS
+l l l.
+@	ICH	표시된 공간 문자의 수를 입력한다.
+A	CUU	표시된 열의 수만큼 커서를 올린다.
+B	CUD	표시된 열의 수만큼 커서를 내린다.
+C	CUF	표시된 행의 수만큼 커서를 오른쪽으로 옮긴다.
+D	CUB	표시된 행의 수만큼 커서를 왼쪽으로 옮긴다.
+E	CNL	표시된 열의 수만큼 1행의 아래로 옮긴다.
+F	CPL	표시된 열의 수만큼 1행의 위로 옮긴다.
+G	CHA	현제 열에서 표시된 행으로 옮긴다..
+H	CUP	표시된 행과 열로 커서를 옮긴다. (1,1에서 시작).
+J	ED	화면을 지운다 (디폴트 값: 커서가 있는 곳부터 화면의 끝까지).
+		ESC [ 1 J: 처음부터 커서가 있는 곳까지 지운다.
+		ESC [ 2 J: 모든 화면을 다 지운다.
+K	EL	줄을 지운다. (디폴트 값:커서에서부터 줄의 끝까지).
+		ESC [ 1 K: 줄의 시작부터 커서가 있는 곳까지 지운다..
+		ESC [ 2 K: 줄 전체를 지운다..
+L	IL	표시된 수만큼 빈 줄을 삽입한다.
+M	DL	지정된 수만큼의 줄을 지운다..
+P	DCH	현제 줄에서 지정된 숫자만큼의 문자를 삭제한다.
+X	ECH	현제 줄에서 지정된 숫자만큼의 문자를 지운다.
+a	HPR	표시된 행만큼 커서를 오른쪽으로 옮긴다.
+c	DA	ESC [ ? 6 c: 에게 `VT102다.'라고 답한다'.
+d	VPA	현제 행에서 지정된 열만큼 옮긴다.
+e	VPR	지정된 열만큼 내린다..
+f	HVP	지정된 열과 행으로 움직인다.
+g	TBC	매개 변수없이: 현제 위치에서 텝을 지운다..
+		ESC [ 3 g: 모든 텝을 지운다..
+h	SM	모드를 설정한다 (아래 참조).
+l	RM	모드를 리셋한다 (아래 참조).
+m	SGR	속성을 설정한다 (아래 참조).
+n	DSR	상태 보고 (아래 참조).
+q	DECLL	키보드 LED를 .
+		ESC [ 0 q: 모든 LED를 끈다.
+		ESC [ 1 q: Scroll Lock LED를 설정한다.
+		ESC [ 2 q: Num Lock LED를 설정한다.
+		ESC [ 3 q: Caps Lock LED를 설정한다
+r	DECSTBM	스크롤 영역을 설정한다; 매개 변수는 첫 열과 끝 열.
+s	?	커서의 위치를 저장한다..
+u	?	커서의 위치를 재지정한다..
+`	HPA	커서를 현제 열의 지정한 행으로 옮긴다..
+.TE
+.SS ECMA-48 Set Graphics Rendition
+
+The ECMA-48 SGR 시퀀스 ESC [ <parameters> m 디스플레이 속성을 설정한다.
+몇가지 속성은 같은 시퀀스에서 설정할 수 있다.
+.LP
+.TS
+l l.
+par	결과
+0	모든 속성을 디폴트로 리셋한다.
+1	볼드체로 설정한다.
+2	밝기(색 디스플레이에서 시뮬레이트 된 색)를 반으로 설정한다.
+4	배경을 설정한다 (색 디스플레이에서 시뮬레이트 된 색)
+	(딤이나 언더라인을 시뮬레트 할 떄 쓰는 색은 ESC를 사용하여 설정해준다
+5	깜빡임을 설정한다.
+7	리버스 비디오를 설정한다
+10	선택된 맵핑과 디스플레이 제어 플래그 그리고 
+토글 메타 플래그를 리셋한다. 
+11	널 맵핑을 선택하고, 디스플레이 제어 플래그를 설정하고
+토글 메타 플래그를 리셋한다
+12	널 맵핑을 선택하고, 디스플레이 제어 플래그를 설정하고,
+토글 메타 플래그를 설정한다.(토글 메타 플래그는 
+맵핑 테이블 해석이 끝나기 전에 토글된 바이트의 
+하이 비트를 생기게 하는 원인이 된다.)
+21	일반적인 세기를 설정한다. (이것은 ECMA-48와 맞지 않는다.)
+22	일반적인 세기를 설정한다.
+24	언더라인 끄기
+25      깜빡임 끄기
+27	리버스 비디오 끄기
+30	검은색 전경 설정
+31	붉은색 전경 설정
+32	녹색 전경 설정
+33	갈색 전경 설정
+34	파란색 전경 설정
+35	자홍색 전경 설정
+36	청록색 전경 설정
+37	하얀색 화경 설정
+38	배경을 켠다, 기본 전경 색을 설정한다.
+39	배경을 끈다, 기본 전경 색을 설정한다.
+40	검은색 배경 설정
+41	붉은색 배경 설정
+42	녹색 배경 설정
+43	갈색 배경 설정
+44	파란색 배경 설정
+45	자홍색 배경 설정
+46	청록색 배경 설정
+47	하얀색 배경 설정
+49	기본 배경 설정
+.TE
+.SS ECMA-48 Mode Switches
+.TP
+ESC [ 3 h
+DECCRM (default off): 디스플레이 설정 chars.
+.TP
+ESC [ 4 h
+DECIM (default off): 삽입 모드 설정.
+.TP
+ESC [ 20 h
+LF/NL (default off): 자동적으로 LF, VT 혹은 CR과 FF의 에코를 발생.
+.LP
+.SS ECMA-48 Status Report Commands
+.TP
+ESC [ 5 n
+Device status report (DSR): 응답은 ESC [ 0 n (Terminal OK).
+.TP
+ESC [ 6 n
+Cursor position report (CPR): 응답은 ESC [ \fIy\fP ; \fIx\fP R,
+where \fIx,y\fP is the cursor location.
+
+.SS DEC Private Mode (DECSET/DECRST) sequences.
+
+ECMA-48에 대한 설명은 없다. Set Mode sequences를 리스트에 올렸다;
+Reset Mode sequences는 마지막`h'를 `l'로 바꾸면 된다..
+.TP
+ESC [ ? 1 h
+DECCKM (default off): 설정되면, 커서키는 ESC보다 ESC O 접두사를 보낸다[.
+.TP
+ESC [ ? 3 h
+DECCOLM (default off = 80 columns): 80/132 col mode switch. 드라이버 소스에 의하면
+이것만으로는 충분치 못하다고 한다;
+.BR resizecons (8)
+와 같은 유저 모드의 유틸리티가 콘솔 비디오 카드상의 하드웨어 레지스터를 바꿔야만 한다.
+.TP
+ESC [ ? 5 h
+DECSCNM (default off): 리버스 비디오 모드를 설정한다.
+.TP
+ESC [ ? 6 h
+DECOM (default off): 설정하면, 커서 어드레싱은 스크롤링 구역의 상위 왼쪽 코너와 관련된다.
+.TP
+ESC [ ? 7 h
+DECAWM (default on):autowrap을 켜진 상태로 설정한다. 이 모드에서는, 80열(DECCOLM
+이 켜졌을때는 132열)후에 나온 그래픽 문자가 다음 열의 시작을 밀어낸다.
+.TP
+ESC [ ? 8 h
+DECARM (default on): 키보드 자동 반복을 켠다.
+.TP
+ESC [ ? 9 h
+X10 Mouse Reporting (default off): 리포팅 모드를 1로 설정한다.(혹은 0을
+리셋한다.) \- 아래를 참조.
+.TP
+ESC [ ? 25 h
+DECCM (default on): 커서를 보이게 한다.
+.TP
+ESC [ ? 1000 h
+X11 Mouse Reporting (default off): 리포팅 모드를 2로 설정한다.(혹은 0으로
+리셋한다.) \- 아래 참조.
+
+.SS Linux Console Private CSI Sequences
+
+아래 시퀀스들은 ECMA-48도 VT102도 아니다. 이것은 리눅스 콘솔 드라이버
+고유의 것들이다. 색은 SGR 매개 변수에 있다:
+0 = 검은색, 1 = 붉은색, 2 = 초록색, 3 = 갈색, 4 = 파란색, 5 = 자홍색, 6 =
+청록색, 7 = 하얀색.
+
+.TS
+l l.
+ESC [ 1 ; \fIn\fP ]	\fIn\fP에 해당하는 색을 언더라인 색으로 설정한다.
+ESC [ 2 ; \fIn\fP ]	\fIn\fP에 해당하는 색을 딤 색으로 설정한다.
+ESC [ 8 ]       	현제 색을 디폴트 속성과 한쌍으로 만든다.
+ESC [ 9 ; \fIn\fP ]	화면 공백의 간격을 \fIn\fP분으로 설정한다.
+ESC [ 10 ; \fIn\fP ]	벨의 주파수를 Hz로 설정한다..
+ESC [ 11 ; \fIn\fP ]	벨의 지속시간을 msec으로 설정한다.
+ESC [ 12 ; \fIn\fP ]	열거된 콘솔을 앞으로 가져온다.
+ESC [ 13 ]      	화면 공백을 없앤다.
+ESC [ 14 ; \fIn\fP ]   	VESA 파워다운 간격을 분으로 설정한다.
+.TE
+
+.SH "CHARACTER SETS"
+
+커널은 콘솔상에서 바이트의 변환을 4개정도 구분한다.
+그 4가지 테이블은 아래와 같다: a) Latin1 -> PC,  b) VT100 graphics -> PC, c) PC -> PC,
+d) 사용자 정의.
+
+G0과 G1이라 불리는 두가지 문자군 (character sets)이 있고, 그중 하나가 
+현제 통용되는 문자군이다.(보통 G0)
+^N을 입력함으로써 G1을 사용할 수 있다.^O을 입력하면 G0으로 바뀐다.
+
+이 가변적인 G0과 G1은 변환 테이블을 말하고, 사용자가 바꿀 수 있다.
+처음에 그것들은 각각 테이블 a)와 b)를 뜻했다.
+ESC ( B, ESC ( 0, ESC ( U와 ESC ( K 시퀀스들은 각각 G0가 
+변환 테이블 a), b), c)와 d)를 가르키도록 한다.
+ESC ) B, ESC ) 0, ESC ) U와 ESC ) K 시퀀스는 G1이 
+각각 테이블 a), b), c) 그리고 d)을 뜻하게 한다.
+
+ESC c 시퀀스는 터미널을 리셋시킨다. 이것은 화면이 왜곡되었을 때 사용한다
+"echo ^V^O"는 G0상에서만 작동한다. 하지만 G0가 테이블 a)를 지정한다는 보장은 없다.
+어떤 배포판에선 "echo ^[c"에만 적용되는 프로그램
+.BR reset (1)
+이 있다.
+만약 당신의 콘솔을 위한 terminfo entry가 정확하다면
+(그리고 entry rs1=\\Ec를 가지고 있다면), "tput reset" 역시 작동할 것이다.
+
+사용자 정의 맵핑 테이블은 
+.BR mapscrn (8).
+을 이용해 설정할 수 있다.
+맵핑의 결과는 기호 c가 프린트되면, 기호 s = map[c] 가 비디오 메모리로 보내진다
+s에 해당하는 비트멥을 문자 ROM에서 찾고, 
+.BR setfont(8).
+사용이 바뀔 수 있게 된다
+.SH "MOUSE TRACKING"
+
+마우스 추적 기능의 원래 목적은 xterm(마우스 호환 상태 리포트)을 반환하는 것이다. 
+콘솔 드라이버는 마우스 장치나, 타입을 알 수 없기 때문에, 가상 터미널 드라이버가 마우스 
+업데이트 ioctl을 받았을때만 콘솔 입력 스트림상에서 이 리포트가 반환된다. 
+이 ioctls은 반드시 \fBgpm(8)\fR 데몬과 같은 mouse-aware user-mode 어플리케이션에 의해
+발생되어야 한다.
+
+\fIxterm\fP에 의해 생성된 모든 마우스 추적 escape 시퀀스를 위한 매개 변수는 수치적인 매개 변수를 \fIvalue\fP+040와 같은 하나의 문자로 인코딩 한다. 예를 들면, `!'는 1이다. 스크린 좌표 시스템은 1-based.이다 
+X10 호환 모드는 escape sequence를 위치와 눌려진 마우스 버튼을 
+인코딩한 버튼이 눌러졌을 때 보낸다.
+It is enabled by ESC [ ? 9 h를 보냄으로써 이것을 가능하게 하고, 
+ESC [ ? 9 l를 보냄으로써 불가능 하게 한다..
+button press에서 , \fIxterm\fP은 ESC [ M \fIbxy\fP (6 characters)를 보낸다.  
+\fIb\fP 는 버튼\-1이고, 마우스를 눌렀을 때의 \fIx\fP와 \fIy\fP는 마우스의 x, y좌표이다. 
+이 코드는 모든 커널에서 적용된다.
+ 
+노말 추적 모드(Linux 2.0.24에서 실행되지 않는)는 escape 시퀀스를 버튼을 누를 때와 띨 때 모두 보낸다. 수정 정보 역시 보낸다. 이것은 ESC [ ? 1000 h를 보냄으로써 가능해지고 ESC [ 1000 l을 보냄으로써 불가능해 진다. 버튼을 누를 때나 띨 때, \fIxterm\fP은 ESC [ M \fIbxy\fP를 보낸다.
+\fIb\fP의 아래 두 비트는 버튼 정보를 인코드한다:
+0=MB1 pressed, 1=MB2 pressed, 2=MB3 pressed, 3=release.  상위 두 비트는 버튼을
+눌렀을때 어떤 수정이 가해졌는지를 인코딩하고, 그것을 다 합친다: 4=Shift, 8=Meta, 16=Control.  
+다시 \fIx\fP와 \fIy\fP는 마우스 움직임의 x,y 좌표가 된다. 
+상위 왼쪽 코너는 (1,1)이라.
+
+.SH COMPARISONS WITH OTHER TERMINALS
+
+많은 서로 다른 터미널 타입은 리눅스 콘솔이 VT100 호환 인 것 처럼 묘사된다.
+리눅스 콘설과 다른 가장 중요한 두가지 DEC VT102와
+.BR xterm (1).
+의 차이점에 대해 알아보자.
+.SS Control-character handling
+vt102 역시 아래 제어 문자들을 인식한다:
+.HP
+NUL (0x00) 은 무시한다;
+.HP
+ENQ (0x05) 응답 메시지를 트리거 한다;
+.HP
+DC1 (0x11, ^Q, XON) 전송을 재개한다;
+.HP
+DC3 (0x13, ^S, XOFF) vt100으로 하여금 XOFF와 XON을 제외한 
+모든 코드를 무시한다(그리고 전송을 멈춘다)
+.LP
+VT100-DC1/DC3 과정과 비슷한, 는 tty 드라이버에 의해 작동 가능하다.
+.LP
+.I xterm
+프로그램(vt100 모드에서)은 BEL, BS, HT, LF, VT, 
+FF, CR, SO, SI, ESC 제어 문자를 인식한다.
+
+.SS Escape sequences
+VT100 콘솔 시퀀스는 리눅스 콘솔에서 실행되지 않는다.
+.LP
+.TS
+l l l.
+ESC N	SS2	Single shift 2. (다음 문자를 위해 G2 문자군을 선택한다)
+ESC O	SS3	Single shift 3. (다음 문자를 위해 G3 문자군을 선택한다)
+ESC P	DCS	Device control string (ESC \e에 의해 가능해진다)
+ESC X	SOS	스트링을 시작한다.
+ESC ^	PM	사적인 메시지 (ESC \e로 끝난다)
+ESC \e	ST	스트링 종료기
+ESC * ...		G2 문자군을 지정한다.
+ESC + ...		G3 문자군을 지정한다.
+.TE
+
+프로그램
+.I xterm
+(vt100 모드에서)는 ESC c, ESC # 8, ESC >, ESC =,ESC D, ESC E, 
+ESC H, ESC M, ESC N, ESC O, ESC P ... ESC \,ESC Z 를 인식한다.
+(ESC [ ? 1 ; 2 c, `I am a vt100 with advanced video option'라고 대답한다]
+ESC ^ ... ESC \도 위와 같은 메시지와 함께 인식가능 하다.
+이것은 ESC (, ESC ), ESC *,  ESC + 도 각각 DEC 특수 문자, 
+line drawing set, UK, USASCII로 인식한다.
+ESC ]는 현제 리소스의 설정으로 인식한다:
+.LP
+.TS
+l l.
+ESC ] 0 ; txt BEL	아이콘 이름과 창 이름을 txt로 설정한다.ESC ] 1 ; txt BEL	아이콘 이름을 txt로 설정한다.
+ESC ] 2 ; txt BEL	창 이름을 txt로 설정한다.
+ESC ] 4 6 ; name BEL	로그파일을 이름으로 바꾼다. (일반적으로 
+compile-time 옵션에 의해 불가능하다.)
+ESC ] 5 0 ; fn BEL	폰트를 fn으로 설정한다.
+.TE
+
+아래에 있는 것들은 약간 의미가 바뀌어서 인식된다:
+.LP
+.TS
+l l l.
+ESC 7  DECSC	커서 저장
+ESC 8  DECRC	커서 복원
+.TE
+
+It also recognizes
+.LP
+.TS
+l l l.
+ESC F		커서를 스크린의 좌측 하단으로 옮긴다.
+( hpLowerleftBugCompat 리소스에 의해 가능해지면) 
+ESC l		메모리 잠금 (HP 터미널 당).
+		커서상에서 메모리를 잠근다.
+ESC m		메모리 개방(HP 터미널 당).
+ESC n	LS2	G2 문자군을 부른다.
+ESC o	LS3	G3 문자군을 부른다.ESC |	LS3R	G3 문자군을 GR로서 부른다.
+		Xterm상에서 눈에 보이는 변화는 없음.
+ESC }	LS2R	G2 문자군을 GR로서 부른다.
+		Xterm상에서 눈에 보이는 변화는 없음.
+ESC ~	LS1R	G1 문자군을 GR로서 부른다.
+		Xterm상에서 눈에 보이는 변화는 없음..
+.TE
+
+ESC % ...는 인식하지 못한다.
+
+.SS CSI Sequences
+.I xterm
+프로그램은 (XFree86 3.1.2G의 경우) 깜빡임이나 보이지 않는 모드의 SGR을 인식하지 못한다.
+주요 X11R6 버전은 칼라 셋팅의 SGR을 인식하지 못한다.
+리눅스에서 인식하는 다른 모든ECMA-48 CSI 시퀀스는 
+.IR xterm ,
+와 vice-versa에서도 역시 인식된다..
+
+.I xterm
+프로그램은 모든 DEC Private Mode 시퀀스를 인식할 것이다. 위의 목록을 참조하자.
+하지만 Linux private-mode 시퀀스는 인식하지 못한다.
+.IR xterm 
+자신의 private-mode 시퀀스에 대해선, Edward Moy와 Stephen Gildea가 쓴 
+.I Xterm Control Sequences
+문서를 참조하자
+
+.SH BUGS
+
+2.0.23 버전에서, CSI가 작동하지않고, NUL은 내부 escape 시퀀스를 무시하지 않는다.
+
+.SH SEE ALSO
+.BR console (4),
+.BR console_ioctl (4),
+.BR charsets (7)
+

@@ -1,0 +1,104 @@
+.\" Copyright (C) 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:26:16 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Thu Apr 11 17:11:33 1996 by Andries Brouwer (aeb@cwi.nl):
+.\"     Corrected type of compar routines, as suggested by
+.\"     Miguel Barreiro (enano@avalon.yaix.es).  Added example.
+.\" In case a Debian maintainer sees this: the Debian version is wrong.
+.\" Please do not `correct' the version here.
+.\" Modified Sun Sep 24 20:15:46 2000 by aeb, following Petter Reinholdtsen.
+.\"
+.\"
+.\" 한국어 번역: 임종균 <hermes44@secsm.org> 2001년 6월 28일
+.\"
+.TH SCANDIR 3  "1996년 4월 11일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+scandir, alphasort \- 디렉토리에서 해당 항목을 조사한다
+.SH 사용법
+.nf
+.B #include <dirent.h>
+.sp
+.BI "int scandir(const char *" dir ", struct dirent ***" namelist ,
+.RS
+.BI "int (*" select ")(const struct dirent *),"
+.BI "int (*" compar ")(const struct dirent **, const struct dirent **));
+.RE
+.sp
+.BI "int alphasort(const struct dirent **" a ", const struct dirent **" b );
+.fi
+.SH 설명
+\fBscandir()\fP 함수는 각 디렉토리 항목에 대해 \fBselect()\fP를 호출하면서 \fIdir\fP 디렉토리를 조사한다. \fBselect()\fP에서 0이 아닌 값을 반환한 항목들은 \fBmalloc()\fP을 통해 할당된 문자열에 저장되고, 비교 함수 \fBcompar()\fP를 사용한
+\fBqsort()\fP에 의해 정렬되고, \fBmalloc()\fP를 통해 할당된 \fInamelist\fP
+배열에 모아진다.
+\fBselect\fP가 NULL이면 모든 항목이 선택된다.
+.PP
+\fBalphasort()\fP 함수는 디렉토리 항목들을 알파벳 순서로 정렬하기 위해
+\fBscandir()\fP 함수의 비교 함수로 사용될 수 있다. 그 함수의 인자는 비교할 두
+개의 디렉토리 항목 \fIa\fP와 \fIb\fP이다.
+.SH 반환값
+\fBscandir()\fP 함수는 선택된 디렉토리 항목의 개수를 또는 에러가 발생하면 -1을
+반환한다.
+.PP
+\fBalphasort()\fP 함수는 첫번째 인자가 두번째 인자보다 작거나, 같거나, 크거나에
+따라 각각 0 보다 작거나, 같거나, 큰 정수를 반환한다.
+.SH 에러
+.TP
+.B ENOMEM
+수행을 하기 위한 메모리 부족하다.
+.SH 호환
+BSD 4.3
+.SH 예제
+.nf
+/* 현재 디렉토리의 파일을 역순으로 출력한다 */
+#include <dirent.h>
+main(){
+    struct dirent **namelist;
+    int n;
+
+    n = scandir(".", &namelist, 0, alphasort);
+    if (n < 0)
+        perror("scandir");
+    else {
+        while(n--) {
+            printf("%s\en", namelist[n]->d_name);
+            free(namelist[n]);
+        }
+        free(namelist);
+    }
+}
+.fi
+.SH 관련 항목
+.BR opendir (3),
+.BR readdir (3),
+.BR closedir (3),
+.BR rewinddir (3),
+.BR telldir (3),
+.BR seekdir (3).
+.SH 번역
+임종균 <hermes44@secsm.org> 2001년 6월 28일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 14일

@@ -1,0 +1,100 @@
+.\" Copyright (C) 1996 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Rewritten old page, 960210, aeb@cwi.nl
+.\" Updated, added strtok_r. 2000-02-13 Nicol&#65533;s Lichtmaier <nick@debian.org>
+.\"
+.\"
+.\" 한국어 번역: 정강훈 <skyeyes@soback.kornet.net> 2001년 2월 24일
+.\" 오류 수정: 한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 11일
+.\"
+.\"
+.\" r1.3 2005-02-11 15:21:22 +15-4 윤현호
+.\" r1.2 2004-08-12 17:20:44 +4-3 xaos
+.\" r1.1 2004-08-12 17:12:38  xaos 
+.\"
+.TH STRTOK 3  "2000년 2월 13일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+strtok, strtok_r \- 문자열에서 토큰들을 뽑아낸다.
+.SH 사용법
+.nf
+.B #include <string.h>
+.sp
+.BI "char *strtok(char *" s ", const char *" delim );
+.sp
+.BI "char *strtok_r(char *" s ", const char *" delim ", char **" ptrptr );
+.fi
+.SH 설명
+`토큰`이란 문자열 \fIdelim\fP에 속하지 않는 문자들로 이루어진 비어 있지 않은 문자열이며
+\e0이나 \fIdelim\fP에 있는 문자가 뒤따른다.
+.PP
+\fBstrtok()\fP 함수는 문자열 \fIs\fP를 토큰으로 파싱하기 위해 사용된다.
+\fBstrtok()\fP의 첫번째 인자로 \fIs\fP를 주면, 가장 앞에 있는 토큰을 구하고,
+그 문자열안의 다음 토큰을 구하고자 할 때에는 첫번째 인자를 NULL로 설정하여야 한다.
+각 호출은 다음 토큰에 대한 포인터를 반환하거나 더이상 토큰이 발견되지 않는다면 
+NULL을 반환한다.
+.PP
+토큰이 구분자로 끝난다면, 이 구분자는 \e0로 겹쳐 쓰여지며 다음 문자에 대한
+포인터가 \fBstrtok()\fP에 대한 다음 호출을 위해 저장된다.
+구분 문자열 \fIdelim\fP는 각 호출시 다를수 있다.
+.PP
+.B strtok_r()
+함수는
+.B strtok()
+와 동일하게 작동한다. 그러나 정적 버퍼를 사용하는 대신에
+이 함수는 char * 포인터로 할당된 유저에 대한 포인터를 사용한다.
+이 포인터,
+.I ptrptr
+파라미터는 같은 문자열을 파싱하는 동안 같아야만 한다.
+.SH 버그
+이 함수를 사용해서는 안된다. 만일 사용해야 한다면, 다음을 주의하라:
+.PP
+.RS
+이 함수는 처음 인자를 수정한다.
+.PP
+구분자의 원본은 잃게 된다.
+.PP
+이 함수는 상수 문자열에서는 사용해서는 안된다.
+.PP
+.B strtok ()
+함수는 파싱하는 동안 정적 버퍼를 사용한다. 그래서 thread safe가 아니다.
+만일 이것이 문제라면
+.B strtok_r ()
+를 사용해라.
+.RE
+.SH 반환값
+\fBstrtok()\fP 함수는 다음 토큰에 대한 포인터를 반환하거나 만일 더 이상
+토큰이 없다면 NULL을 반환한다.
+.SH 호환
+.TP
+strtok()
+SVID 3, POSIX, BSD 4.3, ISO 9899
+.TP
+strtok_r()
+POSIX.1c
+.SH 관련 항목
+.BR index "(3), " memchr "(3), " rindex "(3), " strchr (3),
+.BR strpbrk "(3), " strsep "(3), " strspn "(3), " strstr (3)
+.SH 번역
+정강훈 <skyeyes@soback.kornet.net> 2001년 2월 24일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 11일

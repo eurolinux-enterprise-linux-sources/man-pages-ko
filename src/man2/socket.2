@@ -1,0 +1,245 @@
+'\" t
+.\" Copyright (c) 1983, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     $Id: socket.2,v 1.1.1.1 2002/07/18 10:40:12 hhyoon Exp $
+.\"
+.\" Modified Sat Jul 24 10:36:46 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 22:10:43 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 1998,1999 by Andi Kleen <ak@muc.de>
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH SOCKET 2 "24 Apr 1999" "Linux Man Page" "Linux Programmer's Manual"
+.SH 이름
+socket \- 통신을 위해 말단(endpoint)를 생성한다.
+.SH 사용법
+.B #include <sys/types.h>
+.br
+.B #include <sys/socket.h>
+.sp
+.BI "int socket(int " domain ", int " type ", int " protocol );
+.SH 설명
+.B Socket
+은 통신을 위한 종점(endpoint)를 생성하고 디스크립터를 반환한다.
+.PP
+.I 도메인 
+매개변수는 통신 도메인을 지정한다; 이것은 통신에 사용되어 질 프로토콜 패밀리를 선택한다.
+이러한 프로토콜 패밀리들은 
+.BR <sys/socket.h> 
+에서 정의된다. 현재 쓰여지는 포맷은 다음을 포함한다:
+.PP
+.TS
+tab(:);
+l l l.
+Name:Purpose:Man page
+T{
+.B PF_UNIX,PF_LOCAL
+T}:T{
+Local communication
+T}:T{
+.BR unix (7)
+T}
+T{
+.B PF_INET
+T}:IPv4 Internet protocols:T{
+.BR ip (7)
+T}
+T{
+.B PF_INET6
+T}:IPv6 Internet protocols:
+T{
+.B PF_IPX
+T}:IPX \- Novell protocols:
+T{
+.B PF_NETLINK
+T}:T{
+Kernel user interface device
+T}:T{
+.BR netlink (7)
+T}
+T{
+.B PF_X25
+T}:ITU-T X.25 / ISO-8208 protocol:T{
+.BR x25 (7)
+T}
+T{
+.B PF_AX25
+T}:T{
+Amateur radio AX.25 protocol
+T}:
+T{
+.B PF_ATMPVC
+T}:Access to raw ATM PVCs:
+T{
+.B PF_APPLETALK
+T}:Appletalk:T{
+.BR ddp (7)
+T}
+T{
+.B PF_PACKET
+T}:T{
+Low level packet interface
+T}:T{
+.BR packet (7)
+T}
+.TE
+.PP
+소켓은 지시된 통신 semantics를 지정하는 
+.IR type
+을 갖는다.
+현재 정의된 타입은 다음과 같다:
+.TP
+.B SOCK_DGRAM
+데이타그램 지원
+.TP
+.B SOCK_RAW
+raw network protocol 접근 지원.
+.TP
+.B SOCK_RDM
+보증을 요구하지 않는 데이타그램 레이어지원.
+.TP
+.B SOCK_PACKET
+새로운 프로그램에서 잘 쓰이지 않는다;
+.BR packet (7)
+을 본다.
+.PP
+몇몇 소켓타입은 모든 프로토콜군에 의해 구현되어지지 않을 것이다; 예를들면, 
+.B SOCK_SEQPACKET
+는 
+.BR AF_INET 
+때문에 구현되지 않는다.
+.PP
+.I 프로토콜
+은 소켓을 사용하기 위해 특정 프로토콜을 지정한다. 싱글 프로토콜은 주어진 프로토콜군안에 특정 소켓타입을 지원하도록
+존재한다. 그러나, 특정 프로토콜이 방법으로 지정되어야만하는 곳엔 많은 프로토콜이 존재가능하다. 
+.PP
+.B SOCK_STREAM
+타입의 소켓은 full-duplex byte streams이다. 그것들은 레코드 경계를 보호하진 않는다.
+스트림 소켓은 모든 데이타가 그것으로 송수신 되기전에 
+.I 접속
+상태이어야한다. 다른 소켓과의 접속은 
+.BR connect (2)
+호출로 생성한다. 한번 접속에 데이타는 
+.BR read (2)
+와
+.BR write (2)
+호출 혹은 
+.BR send (2)
+와
+.BR recv (2)
+호출 의 몇몇 변수를 사용해 전송한다.  세션이 완벽할때 
+.BR close (2)
+는 실행된다. Out-of-band 에이타는 또한 
+.BR send (2)
+의 설명대로 전송되고 
+.BR recv (2)
+의 설명대로 수신된다.
+.PP
+.B SOCK_DGRAM
+와 
+.B SOCK_RAW
+소켓은 
+.BR send (2)
+호출에 지정된 correspondents로 데이타그램의 송신을 허락한다.
+데이타그램은 대개 다음 데이타그램을 반환하는
+.BR recvfrom (2)
+로 수신된다.
+.PP
+.B SOCK_PACKET
+은 장치 드라이버로부터 직접 raw패킷을 받는 쓰이지 않는 소켓타입이다.
+대신
+.BR packet (7)
+을 사용한다.
+.PP
+소켓의 작용은 소켓레벨 옵션에 의해 제어된다. 이러한 옵션들은 
+.BR <sys/socket.h> 
+에 정의 되어있다.
+.BR Setsockopt (2)
+와
+.BR getsockopt (2)
+는 옵션을 설정하고 얻는데 사용된다. 
+.SH 반환값
+에러시, \-1이 반환된다; 그 밖의 반환값은 디스크립터 참조소켓이다.
+.SH 에러
+.TP
+.B EPROTONOSUPPORT
+프로토콜 타입이나 지정된 프로토콜은 이 도메인에서 지원되지 않는다.
+.TP
+.B ENFILE
+새로운 소켓구조를 지정하기에 커널메모리가 부족하다.
+.TP
+.B EMFILE
+프로세스 파일 테이블이 overflow.
+.TP
+.B EACCES
+지정된 타입의 생성된 소켓이나 프로토콜 권한이 거부되었다.
+.TP
+.BR ENOBUFS " or " ENOMEM
+메모리가 부족하다. 소켓은 프리메모리가 생길때 까지 생성될 수 없다.
+.TP
+.B EINVAL
+알려지지 않은 프로토콜이나 프로토콜군으로 유효하지 않다.
+.PP
+다른 에러는 프로토콜 모듈에의해 생성된다.
+.SH 호환
+4.4BSD (the
+.B socket
+함수 호출은 4.2BSD에서 선보였다). 대개 비-bsd시스템에서는 bsd소켓레이어의 클론을 지원한다.
+.SH 버그
+.B SOCK_UUCP
+는 아직 구현되지 않았다.
+.SH 관련 항목
+.BR accept (2),
+.BR bind (2),
+.BR connect (2),
+.BR getprotoent (3),
+.BR getsockname (2),
+.BR getsockopt (2),
+.BR ioctl (2),
+.BR listen (2),
+.BR read (2),
+.BR recv (2),
+.BR select (2),
+.BR send (2),
+.BR shutdown (2),
+.BR socketpair (2),
+.BR write (2)
+.PP
+\(lqAn Introductory 4.3 BSD Interprocess Communication Tutorial\(rq
+is reprinted in
+.I UNIX Programmer's Supplementary Documents Volume 1.
+.PP
+\(lqBSD Interprocess Communication Tutorial\(rq
+is reprinted in
+.I UNIX Programmer's Supplementary Documents Volume 1.
+.SH 역자
+ASPLINUX, 2000년 7월 29일

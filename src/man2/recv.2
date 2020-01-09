@@ -1,0 +1,374 @@
+.\" Copyright (c) 1983, 1990, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     $Id: recv.2,v 1.2 2004/03/26 01:22:43 hhyoon Exp $
+.\"
+.\" Modified Sat Jul 24 00:22:20 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 17:45:19 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 1998,1999 by Andi Kleen
+.\" 2001-06-19 corrected SO_EE_OFFENDER, bug report by James Hawtin
+.\"
+.\"
+.\" Changelog of Korean version
+.\" r1.7 2004-03-25 17:03:44 +141-143   윤현호
+.\" r1.6 2004-03-19 12:30:00 +5-5       61.82.158.215
+.\" r1.5 2004-03-19 12:29:16 +5-5       61.82.158.215
+.\" r1.4 2004-03-19 12:28:11 +5-3       61.82.158.215
+.\" r1.3 2004-03-19 12:27:35 +3-3       61.82.158.215
+.\" r1.2 2004-03-19 12:26:20 +5-2       61.82.158.215
+.\" r1.1 2004-03-19 12:13:43            61.82.158.215
+.\"
+.TH RECV 2 "2002-12-31" "리눅스 메뉴얼 페이지" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+recv, recvfrom, recvmsg \- 소켓으로부터 메세지를 받는다.
+.SH 사용법
+.B #include <sys/types.h>
+.br
+.B #include <sys/socket.h>
+.sp
+.BI "int recv(int " s ", void *" buf ", size_t " len ", int " flags );
+.sp
+.BI "int recvfrom(int " s ", void *" buf ", size_t " len ,
+.BI "int " flags ", struct sockaddr *" from ", socklen_t *" fromlen );
+.sp
+.BI "int recvmsg(int " s ", struct msghdr *" msg ", int " flags );
+.SH 설명
+.B recvfrom
+그리고
+.BR recvmsg 는
+연결 지향형이든 아니든 소켓에서 메세지를 받기 위해 사용된다. 그리고 소켓에 있는 데이터를 받기 위해 사용된다.
+.PP
+만일
+.IR from 이
+NULL이 아니고 소켓이 연결 지향형이 아니라면, 메세지의 본래 주소가 채워진다.
+인자
+.IR fromlen 은
+값-결과 변수이며
+.IR from 과
+관련된 버퍼의 크기로 초기화되며, 반환시 저장되는 주소의 실제 크기를 가리키는
+값으로 수정된다.
+.PP
+.B recv
+호출은 보통
+.IR 연결 된
+소켓에서만 사용된다.
+(
+.BR connect (2)를
+참조하라)
+그리고
+.I from
+인자를 가진
+.BR recvfrom 과
+동일하다.
+.PP
+소켓에 메시지가 없다면, 메시지를 받는 호출은 메시지가 들어올때까지 기다리게되며,
+만약 소켓이 넌블럭킹(
+.BR fcntl (2) 
+참조)이었다면 결과값은 -1이 되고 errno를 
+.BR EAGAIN 으로 
+설정한다.
+일반적으로 메시지를 받는 호출들은 요구된 양을 모두 채우며 기다리기 보다는 채워진 양을 리턴한다.
+.PP
+.BR select (2)
+나
+.BR poll (2)
+호출은 데이터가 더 도착하였는지를 결정하기 위해 사용된다.
+.PP
+받는 함수들을 위한
+.I flags
+인자는 다음 값들 중 하나 이상의
+.IR OR 로
+구성된다.:
+.TP
+.B MSG_OOB
+이 플래그는 일반적 데이터 스트림에서 받지 않는 out-of-band 데이터를 요구한다.
+몇몇 프로토콜은 보통 데이터 큐의 머리에 급한 데이터를 놓는다. 그리고 이
+플래그는 그런 프로토콜에서는 사용될 수 없다.
+.TP
+.B MSG_PEEK
+이 플래그는 큐에서 데이터를 제거하지 않고 받는 큐의 시작에서부터 데이터를
+반환하는 받기 작동을 하도록 한다.
+그래서, 연속적인 받기 호출은 같은 데이터를 반환한다.
+.TP
+.B MSG_WAITALL
+이 플래그는 요구한 양이 다 찰 때까지 작동을 블럭킹하도록 요구한다.
+그러나, 만일 신호가 발생하거나, 오류나 단절이 발생하거나, 혹은
+받은 데이터가 전에 반환된 데이터와 다른 타입이라면
+요구한 것보다 적은 데이터라도 반환한다.
+.\" .TP
+.\" .B MSG_NOSIGNAL
+.\" 이 플래그는 다른 종점이 사라졌을때 스트림 소켓에서
+.\" .BR SIGPIPE 가
+.\" 발생하는 것을 막는다.
+.TP
+.B MSG_TRUNC
+전달된 버퍼의 길이보다 길더라도 패킷의 실제 길이를 반환한다.
+패킷 소켓에서만 유효하다.
+.TP
+.B MSG_ERRQUEUE
+이 플래그는 소켓 오류 큐에 저장된 오류들을 받도록 한다.
+오류는 프로토콜(IPv4
+.BR IP_RECVERR 를
+위한)에 의존하는 형식을 갖는 보조 메시지로 전달된다.
+사용자는 충분한 크기의 버퍼를 제공해야 한다. 좀더 자세한 정보는
+.BR cmsg (3)과
+.BR ip (7)을
+참고하라.
+
+오류를 발생시킨 원래 패킷의 유효 데이터(payload)는
+.BR msg_iovec 를
+통해 보통 데이터로 전달된다.
+오류를 발생시킨 데이터그램의 원래 도착 주소는
+.BR msg_name 을
+통해 제공된다.
+.IP
+로컬 오류에 대해서는 아무런 주소도 전달되지 않는다.
+(이것은
+.BR cmsghdr 의
+멤버인
+.IR cmsg_len 으로
+확인할 수 있다.)
+오류가 발생하면,
+.BR MSG_ERRQUEUE 가
+.BR msghdr 에
+설정된다.
+하나의 에러가 전달된 후,
+계류 중인 소켓 오류는 다음 저장된 오류를 기반으로 다시 만들어진다.
+그리고, 이것은 다음 소켓 연산으로 전달될 것이다.
+오류는
+.B sock_extended_err
+구조체로 제공된다.
+.IP
+.RS
+.ne 18
+.nf
+.ta 4n 20n 32n
+#define SO_EE_ORIGIN_NONE	0
+#define SO_EE_ORIGIN_LOCAL	1
+#define SO_EE_ORIGIN_ICMP	2
+#define SO_EE_ORIGIN_ICMP6	3
+
+struct sock_extended_err
+{
+	u_int32_t	ee_errno;	/* error number */
+	u_int8_t	ee_origin;	/* where the error originated */
+	u_int8_t	ee_type;	/* type */
+	u_int8_t	ee_code;	/* code */
+	u_int8_t	ee_pad;
+	u_int32_t	ee_info;	/* additional information */
+	u_int32_t	ee_data;	/* other data */
+	/* More data may follow */
+};
+
+struct sockaddr *SO_EE_OFFENDER(struct sock_extended_err *);
+.ta
+.fi
+.RE
+.IP
+.BR ee_errno 는
+저장된 오류의 오류 번호를 포함한다.
+.BR ee_origin 는
+오류가 시작됐던 본래 코드이다.
+다른 필드들은 프로토콜에 의존한다. 매크로
+.BR SOCK_EE_OFFENDER 는
+보조 메세지에 주어진 포인터에서 오류가 발생한 네트웍 객체의 주소에
+대한 포인터를 반환한다.
+만일 이 주소가 알려지지 않았다면,
+.BR sockaddr 의
+멤버인
+.IR sa_family 는
+.BR AF_UNSPEC 를
+포함하며
+.BR sockaddr 의
+다른 필드들은 정의되지 않는다.
+오류를 야기한 패킷은 보통 데이터처럼 전달된다.
+.IP
+로컬 오류들을 위해, 어떤 주소도 전달되지 않는다. (
+이것은
+.BR cmsghdr 의
+멤버인
+.IR cmsg_len 로
+확인할 수 있다.)
+오류를 받기 위해,
+.BR MSG_ERRQUEUE 가
+.BR msghdr 에
+설정된다.
+
+오류가 전달된 후, 미결인 채로 남아 있던 소켓 오류들은 다음 저장된 오류에 기반하여
+다시 만들어지고 다음 소켓 작동시 전달된다.
+.PP
+.BR recvmsg 는
+제공된 파라미터들의 수를 최소화하기 위해
+.I msghdr
+구조체를 사용한다.
+이 구조체는
+.IR <sys/socket.h> 에
+정의된 것처럼 다음과 같은 형태를 가지고 있다.
+.IP
+.RS
+.nf
+.ta 4n 17n 33n
+struct msghdr {
+	void	* msg_name;	/* optional address */
+	socklen_t	msg_namelen;	/* size of address */
+	struct iovec	* msg_iov;	/* scatter/gather array */
+	size_t	msg_iovlen;	/* # elements in msg_iov */
+	void	* msg_control;	/* ancillary data, see below */
+	socklen_t	msg_controllen;	/* ancillary data buffer len */
+	int	msg_flags;	/* flags on received message */
+};
+.ta
+.fi
+.RE
+.PP
+.IR msg_name 과
+.IR msg_namelen 은
+소켓이 연결되지 않았으면 목적지 주소를 나타낸다.
+.IR msg_name 은
+어떤 이름도 원하지 않거나 필요하지 않다면 null 포인터로써 주어진다.
+.IR msg_iov 와
+.I msg_iovlen
+필드는
+.BR readv (2)처럼
+scatter-gather 위치를 가리킨다.
+.IR msg_controllen 의
+길이를 가지고 있는
+.IR msg_control 는
+메세지나 기타 보조 데이터와 관련된 다른 프로토콜 제어를 위한 버퍼를 가리킨다.
+.BR recvmsg 가
+호출될 때,
+.IR msg_controllen 는
+.IR msg_control 에서
+이용할 수 있는 버퍼의 길이를 포함해야 한다.
+연속적인 호출에 대한 반환시 연속된 제어 메세지들의 길이를 포함해야 한다.
+
+.PP
+메세지의 형태는 아래와 같은 형식을 갖는다.
+.PP
+.RS
+.nf
+.ta 4n 16n 28n
+struct cmsghdr {
+	socklen_t	cmsg_len;	/* data byte count, including hdr */
+	int	cmsg_level;	/* originating protocol */
+	int	cmsg_type;	/* protocol-specific type */
+/* followed by
+	u_char	cmsg_data[]; */
+};
+.ta
+.fi
+.RE
+.PP
+보조 데이터는
+.BR cmsg (3)에서
+정의된 매크로에 의해서만 접근되어야 한다.
+.PP
+예를 들어, 리눅스는 이 보조 데이터를 IP 옵션이나 Unix 소켓에서 파일 기술자들처럼
+확장된 오류들을 전달하기 위해 사용한다.
+.PP
+.I msg_flags
+필드는 받은 메세지에 따라 반환할 때 설정된다.
+.BR MSG_EOR 는
+end-of-record를 나타낸다. 반환된 데이터가 레코드의 끝이다. (일반적으로
+.B SOCK_SEQPACKET
+형식의 소켓일 때 사용된다.)
+.BR MSG_TRUNC 는
+데이터그램의 끝 부분을 버렸다는 것을 나타낸다. 왜냐하면 데이터그램이
+제공되는 버퍼보다 크기 때문이다.
+
+.BR MSG_CTRUNC 는
+몇몇 제어 데이터들을 보조 데이터를 위한 버퍼 공간이 부족하기 때문에 버렸다는
+것을 나타낸다.
+.BR MSG_OOB 는
+급하거나 out-of-band 데이터를 받았다는 것을 가리키기 위해 반환된다.
+.BR MSG_ERRQUEUE 는
+어떤 데이터도 받지 않았지만 소켓 오류 큐에서 오류가 확장되었다는 것을
+나타낸다.
+.SH 반환값
+이들 호출은 받은 바이트들의 수를 반환한다. 오류가 발생하면 \-1을 반환한다.
+.SH 오류
+이것들은 소켓 층에서 발생하는 몇몇 표준 오류이다. 추가적인 오류들은 프로토콜
+모듈들 아래에서 발생되고 반환된다; 해당 메뉴얼 페이지들을 참조하라.
+.TP
+.B EBADF
+인자
+.IR s 가
+유효한 기술자가 아니다.
+.TP
+.B ENOTCONN
+소켓은 연결 지향형 프로토콜이지만 연결되지 않았다. (
+.BR connect (2)와
+.BR accept (2)를
+참조하라.)
+.TP
+.B ENOTSOCK
+인자
+.IR s 가
+소켓을 가리키지 않는다.
+.TP
+.B EAGAIN
+소켓이 non-blocking이고 받는 작동은 블럭킹되어 있거나 받는 타임아웃이 설정되어
+있고 데이터를 받기 전에 타임아웃이 끝났다.
+.TP
+.B EINTR
+받기가 데이터를 이용하기 전에 전달된 신호에 의해 인터럽트 되었다.
+.TP
+.B EFAULT
+받는 버퍼 포인터가 프로세스 주소 공간 이외를 가리키고 있다.
+.TP
+.B EINVAL
+무효한 인자가 전달되었다.
+.SH 호환
+4.4BSD (이 함수는 4.2BSD에서 처음 나타났다.)
+.SH 주의
+위에 주어진 원형은 glibc 이후이다.
+Single Unix Specification은 `ssize_t' 타입의 반환값을 가지는 것 외에 같다.
+(반면에 BSD 4.* 그리고 libc4, libc5는 모두 `int' 이다.)
+.I flags
+인자는 BSD 4.* 에서 `int' 이지만, libc4와 libc5는 `unsigned int' 이다.
+.I len
+인자는 BSD 4.*에서 `int' 이지만, libc4와 libc5는 'size_t' 이다.
+.I fromlen
+인자는 BSD 4.*, libc4, libc5에서 `int *' 이다.
+현재 `socklen_t *'는 POSIX에 의해 만들어졌다.
+.BR accept (2)를
+참조하라.
+.SH 관련 항목
+.BR fcntl (2),
+.BR read (2),
+.BR select (2),
+.BR getsockopt (2),
+.BR socket (2),
+.BR cmsg (3)
+.SH 번역
+정강훈 <skyeyes@soback.kornet.net> 2000년 12월 11일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2004년 3월 25일

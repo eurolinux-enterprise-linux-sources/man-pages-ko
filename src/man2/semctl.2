@@ -1,0 +1,278 @@
+.\" Copyright 1993 Giorgio Ciucci (giorgio@crcc.it)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Tue Oct 22 17:53:56 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Fri Jun 19 10:59:15 1998 by Andries Brouwer <aeb@cwi.nl>
+.\"
+.\"
+.\" 한국어 번역: ASPLINUX <man@asp-linux.co.kr> 2000년 7월 29일
+.\"
+.\" r1.4 2005-02-14 14:16:42 +9-4 윤현호
+.\" r1.3 2004-08-10 20:02:19 +42-25 xaos
+.\" r1.2 2004-08-04 23:21:04 +2-1 xaos
+.\" r1.1 2004-08-04 23:19:57  xaos
+.\"
+.TH SEMCTL 2 "November 1, 1993" "Linux 0.99.13" "Linux Programmer's Manual"
+.SH 이름
+semctl \- 세마포어 제어기.
+.SH 사용법
+.nf
+.B
+#include <sys/types.h>
+.B
+#include <sys/ipc.h>
+.B
+#include <sys/sem.h>
+
+#if defined(__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
+/* union semun is defined by including <sys/sem.h> */
+#else
+/* according to X/OPEN we have to define it ourselves */
+union semun {
+        int val;                    /* SETVAL을 위한값 */
+        struct semid_ds *buf;       /* IPC_STAT, IPC_SET을 위한 버퍼 */
+        unsigned short int *array;  /* GETALL, SETALL을 위한 배열 */
+        struct seminfo *__buf;      /* IPC_INFO을 위한 버퍼 */
+};
+#endif
+.fi
+.sp
+.BI "int semctl (int " semid ,
+.BI "int " semnum ,
+.BI "int " cmd ,
+.BI "union semun " arg )
+.SH 설명
+.B semctl
+함수는
+.I semid
+가 가리키는 세마포어 집합, 혹은 이 집합의
+.I semnum
+번째 세마포어(세마포어는 
+.B 0
+번부터 시작한다.)에
+.I cmd
+가 지정하는 제어작용을 실행한다.
+
+.PP
+.sp
+.I cmd
+가 갖는 값은 다음과 같다.
+.TP 12
+.B IPC_STAT
+.IB arg .buf \fR
+포인터가 가리키는 구조체에 세마포어 집합의 데이타 구조 정보를 복사한다.
+.I semnum
+인수는 무시된다.
+호출한 프로세스는 세마포어 설정에 읽기권한이 있어야한다.
+
+.TP
+.B IPC_RMID
+세마포어 집합과 데이타 구조를 즉시 제거하고, 모든 대기중인 프로세스들을 재실행한다.
+호출한 프로세스의 유효 사용자ID는 수퍼유저나 세마포어 집합의 생성자 혹은 소유자중의 
+하나여야 한다.
+인수
+.I semnum
+는 무시된다.
+.TP
+.B GETALL
+집합의 모든 세마포어에 대한
+.B semval
+값을
+.IB arg .array \fR.
+에 저장한다.
+변수 
+.I semnum
+는 무시된다. 호출한 프로세스는 세마포어설정에 읽기 권한이 있어야한다.
+.TP
+.B GETNCNT
+.I semnum
+번째 세마포어의 
+.B semncnt
+값을 반환한다. 이 값은 세마포어의
+.B semval
+값이 증가하기를 기다리고 있는
+프로세스의 수를 나타낸다. 호출한 프로세스는 세마포어 설정에 읽기 권한이 있어야한다.
+.TP
+.B GETPID
+세마포어 호출은
+.B sempid
+의 값을 반환한다. 이 값은
+가장 최근에 해당 세마포어에
+.B semop
+호출을 했던 프로세스의 pid를 나타낸다. 
+호출한 프로세스는 세마포어 설정에 읽기 권한이 있어야한다.
+.TP
+.B GETVAL
+집합의 
+.IR semnum 
+번째 세마포어에 대한
+.B semval 
+의 값을 반환한다. 호출 프로세스는 세마포어 설정에 대한 읽기 접근에 있어 특별한 권한을 갖고 있어야 한다.
+.TP
+.B GETZCNT
+시스템 호출은 집합의 
+.IR semnum 
+번째 세마포어에 대한
+.B semzcnt
+의 값을 반환한다.이 값은 세마포어의
+.B semval
+값이 0이 되기를 기다리고 있는
+프로세스의 수를 나타낸다.
+호출 프로세스는 세마포어 설정에 대한 읽기 접근 권한들을 갖고 있어야 한다.
+.TP
+.B SETALL
+.IB arg .array \fR
+인수 배열을 사용하여 집합의 모든 세마포어의
+.B semval
+값을 설정한다.
+집합과 관련된 
+.B semid_ds 
+구조체의 
+.B sem_ctime 
+멤버를 또한 업데이트한다.
+모든 프로세스에서 변경된 세마포어에 대해 Undo 엔트리들은 소거된다.
+대기열에서 유휴중인 프로세스들은 일부 
+.B semval
+이 0이 되거나, 증가하면, 다시 활성화된다.
+인수 
+.I semnum
+은 무시된다. 호출 프로세스는 세마포어 설정에 대한 변경 접근 권한을 갖고 있어야 한다.
+.TP
+.B SETVAL
+.B 
+.IB arg .val \fR
+값을 사용하여 집합의 
+.I semnum
+번째 세마포어의
+.B semval
+값을 설정한다.
+.B semid_ds 
+구조의 
+.B sem_ctime 
+멤버를 또한 업데이트시킨다.
+모든 프로세스에서 변경된 세마포어에 대해 Undo 엔트리들은 소거된다. 
+대기열에서 유휴중인 프로세스들은  
+.B semval
+이 0이 되거나, 증가하면, 다시 활성화된다.
+인수 
+.I semnum
+은 무시된다.
+호출 프로세스는 세마포어 설정에 대한 변경 접근 권한을 갖고 있어야 한다.
+.SH 반환값
+실패하면, 시스템 호출은 에러를 가리키는 
+.B errno
+와 함께 
+.B \-1
+를 리턴한다.
+그렇지 않으면, 시스템 호출은 아래와 같이 
+.I cmd
+에 따라 음수값이 아닌 값을 리턴한다.
+.TP 11
+.B GETNCNT
+.BR semncnt
+의 값 .
+.TP
+.B GETPID
+.BR sempid
+의 값 .
+.TP
+.B GETVAL
+.BR semval
+의 값.
+.TP
+.B GETZCNT
+.BR semzcnt
+의 값 .
+.SH 에러
+실패 리턴에 대하여,
+.B errno 
+는 다음의 값들중 하나로 설정될 것이다.:
+.TP 11
+.B EACCES
+호출 프로세스는 
+.IR cmd
+를 실행하는데 필요한 접근 권한을 갖고 있지 않는다.
+.TP
+.B EFAULT
+.IB arg .buf
+에 의해 가리키는 주소나 
+.IB arg .array
+는 접근이 불가능하다.
+.TP
+.B EIDRM
+세마포어 설정은 삭제되었다.
+.TP
+.B EINVAL
+.I cmd
+또는
+.IR semid
+에 대한 부적절한 값.
+.TP
+.B EPERM
+인수 
+.I cmd
+가
+.B IPC_SET
+또는
+.B IPC_RMID
+값을 갖지만, 호출 프로세스 유효 사용자 ID는 명령을 실행시킬 수 있는 충분치 않은 특권들을 갖는다.
+.TP
+.B ERANGE
+인수
+.I cmd
+는
+.B SETALL
+또는
+.B SETVAL를 갖고,
+and the value to which
+.B semval
+가 0보다 적고 구현 값보다 더 크게 설정되어야 하는 값을 갖는다.
+.BR SEMVMX .
+.SH 주의
+.BR IPC_INFO ,
+.BR SEM_STAT
+그리고
+.B SEM_INFO
+제어 호출들은 할당된 자원들에 정보를 제공하는 
+.BR ipcs (8) 
+프로그램에 의해 사용된다.
+.PP
+세마포어 설정에 대한 다음의 시스템 제한은 
+.B semctl 
+호출에 영향을 미친다.
+.TP 11
+.B SEMVMX
+.BR semval
+에 대한 최대값은 구현에 의존적이다 (32767).
+.SH 호환
+SVr4, SVID.  SVr4는 에러 조건  EINVAL과 EOVERFLOW에 대한 문서를 작성한다.
+.SH 관련 항목
+.BR ipc (5),
+.BR shmget (2),
+.BR shmat (2),
+.BR shmdt (2)
+.SH 번역
+ASPLINUX<man@asp-linux.co.kr> 2000년 7월 29일
+.br
+배성훈 <plodder@kldp.org> 2000년 11월 18일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 14일

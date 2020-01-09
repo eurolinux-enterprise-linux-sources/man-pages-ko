@@ -1,0 +1,57 @@
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH FDFORMAT 8 "1 February 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH 이름
+fdformat \- 플로피 디스크를 저수준(Low-level) 포멧한다.
+.SH 사용법
+.B fdformat
+.B "[ \-n ]"
+\fI장치이름\fR
+.SH 설명
+.B fdformat
+명령은 지정한 \fI장치이름\fR에 연결된 플로피 디스크를 저수준으로 포멧하는데, 
+사용된다.
+\fI장치이름\fR은 일반적으로 다음 것들이 사용된다
+(장치 번호 majar = 2, minor는 다음 숫자들.).
+.sp
+.nf
+.RS
+/dev/fd0d360  (minor = 4)
+/dev/fd0h1200 (minor = 8)
+/dev/fd0D360  (minor = 12)
+/dev/fd0H360  (minor = 12)
+/dev/fd0D720  (minor = 16)
+/dev/fd0H720  (minor = 16)
+/dev/fd0h360  (minor = 20)
+/dev/fd0h720  (minor = 24)
+/dev/fd0H1440 (minor = 28)
+
+/dev/fd1d360  (minor = 5)
+/dev/fd1h1200 (minor = 9)
+/dev/fd1D360  (minor = 13)
+/dev/fd1H360  (minor = 13)
+/dev/fd1D720  (minor = 17)
+/dev/fd1H720  (minor = 17)
+/dev/fd1h360  (minor = 21)
+/dev/fd1h720  (minor = 25)
+/dev/fd1H1440 (minor = 29)
+.RE
+.fi
+
+일반적인 플로피 디스크 장치인, /dev/fd0, /dev/fd1 장치명을 지정할 경우에는, 
+그 포멧방식을 자동 검색하지 못할 경우나, 비표준 포멧방식이면, 
+포멧을 할 수 없게된다. 이런 경우에는 디스크 사양을 지정하는 
+.BR setfdprm (8)
+명령을 사용해야한다.
+
+.SH 옵션
+.TP
+.B \-n
+검사하지 않음. 이 옵션은 포멧한 뒤에 디스크 표면 검사를 하지 않는다.
+.SH "관련 항목"
+.BR fd (4),
+.BR setfdprm (8),
+.BR mkfs (8),
+.BR emkfs (8)
+.SH 만든이
+Werner Almesberger (almesber@nessie.cs.id.ethz.ch)

@@ -1,0 +1,48 @@
+.TH MKNOD 1 "GNU File Utilities" "FSF" \" -*- nroff -*-
+.SH NAME
+mknod \- 특수(special) 파일을 만든다.
+.SH SYNOPSIS
+.B mknod
+[options] filename {bcu} major minor
+.br
+.B mknod
+[options] filename p
+.br
+Options:
+.br
+[\-m mode] [\-\-mode=mode] [\-\-help] [\-\-version]
+.SH DESCRIPTION
+이 문서는 더이상 최신 정보를 담고 있지않다. 그래서, 
+몇몇 틀릴 경우도 있고, 부족한 경우도 있을 것이다. 
+완전한 매뉴얼을 원하면, Texinfo 문서를 참조하기 바란다.
+.PP
+이 매뉴얼 페이지는 
+.BR mknod
+명령의 GNU 버전에 대한 것이다.
+.B mknod
+명령은 FIFO, 캐릭터 특수 파일(character special file), 
+블럭 특수파일 등을 만드는데, 사용된다. 
+초기값으로 만들어지는 그 파일의 모드는  0666 이다.
+.PP
+.I filename
+인자를 쓴 후에, 그 파일의 특수 형태를 알리는 값을 지정해야한다. 
+여기서 사용될 수 있는 값은 다음과 같다. 
+.nf
+p:  FIFO
+b: 블럭 특수 파일
+c 또는 u: 캐릭터 특수 파일(character special file)
+.fi
+.PP
+블럭이나 캐릭터 특수 파일을 만들 경우에는 그 장치 파일의 
+major, minor 번호를 지정해 주어야 한다.
+.SS OPTIONS
+.TP
+.I "\-m, \-\-mode mode"
+\fImode\fR로 사용할 것은 \fBchmod(1)\fR에서 사용하는 기호형식이나, 숫자형식이며,
+이 값은 초기값으로 지정되는 모드를 무시한다.
+.TP
+.I "\-\-help"
+도움말을 보여주고 마친다.
+.TP
+.I "\-\-version"
+버전 정보를 보여주고 마친다.

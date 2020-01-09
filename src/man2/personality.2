@@ -1,0 +1,65 @@
+.\" Copyright (C) 1995, Thomas K. Dyas <tdyas@eden.rutgers.edu>
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Created   Sat Aug 21 1995     Thomas K. Dyas <tdyas@eden.rutgers.edu>
+.\"
+.\" typo corrected, aeb, 950825
+.\" added layout change from joey, 960722
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH PERSONALITY 2 "1996년 7월 22일" "리눅스 2.0" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+personality \- 프로세스 실행 도메인 설정.
+.SH 사용법
+.BI "int personality(unsigned long " persona );
+.SH 설명
+리눅스는 프로세스별로 각기 다른 실행 도메인을 제공한다. 다른 것들 가운데,
+실행 도메인은 리눅스가 시그널 액션에 어떻게 시그널 번호를 매핑하는지 알려준다.
+실행 도메인 시스템은 리눅스가 다른 유닉스 호환 시스템하의 바이너리 컴파일의 제
+한된 지원을 한다.
+
+.B personality
+는 현재 프로세스의 새로운 실행 도메인인
+.I persona
+를 참조해 실행 도메인을 만들것이다.
+.SH 반환값
+성공시,
+.I persona
+는 새로운 실행 도메인을 만들고 이전
+.I persona
+를 반환한다. 실패시, \-1을 반환하고
+.I errno
+가 적절히 설정된다.
+.SH 에러
+.TP
+.B EINVAL
+.I persona
+는 유효한 실행 도메인이 아니다.
+.PP
+.SH 파일
+.I /usr/include/linux/personality.h
+.SH 호환
+.B personality
+는 리눅스에서만 사용되며 다른 프로그램에서는 사용할 수 없다.
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29

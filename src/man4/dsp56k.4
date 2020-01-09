@@ -1,0 +1,99 @@
+'\" t
+.\" Copyright (c) 2000 lars brinkhoff <lars@nocrew.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified, Thu Jan 27 19:16:19 CET 2000, lars@nocrew.org
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH DSP56K 4 "2000년 3월 1일" "리눅스" "특수 파일"
+.SH 이름
+dsp56k \- DSP56001 인터페이스 장치
+.SH 사용법
+.nf
+#include <asm/dsp56k.h>
+.sp
+.BI "ssize_t read (int " fd ", void * " data ", size_t " length ");"
+.BI "ssize_t write (int " fd ", void * " data ", size_t " length ");"
+.BI "int ioctl (int " fd ", \s-1DSP56K_UPLOAD\s+1, struct dsp56k_upload *" program ");"
+.BI "int ioctl (int " fd ", \s-1DSP56K_SET_TX_WSIZE\s+1, int " wsize ");"
+.BI "int ioctl (int " fd ", \s-1DSP56K_SET_RX_WSIZE\s+1, int " wsize ");"
+.BI "int ioctl (int " fd ", \s-1DSP56K_HOST_FLAGS\s+1, struct dsp56k_host_flags *" flags ");"
+.BI "int ioctl (int " fd ", \s-1DSP56K_HOST_CMD\s+1, int " cmd ");"
+.fi
+.SH CONFIGURATION
+dsp56k 디바이스는 문자 디바이스로서 메이저 넘버(major number) 55, 마이너 넘버(minor number) 0을 지닌다. 
+.SH 설명
+모토롤라 DSP6001은 Atari Falcon030 호환 컴퓨터들로 모두 프로그램 가능한 24비트 디지털 시그널 프로세서이다. 
+\fBdsp56k\fP 특수 파일은 DSP56001을 제어하는데 사용되고, 두개의 방향의 핸드쉐이크된 호스트 포트를 사용하여 데이터를
+송수신한다. 
+.PP
+데이터 스트림을 시스널 프로세서에 보내려며, 장치에 write()를 사용하고, 처리된 데이터를 수신하는데 read()를 
+사용한다. 데이터는 호스트 측면에서  8, 16, 24, 또는 32 비트의 양에서 보내지거나 수신될 수 있다. 하지만, DSP56001에서는 
+24 비트의 양으로 항상 보여진다. 
+
+.PP
+다음의 
+.IR ioctl (2)
+호출은 \fBdsp56k\fP 디바이스를 제어하는데 사용된다. 
+.IP \fBDSP56K_UPLOAD\fP
+는 DSP56001을 재설정하고, 프로그램을 업로드한다. 
+세번째 ioctl() 인수는 a \fBstruct dsp56k_binary\fP에 대한 포인터가 되어야 하며, \fBbin\fP는 DSP56001 바이너리 프로그램
+의 포인터가,  \fBlen\fP는 프로그램의 길이로서 설정되고, 24 비트의 단어들로 세어진다. 
+
+.IP \fBDSP56K_SET_TX_WSIZE\fP는 전송 단어 크기를 설정한다. 허용된 값들은 1에서 4까지의 범위를 지니고, 
+이는 DSP56001로 한번에 전송된 바이트의 숫자이다. 이러한 데이터 양은 0바이트로 패딩(padding)되거나, 네이티브 24비트 
+데이터 포맷을 맞추도록 생략될 것이다. 
+
+
+.IP \fBDSP56K_SET_RX_WSIZE\fP
+는 수신 단어 크기를 설정한다. 허용된 값들은 1에서 4까지의 범위를 지니고, 
+이는 DSP56001로 한번에 전송된 바이트의 숫자이다. 이러한 데이터 양은 0바이트로 패딩(padding)되거나, 
+DSP56001의 네이티브 24비트 데이터 포맷을 맞추도록 생략될 것이다. 
+
+.IP \fBDSP56K_HOST_FLAGS\fP
+는 호스트 플래그를 읽고 쓰기한다. 호스트 플래그는 네개의 일반 목적 비트로서 호스트 컴퓨터와 DSP56001에 
+의해 읽혀질 수 있다. 비트 0과 1은 호스트에 의해 작성될 수 있으며, 비트 2와 3은 DSP56001에 의해 작성될 
+수 있다. 
+
+호스트 플래그에 액세스하려면, 세번째 ioctl() 인수는 \fBstruct dsp56k_host_flags\fP의 
+포인터가 되어야 한다. 만일 비트 0 혹은 1이  \fBdir\fP 멤버내에 설정된다면, \fBout\fP에서 
+상응하는 비트가 호스트 플래그로 작성될 것이다. 모든 호스트 플래그의 상태는 \fBstatus\fP의 
+낮은 네개의 비트로 리턴될 것이다.  
+
+.IP \fBDSP56K_HOST_CMD\fP
+는 호스트 명령을 전송한다. 허용된 값은 0에서 31까지 범위를 지니며, DSP56001에서 실행되는
+프로그램에 의해 처리되는 사용자 정의 명령이다. 
+
+
+.SH 파일
+/dev/dsp56k
+.SH 저자
+Fredrik Noring <noring@nocrew.org>, lars brinkhoff <lars@nocrew.org>,
+Tomas Berndtsson <tomas@nocrew.org>.
+.SH 관련 항목
+linux/include/asm-m68k/dsp56k.h,
+linux/drivers/char/dsp56k.c,
+http://dsp56k.nocrew.org/,
+DSP56000/DSP56001 디지털 시그널 프로세서 사용자 매뉴얼
+

@@ -1,0 +1,125 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1993 Michael Haardt
+.\" (michael@moria.de),
+.\" Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified Thu Jul 22 14:00:08 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Aug 10 1993 by Alan Cox <iiitac@pyramid.swansea.ac.uk>
+.\" Modified Wed Nov 4  1998 by Tigran Aivazian <tigran@sco.com>
+.\"
+.\"
+.\" Korean manpage ChangeLog
+.\" original manpage from man-pages-1.66 package
+.\"
+.\" r1.4 2004-03-28 23:26:21 +23-21     윤현호
+.\" r1.3 2004-03-11 03:03:16 +2-4       211.219.106.73
+.\" r1.2 2004-03-10 22:51:05 +59-20     211.219.106.73
+.\" r1.1 2004-03-09 23:36:46            pynoos
+.\"
+.TH ACCT 2 "1998년 11월 4일" "리눅스 2.1.126" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+acct \- 프로세스 계정 작업을 활성화시키거나 비활성화시킨다.
+.SH 사용법
+.ad l
+.nf
+.B #include <unistd.h>
+.sp
+.BI "int acct(const char *" filename );
+.fi
+.ad b
+.SH 설명
+어떤 파일 이름을 인자로 주어 호출할 경우, 계정 작업이 활성화되고
+각 프로세스가 종료될 때마다 \fIfilename\fP 파일에 기록이 추가된다.
+인자를 \flNULL\fp로 주면 계정 작업이 비활성화된다.
+.SH "반환값"
+성공시 0을 반환하고, 실패시 \-1을 반환하고
+.I errno
+값이 그에 상응하여 설정된다.
+.SH 에러
+.TP
+.B EACCES
+지정된 파일에 쓰기 권한이 없다.
+.TP
+.B EACCES
+인자
+.I filename
+파일은 잘못된 파일이다.
+.TP
+.B EFAULT
+.I filename
+파일은 접근 가능한 주소 범위를 벗어난다.
+.TP
+.B EIO
+.IR filename
+파일에 쓰기 오류.
+.TP
+.B EISDIR
+.I filename
+파일은 디렉토리이다.
+.TP
+.B ELOOP
+."/ Too many symbolic links were encountered in resolving
+너무 많은 심볼링 링크로 인한
+.IR filename
+파일 찾기 오류
+.TP
+.B ENAMETOOLONG
+.IR filename 의
+문자열 길이가 너무 길다.
+.TP
+.B ENOENT
+지정된 파일이 존재하지 않는다.
+.TP
+.B ENOMEM
+메모리가 부족하다.
+.TP
+.B ENOSYS
+BSD 프로세스 어카운팅 커널 옵션이 활성화되지 않았다.
+이 기능을 제어하는 커널 옵션은 CONFIG_BSD_PROCESS_ACCT 이다.
+.TP
+.B ENOTDIR
+.IR filename 의
+일부분이 디렉토리 이름으로 쓰였으나 실제로는 디렉토리가 아니다.
+.TP
+.B EPERM
+호출된 프로세스의 실행 권한이 없다.
+.TP
+.B EROFS
+.IR filename 은
+읽기만 가능한 파일 시스템의 파일이다.
+.TP
+.B EUSERS
+여분의 공간이나 메모리가 부족하다.
+.SH 호환
+SVr4 호환(POSIX 제외) SVr4는 EBUSY 오류가 지원되나,
+EISDIR 혹은 ENOSYS는 제외되어 있다.
+AIX와 HPUX 역시 EBUSY를 지원하며 (이것이 활성화되었을 경우라도 어카운팅이 지원된다), Solaris도 지원한다.
+(동일한 파일을 사용 중일 경우에도 어카운팅이 지원된다).
+.SH 주의
+프로그램이 정상 종료되지 않았을 때 어떠한 어카운팅도 없으며,
+보통 비정상 종료 프로세스는 어카운팅되지 않는다.
+.SH 번역
+ASPLINUX <man@asp-linux.co.kr> 2000년 7월 29일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2004년 3월 10일

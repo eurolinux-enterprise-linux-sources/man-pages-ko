@@ -1,0 +1,172 @@
+'\" t
+.\" @(#)lilo.8 1.0 950728 aeb
+.\" This page is based on the lilo docs, which carry the following
+.\" COPYING condition:
+.\"
+.\" LILO program code, documentation and auxiliary programs are
+.\" Copyright 1992-1994 Werner Almesberger.
+.\" All rights reserved.
+.\" 
+.\" Redistribution and use in source and binary forms of parts of or the
+.\" whole original or derived work are permitted provided that the
+.\" original work is properly attributed to the author. The name of the
+.\" author may not be used to endorse or promote products derived from
+.\" this software without specific prior written permission. This work
+.\" is provided "as is" and without any express or implied warranties.
+.\"
+.\" Original version, Andries Brouwer (aeb@cwi.nl), 950728
+.\" Added t directive, as Daniel Quinlan asked, 950824
+.\"
+.TH LILO 8 "1995년 7월 28일"
+.SH 이름
+lilo \- 부트 로더 설치
+.SH 사용법
+주 기능:
+.LP
+.B " /sbin/lilo"
+\- 부트 로더 설치
+.LP
+보조 사용:
+.LP
+.B " /sbin/lilo -q"
+\- 맵 조회
+.br
+.B " /sbin/lilo -R"
+\- 다음 재부팅에 대한 기본 명령 라인 설정
+.br
+.B " /sbin/lilo -I"
+\- 현재 커널의 패스 명을 조회
+.br
+.B " /sbin/lilo {-u|-U}"
+\- lilo 제거
+.SH 설명
+.LP
+.BR lilo 는 
+다음 부트 시간에 활성화 될 부트 로더를 설치한다.
+그리고 다음과 같이 여러 가지 옵션을 가진다.
+.LP
+.TP
+.B \-\^v
+많은 정보 출력. 한번 혹은 그 이상의 \fB-v\fP 옵션은 lilo가 
+더 많은 정보를 출력하게 한다.
+.TP
+.B \-\^q
+현재 맵 파일의 리스트.
+.BR lilo 는
+기본적으로 
+.IR /boot/map 에 
+의해 유지되고 부트에 대한 커널의 이름과 위치를 포함한다.
+이 옵션은 그곳에 있는 파일들의 목록을 보여 줄 것이다.
+.TP
+.BI "\-\^m " map-file
+기본 설정 대신 지정한 맵 파일을 사용한다.
+.TP
+.BI "\-\^C " config-file
+.B lilo
+는 기본적으로 
+.IR /etc/lilo.conf 에서 
+명령을 읽어 온다.  이 옵션은 기본 설정 파일 대신 지정한 파일을
+설정 파일로 사용하도록 명령한다.
+.TP
+.BI "\-\^d " delay
+만약 몇개의 커널을 가지고 있다면, 부트-시간에 시프트(Shift) 키를 누르면,
+부트 로터는 어느 시스템으로 부트 할 것인가를 물어본다. 시간이 경과하면
+리스트의 첫번째 커널로 부트한다. 이 옵션은 시간 경과를 0.1초 단위로 
+지정한다.
+.TP
+.BI "\-\^D " label
+부팅을 할 때, 리스트의 첫번째 커널을 사용하는 대신 레이블에 주어진 커널을 사용한다.
+.TP
+.BI "\-\^r " root-directory
+어떤 작업을 하기 전에 \fIchroot\fR로 디렉토리를 변경한다.
+플로피 디스크로 부팅해서 설정을 복구할 때 사용한다.
+.TP
+.BI "\-\^t "
+테스트만을 수행한다. 새로운 부트 섹터 혹은 맵 파일을 실제로 작성하지는 않는다.
+\fB-v\fR와 함께 사용하면 
+.BR lilo 가 
+어떤 작업을 실행하는지 확인할 수 있다.
+.TP
+.B "\-\^c"
+맵을 간결화시킨다. 인접한 섹터로부터의 
+요청을 하나로 합친다. 이 작업을 통해 부팅 속도가 증가할 것이다.(특히 플로피).
+.TP
+.BI "\-\^f " disk-tab
+디스크 지오메트리 매개변수 파일을 지정한다. (기본값은
+.IR /etc/disktab 이다.)
+.TP
+.BI "\-\^i " boot-sector
+새로운 부트 섹터로 사용하는 파일을 지정한다. (기본값은
+.IR /boot/boot.b 이다.)
+.TP
+.BI "\-\^l"
+섹트/헤드/실린더 주소 대신에 선형 섹터 주소(linear sector address)를 생성한다.
+.TP
+.BI "\-\^P " "{fix|ignore}"
+선형 섹트 주소와 섹트/헤드/실린더 어드레스가 일치하지 않는 기타의
+'이상'이 있는 파티션 테이블을 고치거나(혹은 무시) 한다. 
+.TP
+.BI "\-\^s " save-file
+.BR lilo 가 
+부트 섹트를 덮어쓸때, 
+기본 값
+.IR /boot/boot.NNNN 으로 
+이전의 내용을 보존한다.
+NNNN은 장치에 의존한다. 이 옵션은 그 대신 부트 섹트를 보존하기 위해 지정한다.
+(혹은, \fB-u\fR과 같이 지정하여, 부트 섹트를 복구를 위해 지정한다.
+.TP
+.BI "\-\^S " save-file
+일반적으로,
+.B lilo
+는 존재하는 저장 파일에 덮어쓰기를 하지 않는다. 이 옵션은
+덮어쓰기를 허락한다.
+.TP
+.BI "\-\^u " device-name
+부트 섹터에 저장된
+.BR lilo 
+를 제거한다. 제거하는 과정에서 시간-지표(time stamp)를 검사한다.
+.TP
+.BI "\-\^U " device-name
+lilo를 제거하는 것은 동일하지만 시간-지표를 검사하지 않는다.
+.TP
+.BI "\-\^R " "command line"
+이 옵션은 다음 부팅 시에 사용되는 기본 명령을 설정한다. 부트 로더는
+다음 부팅이 끝난 후 이 설정을 제거한다: 즉 이것은 단 한번만 사용된다. 
+일반적인 사용법은 재부팅 스크립트에서 'shutdown -r'을 하기 전에
+삽입한다.
+.TP
+.BI "\-\^I " "label"
+시스템이 시작된 후에, 환경 변수 BOOT_IMAGE의 실행 커널의 라벨을 
+참조할 수 있도록 한다.
+이 명령은 일치하는 패스 명을 표준 출력으로 표시한다.
+.TP
+.B "\-\^V"
+버젼 번호를 출력한다.
+
+.LP
+다음의 명령어 라인 옵션들은 지시된 환경 파일에서 키워드들에 대응한다. 
+.IP
+.TS
+l l.
+-b bootdev	boot=bootdev
+-c	compact
+-d dsec	delay=dsec
+-D label	default=label
+-i bootsector	install=bootsector
+-f file	disktab=file
+-l	linear
+-m mapfile	map=mapfile
+-P fix	fix-table
+-P ignore	ignore-table
+-s file	backup=file
+-S file	force-backup=file
+-v	verbose=level
+.TE
+.SH 관련 항목
+lilo.conf(5).
+.br
+lilo 배포판에는 아주 상세한 문서가 있다.
+.SH 저자
+Werner Almesberger (almesber@bernina.ethz.ch).
+.SH 역자
+배성훈 <plodder@kldp.org>, 2000년 4월 30일

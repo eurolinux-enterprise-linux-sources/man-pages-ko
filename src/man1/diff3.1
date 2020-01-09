@@ -1,0 +1,226 @@
+.\" You may copy, distribute and modify under the terms of the LDP General
+.\" Public License as specified in the LICENSE file that comes with the
+.\" gnumaniak distribution
+.\"
+.\" The author kindly requests that no comments regarding the "better"
+.\" suitability or up-to-date notices of any info documentation alternative
+.\" is added without contacting him first.
+.\"
+.\" (C) 2002 Ragnar Hojland Espinosa <ragnar@ragnar-hojland.com>
+.\"
+.\"     GNU diff3 man page
+.\"     man pages are NOT obsolete!
+.\"     <ragnar@ragnar-hojland.com>
+.\"
+.\"
+.\" Korean manpage ChangeLog
+.\" original manpage from gnumaniak-1.8 package
+.\"
+.\" r1.6 2004-03-29 20:22:03 +57-27     윤현호
+.\" r1.5 2004-03-25 09:51:58 +55-57     윤현호
+.\" r1.4 2004-03-25 00:08:49 +153-164   윤현호
+.\" r1.3 2004-03-11 09:59:43 +9-10      윤현호
+.\" r1.2 2004-03-11 02:56:51 +151-1     211.219.106.73
+.\" r1.1 2004-03-11 02:55:48            211.219.106.73
+.\"
+.TH DIFF3 1 "October 2002" "GNU diff Utilities 2.8.1"
+.SH 이름
+\fBdiff3\fP \- 세 개의 파일들 사이에서 다른 점을 찾는다.
+.SH 사용법
+.B diff3
+[\fB\-3aeimxAETX\fP] [\fB-L\fP \fILABEL\fR] [\fB\-\-easy\-only\fP] [\fB\-\-ed\fP]
+[\fB\-\-initial\-tab\fR] [\fB\-\-label=\fILABEL\fR] [\fB\-\-merge\fP]
+[\fB\-\-overlap\-only\fP] [\fB\-\-show\-all\fP] [\fB\-\-show\-overlap\fP]
+[\fB\-\-text\fP] \fIMINE OLDER YOUR
+.B diff3
+[\fB\-v\fP] [\fB\-\-help\fP] [\fB\-\-version\fP]
+.SH 설명
+.BR diff3 는
+세 개의 파일을 비교해서 다른 점을 출력한다.
+비교되는 세 개의 파일은
+.IR MINE ,
+.IR OLDER ,
+그리고
+.IR YOURS 이다.
+세 파일 중 최대 한개는
+.RB ` \- '
+가 될 수 있는데, 이것은
+.BR diff3 에게
+그 파일에 해당하는 내용을 표준 입력에서 읽어들이라는 뜻이다.
+보통 \fBdiff3\fP는 작업을 수행하기 위해 \fBdiff\fP(1)를 호출한다.
+하지만, \fBDIFF\fP 환경 변수를 수정해서 다른 프로그램을 사용할 수도 있다.
+.SH 옵션
+.TP
+.B \-3, \-\-easy\-only
+중첩되지 않는 변화만 출력하라는 점을 제외하고는
+.BR \-e 와
+비슷하다.
+.TP
+.B \-a, \-\-text
+텍스트 파일이 아닌 것같이 보이더라도 모든 파일을
+텍스트 파일로 취급하고, 이것들을 한줄 한줄씩 비교하게 한다.
+.TP
+.B \-e, \-\-ed
+.I OLDER
+를 기준으로
+.I YOURS
+와 다른 점을
+.I MINE
+에 적용시키기 위한
+.I ed
+스크립트를 만든다.
+.TP
+.B \-i
+System V 호환성을 위해
+.B ed
+스크립트 끝에 `\fBw\fP'와 `\fBq\fP' 명령을 추가한다.
+이 옵션은 반드시
+.B \-AeExX3
+옵션 중 하나와 함께 쓰여야 하며,
+.B \-m
+옵션과는 함께 쓰일 수 없다.
+.TP
+.B \-m, -\-merge
+첫번째 파일에 edit 스크립트를 적용하고, 결과를 표준 출력으로 보낸다.
+\fBdiff3\fP에서 \fBed\fP로 파이핑하는 것과는 달리,
+이 작업은 이진 파일이나 종결되지 않은 줄에 대해서도 동작한다.
+edit 스크립트 옵션이 지정되어 있지 않으면 \fB\-A\fP 옵션으로 가정하고 수행한다.
+.TP
+.B \-x, \-\-overlap\-only
+.B \-e
+옵션과 비슷하지만, 중첩된 변화만을 출력한다.
+.TP
+.B \-A, \-\-show\-all
+.I OLDER
+를 기준으로
+.I YOURS
+와의 차이점을
+.IR MINE
+에 통합시킨다.
+이때 모든 중첩된 변화는 괄호 줄로 묶어놓는다. 
+.TP
+.B \-E, \-\-show\-overlap
+.B \-e
+옵션과 비슷하지만, 첫번째와 세번째 파일의
+중첩된 차이점을 묶는 괄호 줄을 보여준다.
+.B \-e
+옵션과 같이 사용했을 때, 중첩된 차이점은
+아래와 같은 형식으로 나온다.
+.sp
+.nf
+<<<<<<< \fIMINE\fP
+lines from \fIMINE\fP
+=======
+lines from \fIYOURS\fP
+>>>>>>> \fIYOURS\fP
+.fi
+.TP
+.BI "\-L " LABEL ", \-\-label=" LABEL
+\fB\-A\fP, \fB\-E\fP, \fB\-X\fP 옵션에서 사용되는
+괄호 출력을 위해
+.I LABEL
+라벨을 사용한다.
+이 옵션은 세개의 입력 파일에 대해 각각 한번씩 적용시켜야 한다.
+기본 라벨은 입력 파일의 이름이다.
+그래서
+.B "diff3 \-L X \-L Y \-L Z \-m A B C"
+명령은
+.B "diff3 \-m A B C"
+명령과 같은 동작을 하지만, 출력에서 입력 파일의 이름이
+.BR A ,
+.BR B ,
+.B C
+대신
+.BR X ,
+.BR Y ,
+.BR Z 로
+붙게 된다.
+.TP
+.B \-T, \-\-initial\-tab
+일반 형식에서 각 줄 앞에 두개의 빈칸 대신 탭을 출력한다.
+이것은 각 줄을 탭으로 정렬하기 위해 사용된다.
+.TP
+.B \-X
+\fB\-E\fP와 비슷하지만, 중첩된 변화만을 출력한다.
+다른 말로, \fB\-x\fP와 비슷하지만,
+\fB\-E\fP 옵션에서처럼 차이점을 괄호로 묶는다.
+.TP
+.B "\-\-help"
+사용법을 표준 출력에 보여주고, 종료한다.
+.TP
+.B \-v, \-\-version
+.BR diff3 의
+버전 정보를 출력한다.
+.SH "출력 형식"
+.\" Each hunk begins with a line marked `\fB====\fP'.  Three-way hunks have
+.\" plain `\fB====\fP' lines, and two-way hunks have
+.\" .RB ` 1 "', " 2 "', or `" 3 '
+.\" appended to specify which of the three input files differ in that hunk.  The
+.\" hunks contain copies of two or three sets of input lines each preceded by one
+.\" or two commands identifying where the lines came from.  The default behaviour
+.\" is to precede input lines with two spaces to distinguish them from the
+.\" commands.  If `\fB-T\fP' is specified then \fBdiff3\fP uses a tab instead,
+.\" lining up any other tabs correctly.
+각각의 차이를 나타내는 텍스트 블럭은 `\fB====\fP'로 표시된 줄로 시작한다.
+세 파일의 차이를 나타내는 블럭에서는 단순한 `\fB====\fP' 갖고,
+두 파일의 차이를 나타내는 블럭에서는
+.RB ` 1 "', " 2 "', `" 3 '
+중 한쪽에 그 차이가 나는 파일을 나타내기 위해 추가된다.
+각 블럭에는 2개, 또는 3개의 입력행 세트가 포함되어
+각각의 행 세트가 어느 파일에서 나온 것인지 나타내는
+1개 또는 2개의 명령어가 앞에 나오게 된다.
+기본 동작에서는 입력행 앞에 2개의 빈칸이 붙어
+명령어와 구별할 수 있게 되어 있다.
+`\fB-T\fP' 옵션이 설정되면, \fBdiff3\fP는 빈칸 대신 탭을 사용하므로
+입력에 있던 탭에 의한 자리수가 그대로 보존된다.  
+.SS "명령어 형식"
+.TP
+.IB FILE : L a
+.\" This hunk appears after line \fIL\fP of \fIFILE\fP, and contains no lines
+.\" in that file.  To edit this file to yield the other files, one
+.\" must append hunk lines taken from the other files.  For example,
+.\" `1:11a' means that the hunk follows line 11 in the
+.\" first file and contains no lines from that file.
+이 블럭은 \fIFILE\fP의 \fIL\fP 행 다음에 나타나야 할 것으로,
+그 파일에는 존재하지 않는다.
+이 파일을 수정해 다른 파일과 같게 하려면, 다른 파일에서 블럭을 가져와 추가해야 한다.
+예를 들어 `1:11a'은 이 블럭은 첫번째 파일의 11 행 다음에 나와야 할 것으로
+첫번째 파일에는 포함되지 않은 것 말한다.
+.TP
+.IB FILE : R c
+.\" This hunk contains the lines in the range \fIR\fP of \fIFILE\fP.  The
+.\" range \fIR\fP is a comma-separated pair of line numbers, or just one
+.\" number if the range is a singleton.  To edit this file
+.\" to yield the other files, one must change the specified lines to be the lines
+.\" taken from the other files.  For example, `2:11,13c' means that
+.\" the hunk contains lines 11 through 13 from the second file.
+이 블럭에는 \fIFILE\fP의 행 범위 \fIR\fP이 포함되어 있다.
+행 범위 \fIR\fP은 2 개의 행 번호를 쉼표로 단락지은 것이다.
+숫자가 하나라면 한 줄 범위라고 해석된다.
+이 파일을 편집해 다른 파일과 같게 하려면, 그 행 범위를 다른 파일로부터 가져와 변경해야 한다.
+예를 들어, `2:11,13c'은 이 블럭이 두번째 파일의 11-13 행의 내용을 포함한다는 의미이다.
+.sp
+.\" If the last line in a set of input lines is incomplete it is distinguished
+.\" on output from a full line by a following line that starts with `\fB\\\fP'.
+입력행 묶음의 마지막 행이 개행으로 끝나지 않은 경우는
+출력의 다음 행이 `\fB\\\fP'로 시작되므로
+개행으로 끝나는 경우와 구별할 수 있다.
+.SH 진단
+.BR diff3 는
+아래 값 중 하나를 반환하고 종료한다.
+.TP
+.B 0
+\fBdiff3\fR가 성공적으로 종료되었으며, 중첩된 변화(충돌)을 찾지 못했다.
+.TP
+.B 1
+충돌이 발견되었다.
+.TP
+.B 2
+오류가 발생했다.
+.SH 관련 항목
+cmp(1), comm(1), diff(1), ed(1), patch(1), sdiff(1).
+.SH 주의
+Report bugs to bug-gnu-utils@gnu.org.
+Page updated by Ragnar Hojland Espinosa <ragnar@ragnar-hojland.com>
+.SH 번역
+한글 Manpage 프로젝트 (http://man.kldp.org) 2004년 3월 24일

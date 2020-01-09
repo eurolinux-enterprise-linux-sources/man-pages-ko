@@ -1,0 +1,53 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 17:56:43 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Added history, aeb, 980113.
+.\"
+.TH STRSTR 3  "1993년 4월 12일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+strstr \- substring을 찾는다.
+.SH 사용법
+.nf
+.B #include <string.h>
+.sp
+.BI "char *strstr(const char *" haystack ", const char *" needle );
+.fi
+.SH 설명
+\fBstrstr()\fP 함수는 문자열 \fIhaystack\fP에서 substring \fIneedle\fP 이
+처음 발견되는 곳을 찾는다. 끝인 `\\0' 문자는 비교되지 않는다.
+.SH 반환값
+\fBstrstr()\fP 함수는 substring이 시작하는 포인터를 반환하거나 substring이
+발견되지 않는다면 NULL을 반환한다.
+.SH 버그
+Linux libc (4.5.26 같은)의 초기 버전은 빈 인자를 허용하지 않았다.
+나중 버전(4.6.27 같은)은 작 장동한다. 그리고 \fIneedle\fP가 비어 있을때
+\fIhaystack\fP를 반환한다.
+.SH 관련 항목
+.BR index "(3), " memchr "(3), " rindex "(3), " strchr (3),
+.BR strpbrk "(3), " strsep "(3), " strspn "(3), " strtok (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 2월 24일

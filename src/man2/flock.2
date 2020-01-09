@@ -1,0 +1,110 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Fri Jan 31 16:26:07 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Fri Dec 11 17:57:27 1998 by Jamie Lokier <jamie@imbolc.ucc.ie>
+.\"
+.TH FLOCK 2 "1998년 12월 11일" 리눅스 "리눅스 프로그래머 메뉴얼"
+.SH 이름
+flock \- 열려진 파일에 권고(advisory) 잠금을 적용하거나 제거한다.
+.SH 사용법
+.B #include <sys/file.h>
+.sp
+.BR "int flock(int " fd ", int " operation )
+.SH 설명
+열려진 파일에 권고 잠금을 적용하거나 제거한다.
+파일은 
+.IR fd 
+로 지정된다.
+유효한 연산은 다음과 같다:
+.RS
+.sp
+.TP 1.0i
+LOCK_SH
+공유(shared) 잠금. 한개 이상의 프로세스들은 주어진 시간에 주어진 파일에 대한
+공유 잠금을 할수 있다.
+.TP
+LOCK_EX
+배타(exclusive) 잠금. 단지 한개의 프로세스만이 주어진 시간에 주어진 파일에 
+대해 배타 잠금을 할수 있다.
+.TP
+LOCK_UN
+잠금을 푼다.
+.TP
+LOCK_NB
+잠금일 때 블럭하지 않는다. 
+다른 연산과 함께 
+.IR or 에 
+의해 지정된다.
+.sp
+.RE
+
+한 파일에 동시에 공유 잠금과 배타 잠금을 할 수 없다.
+
+파일은 파일 기술자에 대해 잠금이 일어나는 것이 아니라, inode에 대해
+잠금이 된다. 그래서, 
+.BR dup (2)와
+.BR fork (2)는 
+중복된 잠금을 만들지 않는다.
+
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되며, 
+.IR errno 는 
+적당한 값으로 설정된다.
+.SH 에러
+.TP
+.B EWOULDBLOCK
+파일은 잠겨 있고 
+.B LOCK_NB
+플래그가 선택되었다.
+.SH 호환
+4.4BSD (\fRflock(2)\fP은 4.2BSD에서 처음으로 나타났다).
+.SH 주의
+.BR flock (2)은 
+NFS에 있는 파일을 잠금을 하지 않는다. 
+대신에 
+.BR fcntl (2) 를 
+사용해라: 이 시스템 콜은 최신 버전이고 서버가 잠금을 지원한다면
+NFS에서도 작동한다.
+
+.PP
+.BR flock (2)과
+.BR fcntl (2)
+잠금은 생성된 프로세스와
+.BR dup (2)에
+대해서 다른 의미를 갖는다.
+.SH 관련 항목
+.BR open (2),
+.BR close (2),
+.BR dup (2),
+.BR execve (2),
+.BR fcntl (2),
+.BR fork (2).
+.IR /usr/src/linux/Documentation 
+안에 
+.IR locks.txt 와
+.IR mandatory.txt 이 
+있다.
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 5월 1일

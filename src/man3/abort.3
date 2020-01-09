@@ -1,0 +1,54 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 21:46:21 1993 by Rik Faith (faith@cs.unc.edu)
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH ABORT 3  "April 12, 1993" "GNU" "Linux Programmer's Manual"
+.SH 이름
+abort \- 비정상적인 프로그램 종료 발생
+.SH 사용법
+.nf
+.B #include <stdlib.h>
+.sp
+.B void abort(void);
+.fi
+.SH 설명
+\fBabort()\fP 함수는 SIGABORT 시그널를 받지 못하거나 시그널 핸들러로 변환되면 비정상적인 프로그램을 종료시키는 것이다.
+
+\fBabort()\fP 함수로 프로그램을 종료시키면 열려있는 모든 스트림이 닫힌다.
+.PP
+SIGABORT 기능이 막히거나 무시되면, \fBabort()\fP
+함수 역시 이것을 무시한다.
+.SH "반환값"
+\fBabort()\fP 함수는 반환값을 가지지않는다.
+.SH 호환
+SVID 3, POSIX, BSD 4.3, ISO 9899
+.SH "관련 항목"
+.BR sigaction "(2), " exit (3)
+.SH 번역
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 1월 30일

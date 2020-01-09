@@ -1,0 +1,200 @@
+.TH info 1 "1990년 11월 7일"
+.SH 이름
+info \- GNU의 하이퍼텍스트 시스템
+.SH 사용법
+.B info
+[
+.B \-\-옵션이름 옵션값
+]
+.B \차림표-항목
+.SH 저작권
+.if n Copyright (C) 1989, 1993 Free Software Foundation, Inc.
+.if t Copyright \(co 1989, 1993 Free Software Foundation, Inc.
+.SH 설명
+.LP
+GNU 프로젝에는 
+.I Info
+라는 하이퍼 텍스트 시스템이 있다. 
+이것은 매뉴얼을 인쇄하거나 
+.I info
+명령으로 온라인으로 볼 수 있는 소스를 제공한다.
+또한 \fBemacs (1)\fR로도 info 파일을 볼 수 있으며, 
+콘솔상에서 자체적인 풀그림(info)으로도 볼 수 있다. 
+이 매뉴얼 페이지는 info에 대한 간략한 설명을 하고 있다. 
+보다 자세한 정보를 원하면 info 명령을 사용해서 info 자체에 대한 
+설명을 참조한다.
+
+.SH 옵션
+.TP
+.B \-\-directory 경로이름
+\fBinfo\fR에서 info 파일을 찾을 경로에서 \fI경로이름\fR을 추가한다.
+이 옵션은 명령행에서 여러번 사용될 수 있다. 궁극적으로 
+.B INFOPATH
+라는 환경 변수를 사용해 info 파일을 찾을 경로를 지정할 수도 있다. 
+.B \-\-directory
+옵션을 사용하지 않으면, 
+.B INFOPATH
+환경 변수값을 사용한다.
+.B INFOPATH 
+환경 변수로 사용될 각 경로의 구분은 $PATH에서 사용하는 것과 마찬가지로
+콜론(:)으로 한다.
+.B INFOPATH
+환경변수도 지정하지 않고,
+.B \-\-directory-path
+옵션도 사용하지 않으면, \fBinfo\fR는 경로로 초기값을 사용한다.
+초기값은 /usr/info 아니면, /usr/local/info 이다.
+.TP
+.B \-f 파일이름
+\fBinfo\fR로 볼 파일을 지정한다. 이 옵션을 사용하지 않으면, 
+\fI$INFOPATH/dir\fR
+파일을 열어 보게 된다.
+이 옵션을 사용하면, \fBinfo\fR는 \fI파일이름\fR의 \fBTop\fR 노드를 
+보여준다.
+.TP
+.B \-n 노드이름
+지정한 \fI노드이름\fR의 노드를 보여준다. 
+이 옵션은 
+.B \-\-file
+옵션을 사용할 때 아주 유용하게 쓰인다.
+이 옵션은 명령행에서 여러번 사용될 수 있다.
+.TP
+.B -o 파일
+화면으로 보여주지 않고 \fI파일\fR로 만들어준다.
+.TP
+.B \-\-help
+\fBinfo\fR에서 사용될 수 있는 옵션들과 사용법을 간단하게 보여주고 마친다.
+.TP
+.B \-\-version
+\fBinfo\fR의 버전 정보를 보여주고 마친다.
+.TP
+.B 차림표-항목
+\fBinfo\fR로 참조할 항목을 지정한다. 
+이것은 명령행의 마지막 부분에 오며, 여러개가 사용될 수 있으며, 
+여러개가 사용될 때는 앞에서부터 차례로 각 노드의 하위 노드로 지정한다.
+예를 들어,
+
+.B       info emacs buffers
+
+위와 같은 명령이 주워지면, 먼저 초기값 차림표(dir 파일)에서 
+emacs 노드를 찾아 이동하여, 다음 emacs 노드의 차림표에서 
+buffers 노드를 찾아 보여준다.
+
+.SH 명령
+\fBinfo\fR가 실행되면 다음과 같은 명령을 사용할 수 있다;
+.TP
+.B h
+Info 자습서를 호출한다.
+.TP
+.B ?
+info 명령어 요약을 보여준다.
+.TP
+.B h
+Select the
+.B info
+node from the main directory; this is much more complete than just
+using 
+.B ?.
+.TP
+.B Ctrl-g
+작업 진행 중지, 명령 취소.
+.TP
+.B Ctrl-l
+화면 갱신
+.PP
+다른 노드로 이동하기:
+.TP
+.B n
+"next" 노드로.
+.TP
+.B p
+"previous" 노드로.
+.TP
+.B u
+"up" 노드로.
+.TP
+.B m
+특정 노드로. 이때는 이동 원하는 노드 이름을 지정해 주어야한다. 
+이때, 노드 이름을 정확하게 쓸 필요는 없다. 보기 원하는 노드의 이름을 
+몇자 입력하고, Tab 글쇠를 누르면 나머지 부분을 채워준다. 
+이때, 입력된 글자를 포함하는 노드 이름이 여러개 있을 때에는 
+채워주지 않는다. 이때는 Tab 문자를 한번 더 누른다. 
+이러면 사용할 수 있는 노드 이름 목록을 보여준다. 한편 
+.B ?
+글쇠도 가능하다. 
+If you type a few characters and then hit return
+.B info
+will try to do a completion, and if it is ambigous use the first possibility.
+.TP
+.B f
+상호 참조 사용. 이 글쇠를 누르면 상호 참조할 이름을 물어본다. 
+이때 m 글쇠 사용법과 같이 사용하면 된다. 
+.TP
+.B l
+마지막 노드로 이동한다.
+.PP
+노드 안에서의 이동하기:
+.TP
+.B Space
+한 화면 아래로(다음으로, 앞으로) 이동.
+.TP
+.B DEL
+한 화면 위로(이전으로, 뒤로) 이동.
+.TP
+.B b
+노드의 처음으로
+.PP
+고급 명령:
+.TP
+.B q
+\fBinfo\fR 마침.
+.TP
+.B 1
+노드 안에 있는 차림표의 첫번째 항목으로 이동
+.TP
+.B 2 \-\- 5
+두번째... 다섯번째 항목으로 이동.
+.TP
+.B g
+특정 노드로 이동한다. 여기서는 파일이름까지도 지정할 수 있다. 
+사용법은 
+.B (파일이름)노드이름
+이런 식으로 지정한다.
+.TP
+.B s
+현재 노드에서 지정한 문자열을 찾아 발견되면, 
+그곳으로 커서를 이동한다.
+.TP
+.B M-x print-node
+현재 노드를 파이프를 통해 인쇄한다. 
+이때 인쇄 명령으로 
+.B INFO_PRINT_COMMAND
+환경 변수 값이 사용된다.
+이 환경 변수값이 지정되어 있지 않으면, 단순히 
+.B lpr
+명령을 사용한다.
+.SH 환경변수
+.TP
+.B INFOPATH
+info 파일을 찾을 경로. 여러개일 경우에는 콜론(:)으로 구분하다. 
+.B \-\-directory
+옵션으로 이 경로를 지정할 수도 있다.
+.TP
+.B INFO_PRINT_COMMAND
+인쇄를 위한 사용될 명령을 지정한다.
+.SH "관련 항목"
+.BR emacs (1)
+.SH 만든이
+.RS
+Brian Fox, Free Software Foundation
+.br
+bfox@ai.mit.edu
+.SH 매뉴얼 만든이
+.RS
+Robert Lupton; updated by Robert J. Chassell.
+.br
+rhl@astro.princeton.edu; bob@gnu.ai.mit.edu
+.SH 매뉴얼 고쳐서 옮긴이
+.RS
+김상기
+.br
+teodeul@chollian.dacom.co.kr

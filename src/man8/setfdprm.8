@@ -1,0 +1,62 @@
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH SETFDPRM 8 "1993.11.20." "Linux 0.99" "리눅스 푸돌이 지침서"
+.SH 이름
+setfdprm \- 플로피 디스크 사양을 사용자가 직접 설정한다.
+.SH 사용법
+.B "setfdprm [ \-p ]"
+\fI장치이름 이름\fR
+.br
+.B "setfdprm [ \-p ]"
+device size sectors heads tracks stretch gap rate spec1 fmt_gap
+.br
+.B "setfdprm [ \-c ]"
+\fI장치이름\fR
+.br
+.B "setfdprm [ \-y ]"
+\fI장치이름\fR
+.br
+.B "setfdprm [ \-n ]"
+\fI장치이름\fR
+.SH 설명
+.B setfdprm
+풀그림은 플로피 장치를 자동 검색할 수 있도록 디스크 사양을 지정하거나, 
+옛 사양을 지우고, 검사 메시지를 보여줄 것인지, 보여주지 않을 것인지 
+지정하는데 사용된다.
+
+아무 옵션 없이,
+.B setfdprm
+명령을 사용하면, 
+.I /etc/fdprm
+파일에서 \fI이름\fR을 찾아, 그에 해당되는 
+나머지 정보들을 사용해서 \fI장치이름\fR을 가진 플로피 디스크 사양을 
+지정한다. \fI이름\fR은 대게 360/360 이런 식이고, \fI장치이름\fR은 
+대게  
+.I /dev/fd0
+또는
+.IR /dev/fd1 
+이런 식이다.
+이 인자들은 매체가 바뀌기 전까지 계속 그 영향이 지속된다.
+.옵션
+.TP
+.BI \-p " 장치이름 이름"
+이 옵션을 사용하면, 아에 
+.I /etc/fdprm 
+파일의 정보를 바꾸어 버린다. 
+이렇게 되면 다음번 플로피 디스크 자동 검색에서 여기서 지정한 값을 
+사용하게 된다. 물론 명령행에서 지정하는 각각의 정보가 그대로 지정된다. 
+.TP
+.BI \-c " 장치이름"
+플로피 디스크 장치의 자동 환경 설정 사양을 지운다.
+.TP
+.BI -y " 장치이름"
+플로피 디스크 자동 환경 설정을 지정한 포멧 검색 메시지를 사용 가능 상태로 한다.
+.TP
+.BI -n " 장치이름"
+플로피 디스크 자동 환경 설정을 지정한 포멧 검색 메시지를 사용 불가 상태로 한다.
+.SH 벌레
+이 문서는 용어 설명에는 불충분하다.
+.SH "관련 파일"
+.I /etc/fdprm
+.SH 만든이
+Werner Almesberger (almesber@nessie.cs.id.ethz.ch)

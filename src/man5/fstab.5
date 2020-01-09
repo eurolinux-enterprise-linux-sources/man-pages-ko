@@ -1,0 +1,171 @@
+.\" Copyright (c) 1980, 1989, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)fstab.5	6.5 (Berkeley) 5/10/91
+.\"
+.\" Modified Sat Mar  6 20:45:03 1993, faith@cs.unc.edu, for Linux
+.\" Sat Oct  9 10:07:10 1993: converted to man format by faith@cs.unc.edu
+.\" Sat Nov 20 20:47:38 1993: hpfs documentation added
+.\" Sat Nov 27 20:23:32 1993: Updated authorship information
+.\" Wed Jul 26 00:00:00 1995: Updated some nfs stuff, joey@infodrom.north.de
+.\"
+.TH FSTAB 5 "1993년 11월 27일" "리눅스 0.99" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+fstab \- 화일 시스템에 대한 고정적인 정보 저장
+.SH 개요
+.B #include <fstab.h>
+.SH 설명
+.B fstab
+화일에 다양한 화일 시스템에 대한 정보를 기술한다.
+.B fstab
+화일은 프로그램에 의해 읽히기만 할 뿐 쓰기에는 사용되지 않는다. 이 화일을
+제대로 만드는 일은 시스템 관리자의 책임이다. 한 줄마다 하나의 화일 시스템에
+대하여 기술한다. 한 줄 상의 각 필드는 탭 또는 스페이스로 구분된다. 그 순서는
+매우 중요하다.
+왜냐하면
+.BR fsck "(8), " mount "(8), and " umount "(8)
+와 같은 프로그램들이 
+.B fstab
+에 있는 내용을 순차적으로 읽기 때문이다.
+
+첫번째 필드인
+.RI ( fs_spec )
+에서는 마운트될 블럭 특별 장치 또는 원격 화일 시스템을 적는다.
+
+두번째 필드인
+.RI ( fs_file )
+에서는 그 화일 시스템을 마운트할 마운트 포인트를 적는다. 스왑 파티션의 경우
+이 값은 ``none''이라고 적는다.
+
+세번째 필드인
+.RI ( fs_vfstype )
+에서는 화일 시스템의 유형을 적는다. 현재 지원되는 3 가지 유형의 화일 시스템을
+지원하고 있다:
+.TP
+.I minix
+로컬 화일 시스템으로서 화일명의 길이는 14 또는 30 자를 지원한다.
+.TP
+.I ext
+로컬 화일 시스템으로서 긴 화일명, 더 큰 inode 를 지원한다. 이 화일 시스템은
+.I ext2
+화일 시스템으로 교체되었고 더 이상 쓰이지 않는다.
+.TP
+.I ext2
+로컬 화일 시스템으로서 긴 화일명, 더 큰 inode 를 지원하며 기타 많은 기능을
+지원하고 있다.
+.TP
+.I xiafs
+로컬 화일 시스템으로서 긴 화일명, 더 큰 inode 를 지원하며 기타 많은 기능을
+지원하고 있다.
+.TP
+.I msdos
+MS-DOS 파티션에 대한 로컬 화일 시스템.
+.TP
+.I hpfs
+HPFS 파티션에 대한 로컬 화일 시스템.
+.TP
+.I iso9660
+CD-ROM 드라이브에 사용되는 로컬 화일 시스템.
+.TP
+.I nfs
+원격 시스템의 파티션을 마운트할 때 쓰이는 화일 시스템.
+.TP
+.I swap 
+스와핑에 사용되는 디스크 파티션.
+.PP
+만약
+.I vfs_fstype
+이 ``ignore''라고 적혀 있다면 그 줄은 무시된다. 현재 사용되고 있지 않은
+디스크 파티션을 보여줄 때 유용하다.
+
+네번째 필드인
+.RI ( fs_mntops )
+에서는 화일 시스템에 관련된 마운트 옵션을 기술한다.
+
+It is formatted as a comma separated list of options.  It contains at least
+각 옵션은 콤마(,)로 구분된다. 최소한 마운트 유형과 각 화일 시스템에 알맞는
+추가 옵션으로 구성된다. nfs 화일 시스템이 아닌 경우, 각 마운트 옵션에 대해서는
+.BR mount (8)
+를 보기 바란다.
+nfs 화일 시스템에 관련된 옵션에 대해서는
+.BR nfs (5)
+을 참고하라.
+
+다섯번째 필드인
+.RI ( fs_freq )
+에서는
+.BR dump (8)
+명령에 의해 덤프될 화일 시스템을 표시해둔다. 만약 다섯번째 필드가 존재하지
+않는다면 0 이라는 값이 반환되고
+.B dump
+는 해당 화일 시스템이 덤프될 필요없다고 생각한다.
+
+여섯번째 필드인
+.RI ( fs_passno )
+에서는
+.BR fsck (8)
+프로그램에 의해 부팅시 어떤 화일 시스템을 점검할 것인지 기재한다.
+루트 화일 시스템은
+.I fs_passno
+값 1 을 가져야 하며 다른 화일 시스템은
+.I fs_passno
+값 2 를 갖는다. 한 드라이브에 들어있는 화일 시스템은 순서대로 점검되지만
+여러 다른 드라이브 상에 존재하는 화일 시스템은 하드웨어적 병렬처리가
+가능하므로 동시에 이뤄진다. 여섯번째 필드가 존재하지 않거나 0 인 경우 0 이
+반환되며
+.B fsck
+은 주어진 화일 시스템을 점검할 필요가 없다고 생각한다.
+
+.B fstab
+화일로부터 자료를 일기 위한 루틴으로는
+.BR getmntent (3)
+이 있다.
+.SH 관련 화일
+.I /etc/fstab
+.B fstab
+화일은
+.IR /etc 
+디렉토리에 놓여 있다.
+.SH 버그
+.BR mount (8)
+안의 문서가 더욱 최신 정보를 가지고 있다.
+.SH "참고"
+.BR getmntent "(3), " mount "(8), " swapon "(8), " nfs (5)
+.SH HISTORY
+.B fstab
+형식은 4.0BSD에서 생겼다.
+
+.SH 번역자
+.br
+이 만 용
+.B <geoman@nownuri.nowcom.co.kr>
+.br
+.B "         <freeyong@soback.kornet.nm.kr>"

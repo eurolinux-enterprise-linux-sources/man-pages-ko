@@ -1,0 +1,78 @@
+.\"
+.\" 한국어 번역 : ASPLINUX    2000년 7월 26일
+.\"
+.TH PIVOT_ROOT 2 "Feb 23, 2000" "Linux" "System Calls"
+.SH 이름
+pivot_root \- 루트파일시스템 바꾸기.
+.SH 사용법
+.B #include <linux/unistd.h>
+.sp
+.B _syscall2(int,pivot_root,const char *,new_root,const char *,put_old)
+.sp
+.BI "int pivot_root(const char *" new_root ", const char *" put_old );
+.SH 설명
+\fBpivot_root\fP는 디렉토리 \fIput_old\fP로 현재 프로세스의 루트 파일시스템을 옮기고,
+현재 프로세스의 새로운 파일시스템 \fInew_root\fP를 만든다.
+
+의 전형적인 사용은 시스템이 임시 루트 파일시스템을 마운트할 때인 시스템 부팅동안이다. 
+그리고나서 실제 루트 파일 시스템을 마운트하고, 결국 모든 관련된 프로세스들과 쓰레드의 
+현재 루트안에 후자로 바꾼다.
+
+\fBpivot_root\fP는 현재 루트와 모든 프로세스나 쓰레드의 현재 작업중인 디렉토리(cwd)를 변화시키나 
+그렇지 않을 수도 있다. \fBpivot_root\fP의 caller는 루트나 cwd의 프로세스를 확인해야만 한다. 확인의 쉬운 방법은 \fBpivot_root\fP
+이 실행되기 전에 new_root로 루트, cwd를 바꾸는 것이다.
+
+이것은 또한 현재 프로세스에 적용한다는 것을 주지한다:\fBpivot_root\fP는 cwd에 영향을 
+받을 수도 있고 그렇지 않을 수도 있다. 그러므로 그것은 \fBpivot_root\fP후에 즉시 \fBchdir("/")\fP
+호출을 명령한다.
+
+다음의 제한은 \fInew_root\fP와 \fIput_old\fP를 적용한다:
+.IP \- 3
+디렉토리여만 한다.
+.IP \- 3
+\fInew_root\fP 와 \fIput_old\fP는 현재 루트와 같은 파일 시스템이 아니어야한다. 
+.IP \- 3
+\fIput_old\fP는 \fInew_root\fP 아래이어야만 한다.
+.IP \- 3
+어떠한 다른 파일 시스템도 \fIput_old\fP에 마운트되지 않았을 런지 모른댜.
+.PP
+추가 사용예제를 위해 \fBpivot_root(8)\fP를 본다.
+
+.SH 주의
+\fInew_root\fP는 마운트 포인트가 되지않아야 한다.
+.SH 반환값
+성공시, 0이 반환된다. 실패시,\-1이 반환되고 
+\fIerrno\fP는 적절히 설정된다.
+.SH 에러
+\fBpivot_root\fP는 \fBstat(2)\fP에 의해 반환된 에러의 대부분을 반환할런지 모른다. 추가적으로, 아
+래의 사항이 반환될런지도 모른다: 
+
+.TP
+.B EBUSY
+\fInew_root\fP 나\fIput_old\fP는 현재 루트파일시스템에 있거나 파일 시스템이 이미
+\fIput_old\fP에 마운트 되었다.
+
+.TP
+.B EINVAL
+\fIput_old\fP가 \fInew_root\fP밑에 없다.
+.TP
+.B ENOTDIR
+\fInew_root\fP 나 \fIput_old\fP가 디렉토리가 아니다.
+.TP
+.B EPERM
+현재 프로세스가 관리자 기능이 없다.
+.SH 버그
+\fBpivot_root\fP는 시스템의 모든 다른 프로세스들의 루트와 cwd를 바꾸지 않아야만 했다.
+
+.SH 호환
+\fBpivot_root\fP는 리눅스에서만 쓰이므로 이식될 수 없다.
+.SH 역사
+\fBpivot_root\fP는 리눅스 2.3.41에서 소개 되었다.
+.SH 관련 항목
+.BR chdir(2),
+.BR chroot(2),
+.BR initrd(4),
+.BR pivot_root(8),
+.BR stat(2)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 26

@@ -1,0 +1,89 @@
+.\" You may copy, distribute and modify under the terms of the LDP General
+.\" Public License as specified in the LICENSE file that comes with the
+.\" gnumaniak distribution
+.\"
+.\" The author kindly requests that no comments regarding the "better"
+.\" suitability or up-to-date notices of any info documentation alternative
+.\" is added without contacting him first.
+.\"
+.\" (C) 1999-2002 Ragnar Hojland Espinosa <ragnar@ragnar-hojland.com>
+.\"
+.\"     GNU echo man page
+.\"     man pages are NOT obsolete!
+.\"     <ragnar@ragnar-hojland.com>
+.\"
+.\" 한국어 번역
+.\" 윤현호 <hhyoon@kldp.org> GNU Shell Utilities 2.1에 포함된 버전으로 갱신
+.\"
+.TH echo 1 "18 June 2002" "GNU Shell Utilities 2.1"
+.SH 이름
+echo \- 화면에 한 줄의 문자열을 출력한다
+.SH 개요
+.BI "echo [-ne] [" 문자열... ]
+.sp
+.B echo [\-\-help] [\-\-version]
+.SH 설명
+.B echo
+는 주어진 \fI문자열\fP을 문자열 사이에 포함된 공백과
+줄 마지막에 개행문자를 포함하여 표준출력으로 내보낸다.
+만약
+.B -n
+옵션이 주어졌다면 마지막에 개행문자를 출력하지 않는다.
+.PP
+대부분의 쉘들은 같은 이름, 같은 기능의 내장 명령을 가지고 있다는 것을
+기억하기 바란다.
+.SH 옵션
+.TP
+.I \-n
+마지막에 개행문자를 출력하지 않는다.
+.TP
+.I \-e
+문자열에서 다음 백슬래쉬로 이스케이프된 문자의 번역을 하도록 한다:
+.RS
+.PD 0
+.TP
+.B \ea
+경고음 (벨)
+.TP
+.B \eb
+백스페이스
+.TP
+.B \ec
+마지막 개행문자를 사용하지 않는다.
+.TP
+.B \ef
+폼 피드
+.TP
+.B \en
+개행문자
+.TP
+.B \er
+캐리지 리턴
+.TP
+.B \et
+수평 탭
+.TP
+.B \ev
+수직 탭
+.TP
+.B \e\e
+백슬래쉬
+.TP
+.B \e nnn
+ASCII 코드가 \fInnn\fP (8진수)인 문자
+.PD
+.RE
+.SH 옵션
+GNU
+.B echo
+가 다음 옵션이 붙으면 단 한 개의 인수만을 갖고 실행된다.
+.TP
+.I "\-\-help"
+표준출력으로 사용법을 출력하고 정상적으로 종료한다.
+.TP
+.I "\-\-version"
+표준출력으로 버전정보를 출력하고 정상적으로 종료한다.
+.SH 주의
+버그 보고는 bug-sh-utils@gnu.org 으로 하기 바란다. 이 페이지는 Ragnar Hojland Espinosa <ragnar@ragnar-hojland.com>에 의해 갱신되었다.
+.SH 번역
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 1월 31일

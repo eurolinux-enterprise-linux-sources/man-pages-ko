@@ -1,0 +1,196 @@
+.\" Copyright (c) 1988, 1990 The Regents of the University of California.
+.\" Copyright (c) 1988 Mark Nudleman
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)more.1	5.15 (Berkeley) 7/29/91
+.\"
+.\" Revised: Fri Dec 25 15:27:27 1992 by root
+.\" 25Dec92: Extensive changes made by Rik Faith (faith@cs.unc.edu) to
+.\" conform with the more 5.19 currently in use by the Linux community.
+.\"
+.Dd July 29, 1991 (Modified December 25, 1992)
+.Dt MORE 1
+.Os "Linux 0.98"
+.Sh NAME
+.Nm more
+.Nd 문자속성을 살린 파일 보기 풀그림
+.Sh 사용법
+.Nm more
+.Op Fl dlfpcsu
+.Op Fl num
+.Op +/ 표현식
+.Op + 줄번호
+.Op Ar
+.Sh 설명
+.Nm More
+명령은 파일 보기 풀그림이다. 이 풀그림은 유닉스에서 처음부터 
+사용한 풀그림이다. 하지만, 이 풀그림의 기능을 보다 보강한 
+.Xr less 1
+명령을 사용하기를 바란다.
+.Sh 옵션
+다음은 이 풀그림에서 사용할 수 있는 옵션이며, 
+이 옵션은 
+.Ev MORE
+환경변수로도 지정할 수 있다. 이미 이 환경 변수로 옵션들이 지정되어 
+있는데, 명령행으로 옵션을 사용하면, 그 환경 변수는 무시된다.
+.Bl -tag -width flag
+.It Fl num
+\fInum\fR 줄을 한 화면으로 지정한다.
+.It Fl d
+.Nm more
+명령은 글쇠를 입력받아야할 때, 
+"[Press space to continue, 'q' to quit.]" 내용을 보여주고, 
+글쇠가 잘못 입력되었을 때,
+"[Press 'h' for instructions.]" 내용을 보여준다.
+.It Fl l
+.Nm more
+usually treats
+.Ic \&^L
+(form feed) as a special character, and will pause after any line that
+contains a form feed.  The
+.Fl l
+option will prevent this behavior.
+.It Fl f
+Causes
+.Nm more
+to count logical, rather than screen lines (i.e., long lines are not
+folded).
+.It Fl p
+스크롤하지 않고, 화면을 모두 지우고, 텍스트를 보여준다.
+.It Fl c
+Do not scroll.  Instead, paint each screen from the top, clearing the
+remainder of each line as it is displayed.
+.It Fl s
+여러 줄의 빈 줄을 한 줄로 보여준다.
+.It Fl u
+밑줄 속성을 가진 문자를 그냥 보여준다.
+.It Ic +/ Ns Ar 표현식
+정규 \fI표현식\fR이 발견되는 부분부터 보여준다.
+.It Ic +num
+.Ic num 
+줄부터 보여준다.
+.Sh 명령들
+.Nm more
+실행 중에 사용되는 각종 명령은 
+.Xr vi  1 
+명령에 바탕을 두고 있다.
+\fBvi\fR(1)에서와 같이 몇 명령은 먼저 숫자가 지정될 수 있다. 
+아래에 k로 표시되는 것이 숫자다.
+아래에서 ^X로 표기되는 것은 Ctrl 글쇠를 누르고 X 글쇠를 누르는 
+것을 의미한다.
+.Pp
+.Bl -tag -width Ic
+.It Ic h No 또는 Ic ?
+도움말: 지금 설명되는 각종 명령의 요약을 볼 수 있다.
+다른 모든 명령을 다 잊어도 좋지만, 이 명령만큼은 잊지 말기를.
+.It Ic SPACE
+k 줄 만큼 앞으로(순방향, 아래로) 이동. 
+초기값은 한 화면이다.
+.It Ic z
+k 줄 만큼 앞으로 이동.
+초기값은 현재 화면 크기이다. k 값이 지정되면 바로 그 값이 현재 
+화면 크기가 된다.
+.It Ic RETURN
+k 줄 만큼 앞으로 이동. 초기값은 한 줄. 
+k 값이 지정되면 그 값이 초기값으로 바뀐다.
+.It Ic d No 또는 Ic \&^D
+k 줄 만큼 앞으로 이동.
+초기값은 현재 스크롤 크기. 내정치는 11 줄이다. 
+k 값이 지정되면 그 값이 초기값으로 바뀐다.
+.It Xo
+.Ic q
+.No 또는
+.Ic Q
+.No or
+.Ic 인터럽트
+.Xc
+마침.
+.It Ic s
+k 줄 만큼 앞으로 이동. 초기값은 한 줄.
+.It Ic f
+한 화면씩 앞으로 이동. 초기값은 한 화면.
+.It Ic b No 또는 Ic \&^B
+한 화면씩 뒤로(역방향, 위로) 이동. 초기값은 한 화면.
+.It Ic '
+이전에 찾았던 문자열이 있는 곳으로 이동.
+.It Ic =
+현재 줄번호를 보여준다.
+.It Ic \&/ Ns Ar 표현식
+k 번째 발견되는 정규표현식 내용을 찾는다. 초기값은 첫번째.
+.It Ic n
+k 번째 다음 발견 되는 문자열이 있는 곳으로 이동. 초기값은 첫번째.
+.It Ic !<명령> No 또는 Ic :!<명령>
+쉘 <명령>을 실행한다.
+.It Ic v
+현재 줄에서 /usr/bin/vi 명령을 실행한다.
+.It Ic \&^L
+화면 갱신.
+.It Ic :n
+k 번째 다음 파일을 연다. 초기값은 첫번째.
+.It Ic :p
+k 번째 이전 파일을 연다. 초기값은 첫번째.
+.It Ic :f
+현재 보고 있는 파일의 이름과 현재 줄번호를 보여준다.
+.It Ic \&.
+이전에 실행했던 명령을 반복한다.
+.El
+.Sh 환경변수
+.Nm More
+명령은 다음 환경 변수가 지정되어 있으면 그 값을 이용한다:
+.Bl -tag -width Fl
+.It Ev MORE
+\fBmore\fR에서 사용되는 옵션을 지정한다.
+.It Ev SHELL
+현재 사용하고 있는 쉘(이 값은 일반적으로 로그인 때에 자동으로 지정된다.)
+.It Ev TERM
+\fBmore\fR에서 화면 처리를 위한 터미날 형태를 지정한다. 
+.El
+.Sh 관련 항목
+.Xr vi 1
+.Xr less 1
+.Sh 만든이들
+버클리 대학의 Eric Shienbrood가 처음 만들었고, 
+.br
+같은 대학의 Geoff Peck이 밑줄속성 문자와 공백문자 처리 부분을 첨가했고,
+.br
+같은 대학의 John Foderaro가 \-c 옵션과 MORE 환경변수를 사용할 수 있게 했다.
+.Sh 발자취
+.Nm more
+명령은 
+.Bx 3.0 
+시스템에서 처음 나타났다.
+이 매뉴얼 페이지 문서는 
+.Nm more
+버전 5.19 (Berkeley 6/29/88)를 바탕으로 작성되었다. 
+현재 리눅스 협회에서 사용하고 있는 풀그림이다. 
+또한 이 매뉴얼 페이지는 다양한 종류가 있는데, 각각 소스의 변경에 따라 
+확장, 축소되기도 한다. 
+

@@ -1,0 +1,36 @@
+.\" arch.1 -- 
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Public domain: may be freely distributed.
+.TH ARCH 1 "1997년 7월 4일" "리눅스 2.0" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+arch \- 기계 아키텍쳐를 출력한다.
+.SH 사용법
+.B arch
+.SH 설명
+.B arch
+는
+.BR "uname -m" 
+과 같다.
+
+현재 리눅스 시스템에서,
+.B arch
+는 "i386", "i486", "i586", "alpha", "sparc",
+"arm", "m68k", "mips", "ppc"과 같은 것을 출력한다.
+.SH 관련 항목
+.BR uname (1) ", " uname (2)
+.SH 역자
+임종균 <hermes44@secsm.org>, 2000년 4월 13일
+.\"
+.\" Details:
+.\" arch prints the machine part of the system_utsname struct
+.\" This struct is defined in version.c, and this field is
+.\" initialized with UTS_MACHINE, which is defined as $ARCH
+.\" in the main Makefile.
+.\" That gives the possibilities 
+.\" alpha    arm      i386     m68k     mips     ppc      sparc    sparc64
+.\"
+.\" If Makefile is not edited, ARCH is guessed by
+.\" ARCH := $(shell uname -m | sed -e s/i.86/i386/ -e s/sun4u/sparc64/)
+.\" Then how come we get these i586 values?
+.\" Well, the routine check_bugs() does system_utsname.machine[1] = '0' + x86;
+.\" (called in init/main.c, defined in ./include/asm-i386/bugs.h)

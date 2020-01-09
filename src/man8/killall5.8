@@ -1,0 +1,17 @@
+.TH KILLALL5 8 "10 October 1994" "" "Linux System Administrator's Manual"
+.SH NAME
+killall5 -- 모든 프로세스에 시그날을 보낸다.
+.SH SYNOPSIS
+.B killall5
+.RB -signalnumber
+.SH DESCRIPTION
+.B killall5
+명령은 SystemV의 killall 명령이다. 
+자신의 세션을 제외한 모든 프로세스에 시스날을 보낸다. 
+그래서, 실행중인 모든 프로세스를 닫는다. 
+이 명령은 기본적으로 /etc/init.d 경로 안에 있는 \fBrc\fP 
+스크립트에서 사용된다. 
+.SH SEE ALSO
+halt(8), reboot(8).
+.SH AUTHOR
+Miquel van Smoorenburg, miquels@cistron.nl

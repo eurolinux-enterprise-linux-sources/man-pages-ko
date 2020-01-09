@@ -1,0 +1,110 @@
+.\"
+.\" Copyright (c) 1999,2000 WU-FTPD Development Group.
+.\" All rights reserved.
+.\"
+.\" Portions Copyright (c) 1980, 1985, 1988, 1989, 1990, 1991, 1993, 1994
+.\" The Regents of the University of California.  Portions Copyright (c)
+.\" 1993, 1994 Washington University in Saint Louis.  Portions Copyright
+.\" (c) 1996, 1998 Berkeley Software Design, Inc.  Portions Copyright (c)
+.\" 1998 Sendmail, Inc.  Portions Copyright (c) 1983, 1995, 1996, 1997 Eric
+.\" P. Allman.  Portions Copyright (c) 1989 Massachusetts Institute of
+.\" Technology.  Portions Copyright (c) 1997 Stan Barber.  Portions
+.\" Copyright (C) 1991, 1992, 1993, 1994, 1995, 1996, 1997 Free Software
+.\" Foundation, Inc.  Portions Copyright (c) 1997 Kent Landfield.
+.\"
+.\" Use and distribution of this software and its source code are governed
+.\" by the terms and conditions of the WU-FTPD Software License ("LICENSE").
+.\"
+.\"     $Id: ftpshut.8,v 1.1.1.1 2002/07/18 10:40:12 hhyoon Exp $
+.\"
+.TH ftpshut 8
+.SH 이름
+ftpshut \- 지정한 시간에 ftp server를 다운시킨다.
+.SH 문법
+.B ftpshut
+[
+.B \-V
+] [
+.B \-l
+min] [
+.B \-d
+min]
+.I time [ warning-message ... ]
+.SH 설명
+.B ftpshut
+명령은 ftp server가 shut down을 할때 superuser가 ftp user
+에게 공지할수 있는 자동 shutdown 진행을 준비한다.
+.PP
+.B \-V
+옵션은 저작권과 버젼 정보를 출력한다.
+.PP
+.I time
+은
+.B ftpshut
+이 ftp server를 다운시킬 시간을 말한다.
+"now"라는 단어를 사용하여 즉시 shutdown을 할수 있으며
+또한 아래와 같은 하나 또는 두개의 형식으로서 미래의 시간을 
+지정할 수도 있다. :
+.I + number
+또는
+.I HHMM.
+
+첫번째 형식은 ftp server down 시간을
+.l number
+minutes(분) 으로서 지정을 한다.
+두번째는 24\-시간 형식을 사용하여 지정할 날의 시간에 ftp
+server의 shutdown을 지정한다.
+.PP
+shutdown 10분전 또는 
+.B ftpshut
+이 10분이 안남았다면 새로운 ftp 접근은 즉시 거부된다.
+이 시간은 -l flag 를 통해서 정의되어 진다.
+.PP
+shutdonw 5분전 또는
+.B ftpshut
+이 5분이 남지 않았다면 현재 접속이 되어 있는 connections
+들은 즉시 끊어지게 된다. 이 시간은 -d flag를 통해서
+지정이 된다.
+.PP
+.I [ warning-message ... ]
+은 75 문자의 길이의 형식을 취한다.
+.B ftpshut
+은 magic cookie의 실제 문자열 길이 역시 포함을 해서
+인식을 한다.
+.PP
+shutdown을 하려 할때 어떠한 file을 생성하여 이 file의 유무에
+대해 명령을 실행시킬수가 있다. 일단 shutdown이 되면 이 file이
+제가 될때 까지 접속은 거부가 될 것이다. 이 file은 
+.B ftpaccess
+file의
+.I shutdown
+지시자에 의해서 위치와 file명이 지정된다.
+.PP
+아래와 같이 macig cookie를 사용가능하다 :
+.nf
+.ta \w'Request        'u
+    \fBCookie      설명\fP
+      %s      system이 다운되는 시간
+      %r      새로운 접속이 거부되는 시간
+      %d      현재 사용자들이 강제 logout 되는 시간
+      %C      현재 작업중인 directory
+      %E      ftpaccess에서 지정한 서버 관리자의 Email address
+      %F      CWD 파티션의 남은 공간 (kbytes)
+              [모든 system을 지원하지는 않음]
+      %L      local host name
+      %M      현 class의 최대 접속 user 수
+      %N      현 class의 현재 접속 user 수
+      %R      remote host name
+      %T      system의 시간 (form Thu Nov 15 17:12:42 1990)
+      %U      login시 주어진 username
+.fi
+.SH 제한
+만약 절대 시간을 사용한다면, server는 현재부터 23:59 사이에만
+shutdown을 할수 있다.
+.SH 관련 항목
+.BR shutdown(1) ,
+.BR ftpaccess(5) ,
+.BR ftprestart(8)
+.SH 역자
+김정균 <admin@oops.org> 2000년 8월 4일
+

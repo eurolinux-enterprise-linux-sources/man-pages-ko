@@ -1,0 +1,199 @@
+.\" Man page for whatis
+.\"
+.\" Copyright (C), 1994, 1995, Graeme W. Wilford. (Wilf.)
+.\"
+.\" You may distribute under the terms of the GNU General Public
+.\" License as specified in the file COPYING that comes with the
+.\" man_db distribution.
+.\"
+.\" Sat Oct 29 13:09:31 GMT 1994  Wilf. (G.Wilford@ee.surrey.ac.uk)
+.\"
+.\" Korean Version ChangeLog
+.\"
+.\" Updated on 2004-03-08 20:26:02 by 검은해
+.\" Updated on 2004-03-07 by Yoon, Hyunho <hhyoon@kldp.org>
+.\" Translated on 2004-03-05 by Yoon, Hyunho <hhyoon@kldp.org>
+.\"
+.TH whatis 1 "07 September 2001" "2.3.20" "Manual pager utils"
+.SH 이름
+whatis \- 메뉴얼 페이지 설명을 보여준다.
+.SH 사용법
+.B whatis
+.RB [\| \-dhV \|]
+.RB [\| \-r \||\| \-w\c
+\|]
+.RB [\| \-m
+.IR system \|[\|,.\|.\|.\|]\|]
+.RB [\| \-M
+.IR path \|]
+.I name
+\&.\|.\|.
+.SH 설명
+각각의 메뉴얼 페이지는 그것에 대해 짧은 설명을 가지고 있다.
+.B whatis
+는 메뉴얼 페이지의 이름을 검색하여 특정
+.I name
+을 포함하고 있는 메뉴얼 페이지의 설명을 보여준다.
+
+.I name
+은 와일드카드(wildcard)
+.RB ( \-w )
+를 포함하거나 
+정규식(regular expression)
+.RB ( \-r )
+일 수 있다.
+이 옵션들을 사용하면서,
+쉘이 특수 문자들을 해석하는 것을 막기 위해
+.I name
+을 인용하거나 
+에스케이프(escape)시켜야 할 수도 있다.
+
+검색하는 동안
+.B index
+데이터베이스들이 사용된다.
+해당
+.B index
+데이터베이스에서 예전 형식의 텍스트
+.B whatis
+데이터베이스를 만들기 위해서는
+다음 명령을 사용하라.
+
+.B whatis \-M
+.I manpath
+.B \-w  '*' | sort >
+.I manpath/whatis
+
+여기에서 
+.I manpath
+는
+.IR /usr/man
+과 같이 메뉴얼 페이지의 계층 구조를 의미한다.
+.SH 옵션
+.TP
+.B \-d, \-\-debug
+디버깅 정보를 출력한다.
+.TP
+.B \-r, \-\-regex
+각각의
+.I name
+을 정규식으로 해석한다.
+이때
+.I name
+정규식이 페이지 이름의 일부분과 맞는 메뉴얼 페이지에 대해 검색이 이루어진다.
+이 옵션을 사용하면 데이터베이스 검색의 특성 때문에
+.B whatis
+동작이 조금 느려지게 될 것이다.
+.TP
+.B \-w, \-\-wildcard
+각각의
+.I name
+이 쉘 형식 와일드카드를 포함하는 패턴으로 해석된다.
+검색이 이루어지기 위해서는 확장된
+.I name
+이 전체 페이지 이름과 맞아야만 한다.
+이 옵션을 사용하면 데이터베이스 검색의 특성 때문에
+.B whatis
+동작이 조금 느려지게 될 것이다.
+.\"
+.\" Due to the rather silly limit of 6 args per request in some `native'
+.\" *roff compilers, we have do the following to get the two-line
+.\" hanging tag on one line. .PP to begin a new paragraph, then the
+.\" tag, then .RS (start relative indent), the text, finally .RE
+.\" (end relative indent).
+.\"
+.PP
+.B \-m
+.I system\c
+.RB \|[\|,.\|.\|.\|]\| ,
+.BI \-\-systems= system\c
+\|[\|,.\|.\|.\|]
+.RS
+이 시스템에서 다른 운영체제의 메뉴얼 페이지 이름들에 접근할 수 있다면,
+이 옵션을 사용해서 검색할 수 있다.
+만약 NewOS의 메뉴얼 페이지 이름을 검색하고 싶다면,
+.B \-m
+.BR NewOS
+옵션을 사용하면 된다.
+
+.I system
+은 여러 운영체제의 이름을 쉼표(comma)로 구분하여 조합할 수 있다.
+검색하는데 원래 운영체제의 메뉴얼 페이지 이름을 포함하고 싶다면,
+.I system
+에
+.B man
+을 추가하면 된다.
+이 옵션은
+.RB $ SYSTEM
+환경 변수에 우선한다.
+.RE
+.TP
+.BI \-M\  path ,\ \-\-manpath= path
+기본 경로 외에 검색할 메뉴얼 페이지 경로를 콜론(:)으로 구분해서 설정한다.
+기본적으로
+.B apropos
+는
+.RB $ MANPATH
+환경 변수를 사용한다.
+만약 이 환경 변수가 설정되지 않았다면,
+.RB $ PATH
+환경 변수를 기반으로 적절한 경로를 찾아낼 것이다.
+이 옵션은
+.RB $ MANPATH
+환경 변수의 값에 우선한다.
+.TP
+.B \-h, \-\-help
+도움말을 출력하고 종료한다.
+.TP
+.B \-V, \-\-version
+버전과 저자 정보를 출력한다.
+.SH "종료 코드"
+.TP
+.B 0
+정상적인 종료.
+.TP
+.B 1
+사용법, 문법 혹은 설정 파일 오류.
+.TP
+.B 2
+조작상 오류.
+.TP
+.B 16
+주어진 값과 맞는 메뉴얼 페이지를 찾을 수 없을 때.
+.SH 환경
+.TP
+.B SYSTEM
+.RB $ SYSTEM
+이 설정되어 있으면, 이것은 
+.B \-m
+옵션으로 다른 운영체제를 지정해주는 것과 같은 효과를 나타낸다.
+.TP
+.B MANPATH
+.RB $ MANPATH
+가 설정되어 있으면, 이 값은 콜론(:)으로 구분된 메뉴얼 페이지 구조의
+경로로 해석된다.
+.SH 파일
+.TP
+.I /usr/share/man/index.(bt|db|dir|pag)
+기본적인
+.I index
+데이터베이스 캐쉬.
+.TP
+.I /var/cache/man/index.(bt|db|dir|pag)
+부가적인
+.I index
+데이터베이스 캐쉬.
+.TP
+.I /usr/share/man/\|.\|.\|.\|/whatis
+기본적인
+.B whatis
+텍스트 테이터베이스.
+.SH "관련 항목"
+.BR apropos (1),
+.BR man (1).
+.SH 저자
+.nf
+Wilf. (G.Wilford@ee.surrey.ac.uk).
+Fabrizio Polacco (fpolacco@debian.org).
+.fi
+.SH 번역
+한글 Manpage 프로젝트 (http://man.kldp.org), 2004년 3월 8일

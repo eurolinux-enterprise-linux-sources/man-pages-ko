@@ -1,0 +1,50 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH DMESG 8 "28 October 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH 이름
+dmesg \- 커널 ring 버퍼를 보거나, 제어한다.
+.SH 사용법
+.BI "dmesg [ \-c ] [ \-n " level " ]"
+.SH 설명
+.B dmesg
+명령은 커널 ring 버퍼를 조사하거나 제어하는데, 사용된다.
+
+이 풀그림은 부팅될 당시에 보여주는 각종 메시지를 다시 보고자 할 때, 
+사용된다. 직접 사용자가 이 메시지를 갈무리 할 필요없이, 
+다음과 같은 명령으로 간단하게 파일로 저장할 수 있다. 
+.P
+.RS
+dmesg > boot.messages
+.RE
+.P
+또한 어떠한 문제가 있을 때, 
+.I boot.messages
+파일을 제작자나 여러사람에게 보여주어 문제를 고치는데 도움을 준다.
+.SH 옵션
+.TP
+.B \-c
+메시지 내용을 보여주고 ring 버퍼를 모두 비운다.
+.TP
+.BI \-n level
+.I level
+값으로 \fIrunlevel\fR이 사용되는데, 이렇게 지정된 레벨의 메시지만, 
+커널 ring 버퍼에 저장한다. 
+예를 들어
+.B \-n 1
+옵션이 지정되면, 
+단일 사용자 모드로 부팅될 때의 메시지만 저장된다. 즉 리부팅, halt 메시지
+들을 커널 ring 버퍼에 저장되지 않는다. 하지만, 
+.IR /proc/kmsg 
+파일에는 모든 메시지가 저장되어,
+.BR syslogd (8)
+명령은 그 정보를 이용한다.
+.B \-n
+옵션이 사용되면, 
+\fBdmesg\fR는 커널 ring 버퍼를 보여주지 않거나, 비우지 않을 것이다. 
+
+만약에 두 옵션이 모두 사용되면, 마지막으로 지정된 옵션만이 그 영향을 
+준다.
+.SH 관련 항목
+.BR syslogd (8)
+.SH 만든이
+Theodore Ts'o (tytso@athena.mit.edu)

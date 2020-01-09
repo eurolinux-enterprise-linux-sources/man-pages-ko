@@ -1,0 +1,278 @@
+.\" Copyright Andries Brouwer, 2000
+.\"
+.\" This page is distributed under GPL.
+.\" Some fragments of text came from the time-1.7 info file.
+.\" Inspired by kromJx@crosswinds.net.
+.\"
+.\" --------------------------------------------------------------------
+.\" Translated in Korean by Yoon, Hyunho <hhyoon@kldp.org>.
+.\" Mail suggestions and mistranslations to hhyoon@kldp.org.
+.\" --------------------------------------------------------------------
+.TH TIME 1 2000-12-11 "" ""
+.SH 이름
+time \- 프로그램을 실행하고 사용한 시스템 자원을 보여준다.
+.SH 문법
+.BI "time [" options "] " command " [" arguments... "] "
+.SH 설명
+.B time
+명령은 특정 프로그램
+.I command
+를 주어진 인자로 실행시킨다.
+.I command
+가 종료되었을 때,
+.B time
+은 이 프로그램이 실행되는 동안의 타이밍 통계를 표준 출력으로 보여준다.
+이 통계에는 (i) 프로그램의 호출에서 종료까지의 경과된 실제 시간,
+(ii) 사용자 CPU 시간(
+.BR times (2)
+에서 반환되는 "struct tms"의 
+.I tms_utime
+과
+.I tms_cutime
+값의 합), 그리고 (iii) 시스템 CPU 시간(
+.BR times (2)
+에서 반환되는 "struct tms"의 
+.I tms_stime
+과
+.I tms_cstime
+값의 합)이 포함된다.
+.SH 옵션
+.TP
+.B \-p
+POSIX 로케일인 경우, 다음과 같은 전통적인 형식을 사용한다.
+.br
+.in +5
+"real %f\enuser %f\ensys %f\en"
+.in -5
+.br
+(초 단위로 표시한다.)
+.\" %f
+.\" where the number of decimals in the output for %f is unspecified
+.\" but is sufficient to express the clock tick accuracy, and at least one.
+.SH 환경
+환경 변수 LANG, LC_ALL, LC_CTYPE, LC_MESSAGES, LC_NUMERIC,
+NLSPATH, PATH가 사용된다. PATH는
+.IR command
+를 찾기 위해 사용된다.
+다른 변수는 출력 텍스트와 형식화에 사용된다.
+.SH 종료 상태
+.I command
+가 실행되었다면, 종료 상태는
+.IR command
+의 종료 상태가 된다.
+만약 종료 상태가 127 이라면,
+.I command
+를 찾지 못한 경우이고,
+126 이라면
+.I command
+를 찾기는 했지만 실행하지 못한 경우이다.
+그리고, 오류가 발생했을 때는 어떤 0이 아닌 값(1-125)이 된다.
+.SH 관련 항목
+.BR times (2)
+.sp 2
+.SH GNU 버전
+아래 설명은
+.BR time
+의 GNU 1.7 버전의 대한 것이다.
+이 유틸리티의 이름을 무시하고, GNU에서는 이것을 사용된 시간 뿐만 아니라, 
+메모리, I/O 그리고 IPC 호출 등과 같은 다른 유용한 정보들을
+출력하도록 만들었다.
+출력은 \-f 옵션을 통해 설정될 수 있는 형식 문자열 혹은 TIME 환경 변수를
+사용해서 형식화된다.
+.LP
+기본 형식 문자열은
+.br
+.in +3
+%Uuser %Ssystem %Eelapsed %PCPU (%Xtext+%Ddata %Mmax)k
+.br
+%Iinputs+%Ooutputs (%Fmajor+%Rminor)pagefaults %Wswaps
+.br
+.in -3
+이다.
+.LP
+\-p 옵션이 주어지면, 간단한(portable) 출력 형식
+.br
+.in +3
+real %e
+.br
+user %U
+.br
+sys %S
+.br
+.in -3
+이 사용된다.
+.SS "The format string"
+출력 형식은 printf와 같은 형태로 변환된다.
+보통 문자들은 그대로 복사되며, 탭, 개행문자, 그리고 백슬래쉬는
+\et, \en, \e\e를 이용하여 에스케이프된다.
+퍼센트 기호는 %%으로 표현되고, %는 변환 기호로 인식된다.
+.B time
+프로그램은 마지막에 항상 개행 문자를 추가한다.
+변환 기호는 다음과 같다.
+여기에 나온 변환 기호들은
+.BR tcsh (1)
+에서 지원되는 것들이다.
+.LP
+.B "Time"
+.TP
+.B %E
+경과된 실제 시간 ([시간:]분:초 단위)
+.TP
+.B %e
+(tcsh가 아닌 경우) 경과된 실제 시간 (초 단위).
+.TP
+.B %S
+커널 모드에서 프로세스가 사용한 CPU-second.
+.TP
+.B %U
+사용자 모드에서 프로세스가 사용한 CPU-second.
+.TP
+.B %P
+이 작업이 사용한 CPU의 퍼센트, (%U + %S) / %E 으로 계산한다.
+.LP
+.B "Memory"
+.TP
+.B %M
+프로세스 실행 시간 동안 최대 고유 설정 크기. (Kbyte 단위)
+.TP
+.B %t
+(tcsh가 아닌 경우) 프로세스의 평균 고유 설정 크기. (Kbyte 단위)
+.TP
+.B %K
+프로세스의 평균 총 메모리 사용량. (데이터 + 스택 + 텍스트) (Kbyte 단위)
+.TP
+.B %D
+프로세스의 공유하지 않는 데이터 영역의 평균 크기. (Kbyte 단위)
+.TP
+.B %p
+(tcsh가 아닌 경우) 프로세스의 공유하지 않는 스택 공간의 평균 크기. (Kbyte 단위)
+.TP
+.B %X
+프로세스의 공유하는 텍스트 공간의 평균 크기. (Kbyte 단위)
+.TP
+.B %Z
+(tcsh가 아닌 경우) 시스템의 페이지 크기. (바이트 단위)
+이것은 시스템에 따라 일정하며, 다른 시스템들에서는 다를 수 있다.
+.TP
+.B %F
+프로세스가 실행된 동안 발생한 중대한 페이지 오류의 횟수.
+이 오류들은 페이지가 디스크로부터 읽어들여져야하는 경우에 발생한 오류이다.
+.TP
+.B %R
+중대하지 않은, 혹은 복구할 수 있는 페이지 오류의 횟수.
+이 오류들은 유효하지 않은 하지만 아직까지 다른 가상 페이지에 의해
+사용이 요구되지 않은 페이지에 대한 오류들이다.
+따라서, 페이지의 데이터는 아직까지도 유효하지만 시스템 테이블은
+반드시 갱신되어야 한다.
+.TP
+.B %W
+메인 메모리에서 프로세스가 스왑된 횟수.
+.TP
+.B %c
+부득이하게 프로세스가 context-switched된 횟수.
+(이것은 시간 슬라이스가 만료되었기 때문이다.)
+.TP
+.B %w
+인스턴스가 입출력 작업을 마치는 것을 기다리는 동안 발생하는,
+부득이하게 프로세스가 context-switched된 횟수.
+.LP
+.B "I/O"
+.TP
+.B %I
+프로세스에 의해 발생한 파일 시스템 입력의 횟수.
+.TP
+.B %O
+프로세스에 의해 발생한 파일 시스템 출력의 횟수.
+.TP
+.B %r
+프로세스가 받은 소켓 메시지의 개수.
+.TP
+.B %s
+프로세스가 보낸 소켓 메시지의 개수.
+.TP
+.B %k
+프로세스에게 전달된 시그널의 개수.
+.TP
+.B %C
+(tcsh가 아닌 경우) time에서 실행된 명령의 이름과 명령행 인자.
+.TP
+.B %x
+(tcsh가 아닌 경우) 명령의 종료 상태.
+.SH GNU 옵션
+.TP
+.BI "\-f " FORMAT ", \-\-format=" FORMAT
+출력 형식을 설정한다. 환경 변수 TIME에서 설정된 형식을 겹쳐쓴다.
+.TP
+.B "\-p, \-\-portability"
+간략한 출력 형식을 사용한다.
+.TP
+.BI "\-o " FILE ", \-\-output=" FILE
+결과를 stderr로 보내지 않고, 설정한 파일에 덮어 쓴다.
+.TP
+.B "\-a, \-\-append"
+(\-o 옵션과 함께 사용된다.) 파일을 덮어쓰지 않고, 추가한다.
+.TP
+.B "\-v, \-\-verbose"
+프로그램에서 알 수 있는 모든 상세한 정보를 출력한다.
+.SH "GNU 표준 옵션"
+.TP
+.B "\-\-help"
+표준 출력에 사용법을 출력하고 종료한다.
+.TP
+.B "\-V, \-\-version"
+표준 출력에 버전 정보를 출력하고 종료한다.
+.TP
+.B "\-\-"
+옵션 목록을 끝낸다.
+.SH BUGS
+모든 자원이 유닉스의 모든 버전에서 측정되는 것은 아니다.
+따라서 어떤 값은 0으로 보고될 수 있다.
+여기에 보인 대부분의 정보들은 4.2 혹은 4.3BSD에서 제공되는 것들이다.
+.LP
+GNU time 버전 1.7은 아직까지 로케일화가 되지 않았다.
+따라서, POSIX 요구 조건을 구현되지 않았다.
+.LP
+환경 변수 TIME의 선택은 나쁜 선택이었다.
+이것은 autoconf나 make와 같은 시스템에서 사용하는 유틸리티의
+이름으로 겹쳐써지는 환경 변수이다.
+.\" The environment variable TIME was badly chosen.
+.\" It is not unusual for systems like autoconf or make
+.\" to use environment variables with the name of a utility to override
+.\" the utility to be used. Uses like MORE or TIME for options to programs
+.\" (instead of program path names) tend to lead to difficulties.
+.LP
+추가하는 대신 \-o 옵션으로 덮어쓴다는 것은 별로 좋아보이지 않는다.
+(이것은 \-a 옵션이 기본 옵션으로 되어야 할 것이다.)
+.LP
+GNU
+.B time
+에 대한 제안이나 버그 리포트는 
+.br
+.I bug-utils@prep.ai.mit.edu
+.br
+으로 메일을 보내주기 바란다.
+이때, 사용하고 있는
+.B time
+의 버전과 사용하는 운영체제, 그리고 C 컴파일러을 명시해주기 바란다.
+버전 정보는
+.br
+.I time --version
+.br
+을 실행함으로서 알 수 있다.
+.SH 관련 항목
+.BR tcsh (1),
+.BR times (2),
+.BR wait3 (2)
+.SH 저자
+.TP
+.IP "David Keppel"
+Original version
+.IP "David MacKenzie"
+POSIXization, autoconfiscation, GNU getoptization,
+documentation, other bug fixes and improvements.
+.IP "Arne Henrik Juul"
+Helped with portability
+.IP "Francois Pinard"
+Helped with portability
+.SH 역자
+윤현호 <hhyoon@kldp.org>, 2002년 7월 26일

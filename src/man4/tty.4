@@ -1,0 +1,51 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sat Jul 24 17:02:24 1993 by Rik Faith (faith@cs.unc.edu)
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH TTY 4 "January 21, 1992" "Linux" "Linux Programmer's Manual"
+.SH 이름
+tty \- 제어 터미널
+.SH 설명
+파일 \fB/dev/tty\fP는 문자 파일로서 메이저 넘버 5와 마이너 넘버 0을 지니며, 보통 모드 0666와 
+owner.group root.tty를 지닌다. 이 파일은 프로세스의 제어 터미널과 유사하다. 
+
+.LP
+\fBtty\fP가 참조하는 디바이스에 의해 지원된 \fBioctl()\fP 요청외에도, 
+다음의 \fBioctl()\fP 요청 역시 지원된다. 
+
+.IP \fBTIOCNOTTY\fP
+제어 터미널에서 현재 프로세스를 떼어내고, 이를 새로운 프로세스 그룹에 
+부착할 필요 없이, 현재 프로세스 그룹에서 삭제한다. (그룹 ID를 0으로 설정한다.)
+\fBioctl()\fP 호출은 \fB/dev/tty\fP에 연결된 파일 기술자에서만 동작한다. 이는
+터미널에서 사용자에 의해 데몬 프로세스들이 시작되었을 때, 데몬 프로세스에 의해 사용된다. 
+프로세스는 \fB/dev/tty\fP를 열고자 한다. 만일 여는 것이 성공적이라면, \fBTIOCNOTTY\fP를 
+사용함으로서 터미널에서 자신을 제거시킨다. 반면에 여는 것이 실패하면, 터미널에서 첨부될
+필요가 없으므로 자신을 제거할 필요가 없다. 
+
+.SH 파일
+/dev/tty
+.SH 관련 항목
+.BR mknod "(1), " chown "(1), " getty "(1), " termios "(2), "
+.BR console "(4), " ttys (4)

@@ -1,0 +1,127 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"                               1993 Ian Jackson.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Sat Jul 24 13:00:50 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Sun Sep  8 18:59:01 1996 by aeb following remarks by
+.\"     Arnt Gulbrandsen <agulbra@troll.no>
+.\" Modified Fri Jan 31 23:49:15 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH UNLINK 2 "1997년 8월 21일" "Linux 2.0.30" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+unlink \- 이름 그리고 가능하면 참조하는 파일도 지운다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.BI "int unlink(const char *" pathname );
+.SH 설명
+.B unlink
+는 파일 시스템에서 이름을 지운다. 만일 그 이름이 파일에 대한 최근 연결이고
+어떤 프로세스도 열려진 파일을 가지고 있지 않다면 파일은 지워지며 파일이 사용한
+공간은 다시 사용가능하게 된다.
+
+만일 이름이 파일에 대한 최근 연결이지만 어떤 프로세스가 여전이 열려진 파일을 
+가지고 있다면 파일을 참조하는 최근 파일 기술자가 닫혀질때까지 파일은 존재한 체로
+남아 있게 된다.
+
+만일 이름이 상징 연결을 가리킨다면 연결은 제거된다.
+
+만일 이름이 소켓, fifo 또는 장치를 가리킨다면 이것에 대한 이름은 제거되지만 
+열려진 객체를 가지고 있는 프로세스들은 그것을 계속 사용한다.
+
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되며 
+.I errno
+는 적당한 값으로 설정된다.
+.SH 에러
+.TP
+.B EACCES
+.I pathname
+을 포함하는 디렉토리에 대한 쓰기 접근이 프로세스의 유효 uid에게 허가 되지
+않았거나, 
+.IR pathname 에 
+있는 디렉토리중 하나가 검색(실행) 허가권을 허가하지 않는다.
+.TP
+.BR EPERM " or " EACCES
+.I pathname
+을 포함하는 디렉토리가 sticky-bit
+.RB ( S_ISVTX ) 가
+설정되어 있고 프로세스의 유효 uid가 삭제할수가 있는 파일의 uid나 파일을
+포함하는 디렉토리의 uid가 아니다.
+.TP
+.B EPERM
+파일
+.I pathname
+가 디렉토리이다.
+.TP
+.B EFAULT
+.I pathname
+가 접근할수 있는 주소 공간외를 가리키고 있다.
+.TP
+.B ENAMETOOLONG
+.IR pathname 이 " 너무 길다."
+.TP
+.B ENOENT
+.I pathname
+에 있는 디렉토리 요소가 존재하지 않거나 붙어다니는 상징 연결이다.
+.TP
+.B ENOTDIR
+.I pathname
+에서 디렉토리로써 사용된 요소가 사실은 디렉토리가 아니다.
+.TP
+.B EISDIR
+.I pathname
+가 디렉토리를 가리킨다.
+.TP
+.B ENOMEM
+이용할수 있는 커널 메모리가 충분하지 않다.
+.TP
+.B EROFS
+.I pathname
+가 읽기-전용 파일 시스템에 있는 파일을 가리킨다.
+.TP
+.B ELOOP
+너무 많은 상징연결을 
+.IR pathname 
+번역시 만났다.
+.TP
+.B EIO
+I/O 에러가 발생했다.
+.SH 호환
+SVr4, SVID, POSIX, X/OPEN, 4.3BSD.  SVr4 는 추가적으로 
+EBUSY, EINTR, EMULTIHOP, ETXTBUSY, ENOLINK 에러 조건들을 문서화했다.
+.SH 버그
+NFS 기반에서 돌아가는 프로토콜에서 불운한 사태는 여전히 사용되고 있는 파일들이 
+값자기 지워질수 있다는 점이다.
+.SH 관련 항목
+.BR link (2),
+.BR rename (2),
+.BR open (2),
+.BR rmdir (2),
+.BR mknod (2),
+.BR mkfifo (3),
+.BR remove (3),
+.BR rm (1)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 8월 5일

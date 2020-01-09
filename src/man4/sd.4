@@ -1,0 +1,118 @@
+.\" sd.4
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH SD 4 "1992년 12월 17일 목요일 10:15:53" "" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+sd \- 스카시디스크 드라이버이다.
+.SH 사용법
+#include <linux/hdreg.h>        /* for HDIO_GETGEO */
+#include <linux/fs.h>           /* for BLKGETSIZE and BLKRRPART */
+.SH CONFIG
+블록장치명은 다음과 같은 형태이다:
+.BI sd lp,
+where
+.I l
+이 물리적드라이브를 표시하는 문자이고,
+.I p
+가 물리적드라이브의 파티션을 표시하는 숫자이다.
+
+스카시디스크는 메이저장치번호 8번이고, 마이너장치번호SCSI disks have a major device number of 8, and a minor device number of
+the form (16 *
+.IR drive_number ") + " partition_number ,
+where
+.I drive_number
+is the number of the physical drive in order of detection, and
+.I partition_number
+is as follows:
+.sp
+파티션 0은 모든 드라이브이다.
+.br
+파티션 1에서 4는 도스"프라이머리"파티션이다.
+.br
+파티션 5에서 8은 도스 "확장(혹은 "논리")" 파티션이다.
+
+예를 들면,
+.B /dev/sda
+는 메이저 8과, 마이너 0을 갖게되고, 시스템의 모든 스카시드라이브와 관련될
+것이다; 그리고
+.B /dev/sdb3
+는 메이저 8과 마이너 19를 갖게되고, 시스템의 두번째 스카시 드라이브상의 
+세번째 도스"프라이머리"파티션과 관련될 것이다.
+
+이때, 블록 장치가 제공된다. Raw장치는 아직 구현되지 않았다.
+.SH 설명
+iotcl's는 아래와 같이 제공된다:
+.TP
+HDIO_GETGEO
+.RS
+는 아래 구조인 바이오스 디스크 매개변수를 반환한다:
+.RS
+.nf
+.ft B
+struct hd_geometry {
+      unsigned char heads;
+      unsigned char sectors;
+      unsigned short cylinders;
+      unsigned long start;
+};
+.ft R
+.fi
+.RE
+
+이 구조에서 포인터는
+.BR ioctl (2)
+매개변수에 의해 전달된다.
+
+매개변수의 정보는 디스크
+.I "도스에 의해 이해되는"
+드라이브의 디스크구성도이다.
+이 구성도는 드라이브의 물리적인 구성도는
+.I 아니다.
+그것은 드라이버의 파티션 테이블을 구성할때 사용되지만, 
+.BR fdisk (1), efdisk "(1), and " lilo (1)
+의 용이한 실행을 위해 필요하다.
+구성도 정보가 유효하지 않다면, 모든 매개변수를 위해 0이 반환될 것이다.
+.RE
+.TP
+BLKGETSIZE
+섹터의 장치크기를 반환한다.
+.BR ioctl (2)
+매개변수는 long을 포인터한다.
+.TP
+BLKRRPART
+스카시디스크 파티션 테이블의 다시읽기를 강제한다. 어떤 매개변수도 필요하지 않다.
+
+.BR scsi (4)
+ioctls는 또한 지원된다.
+.BR ioctl (2)
+매개변수가 요구되고, 널이면 
+.BR ioctl (2)
+는 -EINVAL를 반환한다.
+.SH 파일
+/dev/sd[a-h]: 모든 장치
+.br
+/dev/sd[a-h][0-8]: 개별 블록 파티션
+.SH 관련 항목
+.BR scsi (4)

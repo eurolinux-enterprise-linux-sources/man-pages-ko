@@ -1,0 +1,115 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1996 Tom Bjorkholm <tomb@mydata.se>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" 1996-04-11 Tom Bjorkholm <tomb@mydata.se>
+.\"            First version written (1.3.86)
+.\" 1996-04-12 Tom Bjorkholm <tomb@mydata.se>
+.\"            Update for Linux 1.3.87 and later
+.\"
+.TH MREMAP 2 "1996년 4월 12일" "리눅스 1.3.87" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+mremap \- 가상 메모리 주소를 재대응시킨다.
+.SH 사용법
+.B #include <unistd.h>
+.br
+.B #include <sys/mman.h>
+.sp
+.BI "void * mremap(void * " old_address ", size_t " old_size
+.BI ", size_t " new_size ", unsigned long " flags );
+.fi
+.SH 설명
+\fBmremap\fR 는 존재하는 메모리 대응을 확장(또는 축소)하며, 
+동시에 내부적으로 그 대응을 이동시킨다 (\fIflags\fR인자와 이용할 수 있는 
+가상 주소 공간에 의해 제어된다).
+
+\fIold_address\fR는 확장(또는 축소)하기를 원하는 가상 메모리 블럭의 
+예전 주소이다. \fIold_address\fR는 페이지 정렬이 되있어야 한다.
+\fIold_size\fR는 가상 메모리 블럭의 예전 크기이다.
+\fInew_size\fR는 바꾸려하는 새로운 가상 메모리 블럭의 크기이다.
+
+\fIflags\fR인자는 플래그의 비트맵이다.
+
+리눅스에서 메모리는 페이지로 나누어 진다. 사용자 프로세스는 (하나 
+또는) 여러 개의 선형 가상 메모리 세그먼트들을 가지고 있다.
+각각의  가상 메모리 세그먼트는 하나 또는 여러 개의 실제 메모리 페이지로
+(페이지 테이블 내) 대응된다.
+각각의 가상 메모리 세그먼트는 잘못된 메모리에 접근되면 세그먼트 위반을
+발생시키는 (즉, 읽기 전용 세그먼트에 쓰기를 할 때) 자신만의 
+보호 모드(접근 권한)를 가지고 있다.
+
+세그먼트 영역 외의 가상 메모리 접근 또한 세그먼트 위반을 발생시킨다.
+
+\fBmremap\fR는 리눅스 페이지 구조를 사용한다.
+\fBmremap\fR는 가상 주소와 메모리 페이지 사이의 대응을 바꾼다.
+이것은 \fBrealloc\fR을 매우 효율적으로 수행하기 위해 사용될 수 있다.
+
+.SH 플래그
+.TP
+.B MREMAP_MAYMOVE
+연산이 실패하면, 현재 가상 주소에 대한 크기 변경이 불가능한 경우
+가상 주소를 바꾸도록 지정한다.
+
+.SH 반환값
+성공시, \fBmremap\fR는 새로운 가상 메모리 영역에 대한 포인터를 
+반환한다.  에러시, \-1이 반환되며,\fIerrno\fR는 적당한 값으로 설정된다.
+
+.SH 에러
+.TP
+.B EINVAL
+유효하지 않은 인자가 주어졌다. 대부분 \fIold_address\fR가 페이지
+정렬 되있지 않은 경우이다.
+.TP
+.B EFAULT
+"Segmentation fault" 
+\fIold_address\fR에서 \fIold_address\fR+\fIold_size\fR 범위의 일정
+주소가 이 프로세스를 위한 유효한 가상 메모리 주소가 아니다.
+비록 요청된 전체 주소 공간을 포함하는 대응이 있을 지라도 사용자는 
+EFAULT를 받을 수 있으며, 이런 대응은 다른 타입의 것이다.
+.TP
+.B EAGAIN
+메모리 세그먼트가 잠겨져 있어 다시 대응시킬 수 없다.
+.TP
+.B ENOMEM
+메모리 영역이 현재 가상 주소로 확장될 수 없으며, 
+\fIMREMAP_MAYMOVE\fR 플래그가 \fIflags\fR에 설정되있지 않다. 
+또는, 이용할 수 있는 (가상) 메모리가 충분하지 않다.
+.SH 호환
+이 시스템 콜은 리눅스에 한정적이며, 호환성을 염두에 둔 프로그램에서
+사용해서는 안된다. 4.2BSD는 완전히 다른 의미의
+.BR mremap (2)
+시스템 콜(실제로 구현되지 않음)이 있다.
+.SH 관련 항목
+.BR getpagesize (2),
+.BR realloc (3),
+.BR malloc (3),
+.BR brk (2),
+.BR sbrk (2),
+.BR mmap (2)
+.P
+메모리 페이지에 관한 더 많은 정보는 좋아하는 OS 교재를 참고하라>
+(Andrew S. Tannenbaum의 \fIModern Operating Systems\fR,
+Randolf Bentson의 \fIInside Linux\fR,
+Maurice J. Bach의 \fIThe Design of the UNIX Operating System\fR.)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 5월 15일

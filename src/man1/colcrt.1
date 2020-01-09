@@ -1,0 +1,114 @@
+.\" Copyright (c) 1980, 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)colcrt.1	8.1 (Berkeley) 6/30/93
+.\"
+.Dd June 30, 1993
+.Dt COLCRT 1
+.Os BSD 3
+.Sh NAME
+.Nm colcrt
+.Nd 밑줄 속성을 가진 문자 변환 필터
+.Sh SYNOPSIS
+.Nm colcrt
+.Op Fl
+.Op Fl \&2
+.Op Ar
+.Sh DESCRIPTION
+.Nm Colcrt
+필터는 밑줄 속성을 가진 문자를 
+볼 수 없는 터미날이나, 인쇄할 수 없는 프린터를 위해,
+일반 텍스트 문서에서 그 문자 밑에 밑줄문자(\-)를 
+넣어주는 필터이다. 
+.Pp
+사용할 수 있는 옵션은 다음과 같다:
+.Bl -tag -width Ds
+.It Fl
+밑줄 속성이 있는 문자열 아랫줄은 모두 밑줄로 표시한다.
+이 옵션은 특별하게 
+.Xr tbl 1 
+명령에 의해서 만들어지는 표상자를 미리 보는데 유용하게 사용된다.
+.It Fl 2
+이 옵션을 사용하지 않으면, 밑줄 속성이 있는 문자열이 있는 
+다음줄에만 밀줄문자(\-)를 추가하기 위해 줄이 첨가된다. 
+이것을 인쇄할 경우에 줄 간격이 이상하게 되어 읽기가 불편하다. 
+이런 것을 대비해서 이 옵션을 사용하면, 밑줄 속성이 없는 문자열에서도 
+무조건 다음줄은 공백으로 한줄 띄우게 된다. 
+.El
+.Sh EXAMPLES
+.Nm colcrt
+필터는 전형적으로 다음과 같이 사용된다.
+.Bd -literal
+tbl exum2.n \&| nroff \-ms \&| colcrt \- \&| more
+.Ed
+.Sh SEE ALSO
+.Xr nroff 1 ,
+.Xr troff 1 ,
+.Xr col 1 ,
+.Xr more 1 ,
+.Xr ul 1
+.Sh BUGS
+.Ql Fl
+옵션을 사용했음에도 불구하고 밑줄 문자가 만들어지지 않을 경우도 있다.
+.Pp
+102줄 이상 되는 문서에서는 백업이 불가능하다.
+.Pp
+가운데줄 속성(흔히 취소선이라고함,overstriking)을 가진 문자들에 
+대해서는 변환이 불가능하다. 
+.Ql \&|
+기능을 이용할 경우에는 
+.Ql \-
+문자나,
+.Ql \&+ .
+문자로 보여질 수도 있다.
+.Pp
+한글이 있는 문자열은 변환 불가능(팻치가 시급함)
+.Pp
+이미 두 공백문자가 있는 문서 안의 슈퍼스크립트나 하위스크립트 처리를 
+위해서 약간의 준비과정이 필요하다.(?)
+.Sh HISTORY
+.Nm
+명령은 
+.Bx 3.0 
+에서 처음 사용되었다.
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,79 @@
+.\"{{{}}}
+.\"{{{  Title
+.TH LAST,LASTB 1 "March 11, 1996" "" "Linux System Administrator's Manual"
+.\"}}}
+.\"{{{  Name
+.SH NAME
+last, lastb \- 사용자들의 마지막 로그인했는 기록 목록을 보여준다.
+.\"}}}
+.\"{{{  Synopsis
+.SH SYNOPSIS
+.B last
+.RB [ \-R ]
+.RB [ \-\fInum\fP ]
+.RB "[ \-\fBn\fP \fInum\fP ]"
+.RB [ \-adx ]
+.RB "[ \-\fBf\fP \fIfile\fP ]"
+.RI [ name... ]
+.RI [ tty... ]
+.br
+.B lastb
+.RB [ \-R ]
+.RB [ \-\fInum\fP ]
+.RB "[ \-\fBn\fP \fInum\fP ]"
+.RB "[ \-\fBf\fP \fIfile\fP ]"
+.RB [ \-adx ]
+.RI [ name... ]
+.RI [ tty... ]
+.\"}}}
+.\"{{{  Description
+.SH DESCRIPTION
+.B Last
+명령은 \fB/var/log/wtmp\fP 파일이나, \fB\-f\fP 옵션에서 지정한 
+파일을 통해서 사용자의 로그인, 로그아웃 시간을 보여준다. 
+특정 사용자의 이름이나, tty를 지정할 수 있으며, 
+이렇게 지정되면, 해당 사용자의 로그인 정보만을 보여준다.
+tty의 이름은 생략될 수 있어, \fBlast 0\fP 명령은 
+\fBlast tty0\fP 명령과 같은 기능을 한다. 
+\fBlast\fP가 실행 중에 \s-2SIGINT\s0(인터럽트 글쇠, 
+주로 Ctrl-C에 의해서 만들어지는 신호)가 감지되거나, 
+\s-2SIGQUIT\s0(마침 글쇠, 주로 Ctrl-\e에 의해서 만들어지는 신호)가 
+감지되면, 실행을 마친다.
+.PP
+접속 사용자 이름에 \fBreboot\fP라고 나오는 것은 시스템이 
+reboot된 것을 나타낸다. 즉 \fBlast reboot\fP 명령으로 
+기록 파일이 만들어진 후부터 reboot 되었는 기록을 모두 볼 수 있다.
+.PP
+\fBLastb\fP 명령은 접속 실패를 기록하는 파일인 \fB/var/log/btmp\fP
+파일을 대상으로 한다는 것을 제외하고는 \fBlast\fP 명령과 같다.
+.\"}}}
+.\"{{{  Options
+.SH OPTIONS
+.IP \fB\-\fP\fInum\fP
+\fInum\fP 만큼의 줄만 보여준다.
+.IP "\fB\-n\fP \fInum\fP"
+윗 기능과 같음.
+.IP \fB\-R\fP
+\fBhostname\fP 필드를 보여주지 않음.
+.IP \fB\-a\fP
+\fBhostname\fP 필드를 마지막에 보여줌. 이 옵션은 다음 옵션과 함께 
+요용하게 쓰임.
+.IP \fB\-d\fP
+다른 호스트에서 접속한 것만 보여줌.
+.IP \fB\-x\fP
+shutdown이 일어난 상태나, run level이 바뀐 상태도 보여줌.
+.\"}}}
+.SH NOTES
+\fIwtmp\fP 파일이나, \fIbtmp\fP 파일이 없을 수도 있다. 
+시스템은 이런 파일이 있을 경우에만, 로그인 정보를 그 파일에 기록한다. 
+만약 없는데, 이제부터 last 명령을 사용하고 싶다면, 
+단지 간단하게 \fBtouch\fP 명령을 사용해서 각 파일을 만들어 놓으면 된다.
+(예를 들면, \fItouch /var/log/wtmp\fP).
+.\"{{{  Author
+.SH AUTHOR
+Miquel van Smoorenburg, miquels@cistron.nl
+.\"}}}
+.\"{{{  See also
+.SH "SEE ALSO"
+shutdown(8), login(1), init(8)
+.\"}}}

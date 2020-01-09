@@ -1,0 +1,180 @@
+.\" Copyright (c) 1980, 1990 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"     This product includes software developed by the University of
+.\"     California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\" @(#)whereis.1 from UCB 4.2
+.TH WHEREIS 1 "8 May 1994"
+.SH 이름
+whereis \- 명령의 실행 파일, 소스, 매뉴얼 페이지가 어디 있는지 보여준다.
+.SH 사용법
+.B whereis
+[
+.B \-bmsu
+] [
+.B \-BMS
+.IR 경로 .\|.\|.
+.B \-f
+]
+\fI파일이름\fP\|
+\&.\|.\|.
+.IX  "whereis command"  ""  "\fLwhereis\fP \(em find program"
+.IX  find "program \(em \fLwhereis\fP"
+.IX  "locate program"  ""   "locate program \(em \fLwhereis\fP"
+.IX  command  locate  ""   "locate \(em \fLwhereis\fP"
+.SH 설명
+.B whereis
+명령은 지정한 \fI파일이름\fR의 실행파일, 소스, 매뉴얼 페이지가
+어디 있는지 알려준다.
+지정할 \fI파일이름\fR에는 확장자가 사용될 수 있다. 이때, 
+`.c', `.1' 이런 소스 파일과 매뉴얼 페이지 확장자가 사용될 수 있는데, 
+이러면 특별히 지정하지 않으면 그 실행파일까지도 찾아준다.
+이때
+.B whereis
+명령은 따로 특별히 찾을 경로를 지정하지 않으면,
+다음 경로를 바탕으로 찾는다:
+.IP
+.nf
+.ft B
+/bin
+/usr/bin
+/etc
+/usr/etc
+/sbin
+/usr/sbin
+/usr/games
+/usr/games/bin
+/usr/emacs/etc
+/usr/lib/emacs/19.22/etc
+/usr/lib/emacs/19.23/etc
+/usr/lib/emacs/19.24/etc
+/usr/lib/emacs/19.25/etc
+/usr/lib/emacs/19.26/etc
+/usr/lib/emacs/19.27/etc
+/usr/lib/emacs/19.28/etc
+/usr/lib/emacs/19.29/etc
+/usr/lib/emacs/19.30/etc
+/usr/TeX/bin
+/usr/tex/bin
+/usr/interviews/bin/LINUX
+/usr/bin/X11
+/usr/X11/bin
+/usr/X11R5/bin
+/usr/X11R6/bin
+/usr/X386/bin
+/usr/local/bin
+/usr/local/etc
+/usr/local/sbin
+/usr/local/games
+/usr/local/games/bin
+/usr/local/emacs/etc
+/usr/local/TeX/bin
+/usr/local/tex/bin
+/usr/local/bin/X11
+
+/usr/contrib",
+/usr/hosts",
+/usr/include",
+
+/usr/g++-include",
+.ft R
+.fi
+.SH 옵션
+.TP
+\fB\-b
+실행 파일만 찾는다.
+.TP
+.B \-m
+매뉴얼 페이지만 찾는다.
+.TP
+.B \-s
+소스만 찾는다.
+.TP
+.B \-u
+일반적이지 않은 항목을 위한 찾기. 
+이 옵션은 일반적으로 특정 파일을 제외하는데 사용된다.
+즉, 
+.RB ` "whereis\ \ \-m\ \ \-u\ \ *" '
+명령은 현재 경로에서 메뉴얼 페이지가 없는 파일을 조사한다.
+.TP
+.B \-B
+실행 파일을 찾을 경로를 지정한다.
+.TP
+.B \-M
+매뉴얼 페이지를 찾을 경로를 지정한다.
+.TP
+.B \-S
+소스 파일을 찾을 경로를 지정한다.
+.TP
+.B \-f
+경로 지정이 끝나고 다음에 오는 것은 찾을 파일 이름을 알리는 옵션이다.
+이 옵션은
+.BR \-B ,
+.BR \-M ,
+.B \-S
+옵션들이 사용될 때에 사용해야 한다.
+.SH 예제
+.B /usr/bin
+경로 안에 있지만,
+.B /usr/man/man1
+경로 안에 그 해당 매뉴얼이 없고,
+.B /usr/src
+경로 안에 그 해당 소스가 없는 
+모든 파일을 찾는 예제는:
+.IP
+.nf
+.ft B
+example% cd /usr/bin
+example% whereis \-u \-M /usr/man/man1 \-S /usr/src \-f *
+.fi
+.ft R
+.SH "관련 파일"
+.PD 0
+.TP 20
+.B /{bin,sbin,etc}
+.TP
+.B /usr/{lib,bin,old,new,local,games,include,etc,src,man,sbin,
+.B X386,TeX,g++-include}
+.TP
+.B /usr/local/{X386,TeX,X11,include,lib,man,etc,bin,games,
+.B emacs}
+.TP 0
+.B 
+.PD
+.SH " "
+.SH "관련 항목"
+.BR chdir (2)
+.SH 벌레
+보다 빠르게 실행하기 위해 \fBwhereis\fR가 \fBchdir (2)\fR을 사용할 때, 
+.BR \-M ,
+.BR \-S ,
+.B \-B
+옵션의 인자로 지정하는 경로는 절대 경로여야한다. 
+즉, 그 경로는  반드시 ` / '로 시작해야한다.
+

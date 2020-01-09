@@ -1,0 +1,158 @@
+.\" This file Copyright 1992,93,94 Miquel van Smoorenburg
+.\" It may be distributed under the GNU Public License, version 2, or
+.\" any higher version.  See section COPYING of the GNU Public license
+.\" for conditions under which this file may be redistributed.
+.TH RUNSCRIPT 1 "1994년 10월 28일" "사용자 설명서"
+.SH 이름
+runscript \- minicom을 위한 스크립트 인터프리터
+.SH 사용법
+.B runscript
+.RI "스크립트"
+.SH 설명
+.B runscript
+풀그림은 간단한 스크립트 인터프리터이다. 
+이것은 minicom 통신 풀그림 안에서 호출되어, 
+unix 시스템이나, 기타 BBS에 접속과정을 자동으로 처리해준다.
+.SH 호출
+이 풀그림의 인자로 단지 하나의 스크립트 파일 이름만을 
+사용할 수 있다. 또한 이것의 입/출력은 단지 연결된 호스트를 
+대상으로만 하고 있다. runscript에서 처리하는 모든 메시지는 
+현재 화면의 것을 입력받아, stderr로 보낸다. 
+그래서, 이 인터프리터는 \fBminicom\fP에서 작동되도록 고안 
+작성되었다.
+.PP
+참고: 이 스크립트 파일은 초기값으로 /usr/lib/minicom 경로 
+안에 있어야한다. (즉, 기본적으로 시스템 관리자만이 
+이 스크립트 파일을 관리할 수 있다. - 초기값)
+.SH 키워드
+.TP 0.5i
+runscript는 다음의 명령들을 인식한다:
+.br
+.RS
+.nf
+
+expect   send     goto     gosub    return   \^!
+exit     print    set      inc      dec      if
+timeout  verbose  sleep    break    call
+
+.fi
+.RE
+.SH "키워드 개요"
+.TP 0.25i
+.B "send <문자열>"
+<문자열>은 모뎀으로 보낼 문자열이다. 
+'\\r' 문자는 자동으로 끝에 붙는다.
+<문자열>로 사용될 수 있는 것은: 
+  - 단순한 단어, 예 'send hello'
+  - 따움표로 둘러싼 단어들, 예 'send \^"hello world\^"'
+.TP 0.5i
+<문자열> 안에는 다음과 같은 제어문자들을 사용할 수있다.
+    \\n - 새줄
+    \\r - 리턴문자
+    \\a - 벨소리
+    \\b - 백스페이스
+    \\c - 초기값인 '\\r' 자동 보내기를 하지 않음.
+    \\f - 용지바꿈문자
+    \\o - \fBo\fP문자 보냄 (\fBo\fP는 8진수를 뜻한다.)
+
+.br
+또한 $(환경변수_값)을 사용할 수 있다. 
+예: $(TERM). minicom에서는 두개의 특별한 환경변수값을 제공하는데,
+사용자 ID로 $(LOGIN), 비밀번호로 $(PASS)가 그것이다.
+이 값은 전화번호부에서 지정한다.
+.TP 0.25i
+.B "print <문자열>"
+<문자열>을 현재 화면에 출력한다.
+끝에는 자동으로 '\\r\\n' 문자가 붙는다. 
+나머지는 'send'와 사용법이 같다.
+.TP 0.5i
+.B "label:"
+goto나 gosub에의해 이동되는 분기점을 지정.
+.TP 0.5i
+.B "goto <label>"
+스크립트 안에서 다른 위치로 이동한다.
+.TP 0.5i
+.B "gosub <label>"
+서브 goto로 'return'에 도달했을 때, 현재의 영역 안에서
+이동한다.
+.TP 0.5i
+.BR "return"
+gosub 영역을 벗어난다.
+.TP 0.5i
+.BR "! <명령>"
+쉘명령을 실행한다. 그 명령의 리턴값은 $? 변수에 저장된다.
+그래서, 'if' 문으로 선택적인 문을 만들 수 있다.
+.TP 0.5i
+.B "exit [값]"
+부여한 \fI값\fR 돌려주며, \^"runscript\^"를 마친다. 초기값 1
+.TP 0.5i
+.B "set <변수명> <변수값>"
+<변수명>은 a부터 z까지의 단일 문자이며, 
+이 변수에 <변수값>을 지정한다. 변수 선언 없이 사용되면, 
+즉시 만들고, <변수값>은 숫자나 다른 변수여야한다.
+.TP 0.5i
+.B "inc <변수명>"
+<변수명>의 변수값을 하나씩 증가시킨다.
+.TP 0.5i
+.B "dec <변수명>"
+<변수명>의 변수값을 하나씩 감소시킨다.
+.TP 0.5i
+.B "if <변수> <연산자> <변수> <문>"
+사용할 수 있는 연산자는 <, >, !=, -.
+예, 'if a > 3 goto exitlabel'.
+.TP 0.5i
+.B "timeout <값>"
+제한시간을 설정한다.
+초기값으로 'runscript' 전체 실행시간은 2분이다.
+즉, 특별히 시간을 정해 놓지 않으면, 2분 후에는 자동으로 종료된다.
+이 값을 이명령으로 바꿀 수 있다. 
+이 명령은 'expect' 문에서는 다르게 동작한다.
+아래 참조.
+.TP 0.5i
+.B "verbose <on|off>"
+초기값은 'on'. 'runscript' 작동 상태를 화면에서 볼 수 있게 한다.
+.TP 0.5i
+.B "sleep <값>"
+<값> 초 동안 실행을 잠시 멈춘다.
+.TP 0.5i
+.B "expect"
+.nf
+  expect {
+    패턴 [문]
+    패턴 [문]
+    [timeout <값> [문] ]
+    ....
+  }
+.fi
+가장 중요한 명령어이다. 
+패턴을 기다려서, 해당 패턴이 나타나면, 해당 <문>을 실행한다. 
+패턴은 'send'에서 설명한 문자열이며, 일반적으로 첫번째, 
+패턴에 대한 문은 생략해서, 만일 첫번째 패턴이 나타나면, 
+바로 expect 문을 벗어나 다음 작업을 계속 하도록 한다. 
+만일 이때, 첫번째 패턴이 나타나지 않고, 두번째 패턴이 나타난다면, 
+두번째 패턴에서 지정한 문을 실행한다. 
+초기값으로 expect의 최대시간은 60초이다. 이것을 바꾸려면
+timeout을 사용한다.
+.TP 0.5i
+.B "break"
+\^'expect' 문을 중지한다. 이 명령은 'timeout' 명령에 대한 
+문으로 일반적으로 사용된다. 'timeout'에 대한 아무른 작업을 
+지시하지 않으면, 제한 시간을 초과했을 경우, 그 스크립트 
+자체를 마쳐버리기 때문이다.
+.TP 0.5i
+.B "call <스크립트이름>"
+다른 <스크립트이름>의 파일을 불러와 실행한다. 
+이때 아무런 오류가 나지 않으면 나머지 스크립트를 실행한다.
+.SH 참고
+'runscript'를 사용해서 스크립트를 만드는 작업은 
+그다지 프로그래밍에 대한 지식이 없어도 쉽게 만들 수 있을 것이라
+생각한다. BASIC 정도를 한번쯤 사용해 본 사람이라면
+쉽게 작성할 수 있을 것이다. 
+\fBminicom\fP 패키지 안에는 \fBscriptdemo\fP, \fBunixlogin\fP
+등 몇개의 스크립트 파일이 예제로 있는데, 
+이것을 참고한다면, 보다 유용한 스크립트 파일을 만들 수 있을 것이다.
+.SH 벌레
+runscript는 minicom용으로 고안, 작성되었기 때문에, 
+다른 곳에서는 제대로 동작하지 않을 수 있다.
+.SH 만든이
+Miquel van Smoorenburg, <miquels@drinkel.ow.org>

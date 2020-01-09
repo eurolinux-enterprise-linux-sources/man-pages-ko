@@ -1,0 +1,21 @@
+.TH LOGNAME 1L "GNU 쉘 유틸리티" "FSF" \" -*- nroff -*-
+.SH 이름
+logname \- 사용자의 로그인명을 출력한다.
+.SH 개요
+.B logname [\-\-help] [\-\-version]
+.SH 설명
+이 맨페이지는 GNU 버전의
+.BR logname 
+을 설명한다.
+.B logname
+은 호출한 사용자의 이름을 /etc/utmp 에 나타난 대로 출력하고 0 번 상태로
+종료한다. /etc/utmp 에 호출한 프로세스에 대한 항목이 존재하지 않으면
+.B logname
+은 에러 메세지를 출력하고 1 번 상태로 종료한다.
+.SS 옵션
+.TP
+.I "\-\-help"
+표준출력으로 사용법을 출력하고 정상적으로 종료한다.
+.TP
+.I "\-\-version"
+표준출력으로 버전정보를 출력하고 정상적으로 종료한다.

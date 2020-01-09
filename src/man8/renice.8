@@ -1,0 +1,115 @@
+.\" Copyright (c) 1983, 1991, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)renice.8	8.1 (Berkeley) 6/9/93
+.\"
+.Dd June 9, 1993
+.Dt RENICE 8
+.Os BSD 4
+.Sh NAME
+.Nm renice
+.Nd 실행 중인 프로세스의 우선권을 바꾼다.
+.Sh 사용법
+.Nm renice
+.Ar 우선권
+.Oo
+.Op Fl p
+.Ar pid ...
+.Oc
+.Oo
+.Op Fl g
+.Ar pgrp ...
+.Oc
+.Oo
+.Op Fl u
+.Ar user ...
+.Oc
+.Sh 설명
+.Nm Renice
+명령은 하나 또는 그 이상의 실행중인 프로세스의 진행 우선권을 
+바꾼다.
+
+각 옵션에서 사용되는 옵션의 인자는 프로세스 ID, 프로세스 그룹 ID, 
+사용자 ID이다.
+프로세스 그룹의 우선권 변환은 그 해당되는 그룹의 모든 프로세스에 
+적용된다. 
+사용자의 우선권 변환은 그 해당되는 사용자의 모든 프로세스에 적용된다.
+초기값으로 우선권 변환에 영향을 받는 프로세스는 그 지정한 프로세스만이다.
+.Pp
+사용할 수 있는 옵션은 다음과 같다:
+.Bl -tag -width Ds
+.It Fl g
+그룹 ID 지정
+.It Fl u
+사용자 ID 지정
+.It Fl p
+프로세스 ID 지정(초기값)
+.El
+.Pp
+예를 들어,
+.Bd -literal -offset
+renice +1 987 -u daemon root -p 32
+.Ed
+.Pp
+이런 명령이 내려지면, 프로세스 ID가 987, 32인 것과, 
+사용자가 daemon과 root인 모든 프로세스의 우선권을 바꾼다.
+.Pp
+이 명령을 사용하는 이가 root가 아니라면, 자신의 프로세스만을
+바꿀 수 있다. 또한 ``nice 값''은 0에서 
+.Dv PRIO_MAX
+(20) 까지만 사용할 수 있다.
+(This prevents overriding administrative fiats.)
+root의 경우는 모든 프로세스의 우선권을 바꿀 수 있으며, 
+사용할 수 있는 ``nice 값''은 
+.Dv PRIO_MIN
+(\-20)부터 
+.Dv PRIO_MAX 
+까지이다.
+유용한 우선권은:
+20 (the affected processes will run only when nothing else
+in the system wants to),
+0 (the ``base'' scheduling priority),
+anything negative (to make things go very fast).
+.Sh 관련 파일
+.Bl -tag -width /etc/passwd -compact
+.It Pa /etc/passwd
+UID와 사용자 이름을 확인하기 위해
+.El
+.Sh 관련 항목
+.Xr getpriority 2 ,
+.Xr setpriority 2
+.Sh 벌레
+일반 사용자는 자신의 프로세스 우선권을 줄일 수는 없다. 
+.Sh 발자취
+.Nm
+명령은
+.Bx 4.0
+시스템에서 처음 나타났다.

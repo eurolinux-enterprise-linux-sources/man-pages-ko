@@ -1,0 +1,99 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified Wed Jul 21 22:18:17 1993 by  Rik Faith <faith@cs.unc.edu>
+.\" Modified 21 Aug 1994 by Michael Chastain <mec@shell.portal.com>
+.\"   Fixed typoes.
+.\" Modified 13 Jun 1996 by aeb - Added a warning: . may be outside / tree.
+.\" Modified Wed Nov  6 03:50:45 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified by Joseph S. Myers <jsm28@cam.ac.uk>, 970821
+.\"
+.TH CHROOT 2 "1997년 8월 21일" "리눅스 2.0.30" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+chroot \- 루트 디렉토리를 바꾼다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.BI "int chroot(const char *" path );
+.SH 설명
+.BR chroot 는 
+.IR path 가 
+지정한 곳으로 루트 디렉토리를 바꾼다.
+이 디렉토리는 /으로 시작하는 경로 이름이 사용된다.
+루트 디렉토리는 현재 프로세스의 모든 자식 프로세스에게 상속된다.
+
+슈퍼유저만이 루트 디렉토리를 바꿀 수 있다.
+
+이 시스템 콜은 현재 작업 디렉토리는 바꾸지 않는다. 그래서 `.'는 
+`/'으로 지정된 루트 트리 밖의 위치가 될 수도 있다.
+
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되며, 
+.IR errno 는 
+적당한 값으로 설정된다.
+.SH 에러
+파일 시스템에 의존적이며, 다른 에러가 리턴될 수 있다.
+일반적인 에러 목록은 다음과 같다:
+
+.TP
+.B EPERM
+유효 UID가 0이 아니다.
+.TP
+.B EFAULT
+.IR path 가 
+접근할 수 없는 메모리 영역을 가리키고 있다.
+.TP
+.B ENAMETOOLONG
+.IR path 가 
+너무 길다.
+.TP
+.B ENOENT
+파일이 존재하지 않는다.
+.TP
+.B ENOMEM
+커널 메모리가 충분치않다.
+.TP
+.B ENOTDIR
+.IR path 가 
+디렉토리가 아니다.
+.TP
+.B EACCES
+허가가 거부되었다.
+.TP
+.B ELOOP
+.IR path 를 
+찾아갈 때, 너무 많은 심볼릭 링크가 존재한다.
+.TP
+.B EIO
+I/O 에러가 발생했다.
+.SH 호환
+SVr4, SVID, 4.4BSD, X/OPEN. 이 함수는 POSIX.1의 일부가 아니다.
+SVr4 문서는 EINTR, ENOLINK 그리고 EMULTIHOP 에러 상태들을 추가적으로 기술한다.
+X/OPEN은 EIO, ENOMEM 또는 EFAULT 에러 상태를 문서화하지 않았다.
+이 시스템 콜은 X/OPNE의 유산물로서 알려져있다.
+.SH 관련 항목
+.BR chdir (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 5월 1일

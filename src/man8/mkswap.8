@@ -1,0 +1,97 @@
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.\" Modified with suggestions from Linus, Mon Feb  1 21:40:49 1993
+.\" Modified with patches from Kai, Wed Jun 22 21:54:56 1994
+.\" Patches from jaggy@purplet.demon.co.uk (Mike Jagdis), Wed Feb 8 1995
+.\" Added comments from Nick Holloway, Sat Feb 11 1995, faith@cs.unc.edu
+.\" "
+.TH MKSWAP 8 "8 February 1995" "Linux 1.0" "Linux Programmer's Manual"
+.SH 이름
+mkswap \- 리눅스 스왑 영역을 지정한다.
+.SH 사용법
+.B "mkswap [ \-c ]"
+.IB 장치이름  " [" 블럭크기 "]"
+.SH 설명
+.B mkswap
+명령은 지정한 특정 장치나, 파일을 리눅스용 스왑 영역으로 지정한다.
+
+.I 장치이름
+인자로 사용될 수 있는 장치이름은 다음과 같다.
+
+.nf
+.RS
+/dev/hda[1-8]
+/dev/hdb[1-8]
+/dev/sda[1-8]
+/dev/sdb[1-8]
+.RE
+.fi
+
+.I 블럭크기
+인자는 파일 시스템의 원하는 블럭 단위의 크기이다. 이 인자가 사용되지 않으면, 
+자동으로 계산된다.
+블럭크기는 해당 시스템의 CPU에서 처리할 수 있는 page 크기에 따라 
+정해진다. 
+MINCOUNT..MAXCOUNT 범위만의 블럭크기가 지정될 수 있다.
+만약에 블럭 갯수가 MAXCOUNT를 초가했을 경우에는, MAXCOUNT까지만 사용되고, 
+나머지는 짤리고, 경고 메시지를 보여준다.
+
+MINCOUNT와 MAXCOUNT 값은 다음과 같이 계산된다.
+
+.RS
+MINCOUNT = 10 * PAGE_SIZE / 1024
+.br
+MAXCOUNT = (PAGE_SIZE - 10) * 8 * PAGE_SIZE / 1024
+.RE
+
+예를 들어 4KB page 처리를 할 수 있는 CPU에서는 다음과 같이 계산된다:
+
+.RS
+MINCOUNT = 10 * 4096 / 1024 = 40
+.br
+MAXCOUNT = (4096 - 10) * 8 * 4096 / 1024 = 130752
+.RE
+
+각 블럭이 1KB 일때, 윗 예제의 스왑 영역은 
+40KB에서 127.6875MB 사이의 아무 크기나 사용할 수 있다.
+
+만약 page 크기를 모른다면, "cat /proc/cpuinfo" 명령으로 알아 볼 수 있다.
+
+MAXCOUNT의 계산을 할 때, 각 page의 크기에서 10바이트를 빼는 이유는 
+스왑 영역을 알리는 
+기호인 "SWAP-SPACE"라는 10 문자가 각 page에서 쓰이기 때문이다.
+
+스왑 파일을 설정하기 위해서는 먼저 그 파일을 만들어야 한다. 
+스왑 파일의 사용은 일반적으로 다음과 같은 과정으로 처리된다.
+
+.nf
+.RS
+# dd if=/dev/zero of=swapfile bs=1024 count=8192
+# mkswap swapfile 8192
+# sync
+# swapon swapfile
+.RE
+.fi
+
+스왑 파일로 사용할 파일은 어떠한 공백이 있어서도 안된다는 것을 
+주의하라. (그래서, 
+.BR cp (1)
+명령으로 스왑 파일을 만들지 말기를)
+
+.SH 옵션
+.TP
+.B \-c
+스왑 영역을 만들기 전에 먼저 블량 블럭을 검사한다.
+불량 블럭이 발견되면 그 정보를 보여준다. 
+이 옵션은 스왑 파티션에 대해서만 영향을 끼치지, 
+일반 파일에 대해서는 해당사항이 없다.
+일반 파일을 스왑 파일로 만들어 사용할 경우에는 
+그 파일에 불량 블럭이 있는지 확인하기 위해서는 
+.BR "mkfs -c"
+명령으로 파일 시스템을 만든다.
+.SH "관련 항목"
+.BR fsck (8),
+.BR mkfs (8),
+.BR fdisk (8)
+.SH 만든이
+Linus Torvalds (torvalds@cs.helsinki.fi)

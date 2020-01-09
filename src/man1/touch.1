@@ -1,0 +1,71 @@
+.TH TOUCH 1 "GNU File Utilities" "FSF" \" -*- nroff -*-
+.SH NAME
+touch \- 파일의 시간 정보를 바꾼다.
+.SH SYNOPSIS
+.B touch
+[\-acfm] [\-r file] [\-t MMDDhhmm[[CC]YY][.ss]]
+[\-d time] [\-\-time={atime,access,use,mtime,modify}] [\-\-date=time]
+[\-\-reference=file] [\-\-no-create] [\-\-help] [\-\-version] file...
+.SH DESCRIPTION
+이 문서는 더이상 최신 정보를 담고 있지않다. 그래서, 
+몇몇 틀릴 경우도 있고, 부족한 경우도 있을 것이다. 
+완전한 매뉴얼을 원하면, Texinfo 문서를 참조하기 바란다.
+.PP
+이 매뉴얼 페이지는 
+.BR touch
+명령의 GNU 버전에 대한 것이다.
+.B touch
+명령은 주어진 파일의 최근 사용시간과 최근 변경 시간(파일 내용이 바뀐 시간)을
+시스템의 현재 시간으로 바꾼다. 
+이때 그런 파일이 없으면 0 바이트 크기의 이름만 있는 파일을 만든다.
+만약, 첫번째 오는 \fIfilename\fB에 해서 
+.I \-t
+옵션이 사용되고 나머지 \fIfilename\fB에 대해서 특별히 
+.IR \-d ,
+.IR \-r ,
+.I \-t
+옵션이 사용되고 있지 않다면, 나머지 모든 파일들은 
+그 첫번째 파일에서 사용할 시간값을 그대로 사용하게 된다. 
+이런 것을 방지하려면, 
+.I \-\-
+옵션을 사용해서 각각의 옵션들을 분리 시킨다.
+.PP
+If  changing both the access and modification times to the
+current time, 
+.B touch 
+can change the  timestamps  for  files
+that  the  user running it does not own but has write per
+mission for.  Otherwise, the user must own the files.
+.SS OPTIONS
+.TP
+.I "\-a, \-\-time=atime, \-\-time=access, \-\-time=use"
+최근 파일 사용 시간(access time)만 바꾼다.
+.TP
+.I "\-c, \-\-no-create"
+파일이 이미 존재하지 하고 있지 않다면, 새로 만들지 않는다.
+.TP
+.I "\-d, \-\-date time"
+현재 시간 대신 지정한 
+.I time
+갑을 사용하는데, 이것은 다양한 형식이 될 수 있다. 
+이 시간에는 월 이름, 지역, `am', `pm' 등이 포함될 수도 있다.
+.TP
+.I \-f
+무시; 이 옵션은 BSD 버전과 호환을 위해 있을 뿐.
+.TP
+.I "\-m, \-\-time=mtime, \-\-time=modify"
+최근 파일 변경 시간(modify time)만 바꾼다.
+.TP
+.I "\-r, \-\-reference file"
+현재 시간 대신 지정한 
+\fIfile\fR의 시간으로 바꾼다.
+.TP
+.I \-t MMDDhhmm[[CC]YY][.ss]
+현재 시간 대신 지정한 시간(MM:달, DD:날, hh:시, mm:분, [CC]YY:년, SS:초)으로
+바꾼다.
+.TP
+.I "\-\-help"
+도움말 정보를 보여주고 마친다.
+.TP
+.I "\-\-version"
+버전 정보를 보여주고 마친다.

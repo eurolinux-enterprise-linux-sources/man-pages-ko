@@ -1,0 +1,220 @@
+.\"{{{}}}
+.\"{{{  Title
+.TH INITTAB 5 "Jun 04, 1996" "" "Linux System Administrator's Manual"
+.\"}}}
+.\"{{{  Name
+.SH NAME
+inittab \- 시스템 운영 시작에서 사용되는 init 프로세스의 처리 방법을 
+지정하고 있는 파일.
+.\"}}}
+.\"{{{  Description
+.SH DESCRIPTION
+\fBinittab\fP 파일은 시스템이 가동될 때 일반적인 운영 방법의 처리에 
+대한 것을 설명하고 있는 파일이다. (예를 들면, /etc/rc, gettys.. 등의 
+처리). init 프로세스는 다양한 \fIrunlevels\fP을 구별해서 
+사용한다. 이 \fIrunlevels\fP은 시스템의 부팅과 종료등에 사용된다. 
+\fIrunlevels\fP 값은 \fB0\fP\-\fB6\fP이며, 
+\fBondemand\fP 위해 \fBA\fP, \fBB\fP, \fBC\fP 가 쓰인다. 
+\fBinittab\fP 파일의 내용은 다음과 같은 형식을 취한다.
+.RS
+.sp
+\fIid\fP:\fIrunlevels\fP:\fIaction\fP:\fIprocess\fP
+.sp
+.RE
+`#'로 시작하는 문장은 주석으로 처리된다.
+.\"{{{  id
+.IP \fIid\fP
+inittab 안에서의 각 항목들에 대한 식별자. 최대 4자리.
+(libc의 버전이 5.2.18보다 낮은 버전이나, a.out 라이브러리로 
+컴파일 했다면, 사용할 수 있는 최대 문자 갯수는 2개다. 
+.sp
+주의: getty나 다른 로그인 프로세스의 사용에서는 \fIid\fP 필드에는 
+그 프로세스에서 사용하는 tty의 끝자리 숫자가 와야한다. 
+예를 들면, \fBtty1\fP은 \fB1\fP. 그렇지 않으면 바르게 작동되지 
+않을 수도 있다.
+.\"}}}
+.\"{{{  runlevels
+.IP \fIrunlevels\fP
+진행할 runlevel 지정.
+.\"}}}
+.\"{{{  action
+.IP \fIaction\fP
+action 지정
+.\"}}}
+.\"{{{  process
+.IP \fIprocess\fP
+실행할 프로세스 지정. 이 필드에 `+' 문자가 제일 앞에 오면, 
+init는 그 처리과정에서 utmp, wtmp 처리를 하지 않게 한다. 
+이것은 gettys에서 스스로 utmp/wtmp를 처리할 경우 필요하다. 
+사용하는 gettys를 확인하기 바란다.
+.\"}}}
+.PP
+action에서 사용할 수 있는 값은 다음과 같다.
+.\"{{{  respawn
+.IP \fBrespawn\fP
+그 프로세스가 종료되면 항상 다시 시작하게 한다.(예, getty)
+.\"}}}
+.\"{{{  wait
+.IP \fBwait\fP
+지정한 runlevel이 되면 그 프로세스가 실행되고, 
+init는 그 프로세스가 종료되기를 기다린다.
+.\"}}}
+.\"{{{  once
+.IP \fBonce\fP
+지정한 runlevel이 되면 한번만 그 프로세스를 실행한다.
+.\"}}}
+.\"{{{  boot
+.IP \fBboot\fP
+시스템 부팅 때에 그 프로세스를 실행한다. 이때는 \fIrunlevel\fP 값이
+무시된다.
+.\"}}}
+.\"{{{  bootwait
+.IP \fBbootwait\fP
+시스템 부팅 때에 그 프로세스가 실행되는데, 이때 init는 
+그 프로세스가 종료되기를 기다린다.(예, /etc/rc). 
+이때는 \fIrunlevel\fP 값이 무시된다.
+.\"}}}
+.\"{{{  off
+.IP \fBoff\fP
+아무것도 아니다. 단지 id만 존재하는 것뿐.
+.\"}}}
+.\"{{{  ondemand
+.IP \fBondemand\fP
+지정한 ondemand runlevel이 호출 될 때마다 그 프로세스를 실행한다.
+하지만 runlevel 값은 바뀌지 않는다.
+(\fBondemand\fP runlevel 값은 'a', 'b', 'c' 이다.)
+.\"}}}
+.\"{{{  initdefault
+.IP \fBinitdefault\fP
+시스템 부팅 뒤에 실행될 runlevel을 지정한다. 
+만약 이 부분이 없으면, 어떤 runlevel로 실행할 것이지, 
+콘솔에서 물어본다. \fIprocess\fP 필드는 무시된다.
+.\"}}}
+.\"{{{  sysinit
+.IP \fBsysinit\fP
+시스템 부팅을 할 때에 그 프로세스가 실행된다. 
+이것은 \fBboot\fP, \fB bootwait\fP로 지정된 프로세스보다 
+먼저 실행된다. \fIprocess\fP 필드는 무시된다.
+.\"}}}
+.\"{{{  powerwait
+.IP \fBpowerwait\fP
+\fBinit\fP가 SIGPWR 시그날을 받았을 때 그 프로세스가 실행된다.
+SIGPWR은 전원 공급에 문제가 생겼을 때 발생하는 시그날이다.
+\fBInit\fP는 그 프로세스 작업이 끝날 때까지 아무 작업도 하지 않는다.
+.\"}}}
+.\"{{{  powerfail
+.IP \fBpowerfail\fP
+\fBpowerwait\fP와 같지만, init는 그 프로세스 작업이 끝나기를 
+기다리지 않는다. 
+.\"}}}
+.\"{{{  powerokwait
+.IP \fBpowerokwait\fP
+\fBinit\fP가 SIGPWR 시그날을 받았을 때 그 프로세스가 실행된다.
+\fBOK\fP라는 단어를 포함하고 있는 \fB/etc/powerstatus\fP 파일이 
+SIGPWR 시그날을 제공한다.
+.\"}}}
+.\"{{{  ctrlaltdel
+.IP \fBctrlaltdel\fP
+\fBinit\fP가 SIGINT 시그날을 받았을 때 그 프로세스가 실행된다.
+SIGINT는 시스템 콘솔에서 누군가가 \fBCTRL\-ALT\-DEL\fP 글쇠를 
+눌렀을 때 발생하는 시스날이다. 이것은 전형적으로 
+컴퓨터를 리부팅하거나, 단일 사용자 모드를 사용하기 위해서 
+사용된다.
+.\"}}}
+.\"{{{  kbrequest
+.IP \fBkbrequest\fP
+콘솔 글쇠판에서 특별하게 지정된 글쇠가 눌려졌을 때, 
+발생하는 한 시그날을 init가 받았을 때, 그 프로세스를 실행한다.
+.br
+이 부분에 대한 이야기는 아직 여기서 자세히 다루지는 못한다. 
+좀더 자세한 정보를 원하면 kbd-x.xx 팻키지의 문서들을 
+참고한다. (이 문서는 kbd-0.91 팻키지를 바탕으로 쓰여졌다.)
+보통, 글쇠지정은 "Spawn_Console" action으로 한다. 
+예를 들어, Alt-윗화살표글쇠를 지정하고 싶으면, 
+글쇠지정파일(keymap)에 다음 내용을 추가한다.
+.RS
+.sp
+alt keycode 103 = Spawn_Console
+.sp
+.RE
+.\"}}}
+.PP
+하나의 프로세스가 각각 다른 runlevel에서도 같이 실행되게 하려면, 
+\fIrunlevel\fP 필드에는 다른 runlevel 들을 함께 지정할 수 있다. 
+예, \fB123\fP. \fBondemand\fP 값으로 지정한는 \fBA\fP, \fBB\fP, 
+\fBC\fP도 마찬가지다. action 값이 \fBsysinit\fP, \fBboot\fP,
+\fBbootwait\fP로 지정되어 있으면 그 runlevel 값은 무시된다.
+.PP
+runleve 값이 바뀌었을 때, 그 새로 바뀐 runlevel에 대한 처리 과정을
+따로 지정하지않았다면, \s-2SIGTERM\s0, \s-2SIGKILL\s0과 함께, 
+그 프로세스는 종료된다.
+.\"}}}
+.\"{{{  Examples
+.SH EXAMPLES
+이것은 옛날 linux에서 사용하던 inittab 파일이다.
+.RS
+.sp
+.nf
+.ne 7
+# inittab for linux
+id:1:initdefault:
+rc::bootwait:/etc/rc
+1:1:respawn:/etc/getty 9600 tty1
+2:1:respawn:/etc/getty 9600 tty2
+3:1:respawn:/etc/getty 9600 tty3
+4:1:respawn:/etc/getty 9600 tty4
+.fi
+.sp
+.RE
+이 파일은 시스템이 부팅되는 동안 \fB/etc/rc\fP 파일을 실행하고, 
+tty1\-tty4에서 getty를 실행한다.
+.PP
+다음 부분은 다른 runlevel에서의 각 설정들을 지정한다(주석 부분을 참고).
+.RS
+.sp
+.nf
+.ne 19
+# 2 단계 정의 
+id:2:initdefault:
+
+# 최우선으로 시스템 초기화
+si::sysinit:/etc/rc.d/bcheckrc
+
+# runlevel 0,6은 각각 halt와 reboot, 1은 단일 사용자 모드
+l0:0:wait:/etc/rc.d/rc.halt
+l1:1:wait:/etc/rc.d/rc.single
+l2:2345:wait:/etc/rc.d/rc.multi
+l6:6:wait:/etc/rc.d/rc.reboot
+
+# "3 finger salute"에서 어떻게....
+ca::ctrlaltdel:/sbin/shutdown -t5 -rf now
+
+# runlevel 2&3: 콘솔 getty, level 3: 모뎀 getty
+1:23:respawn:/sbin/getty tty1 VC linux
+2:23:respawn:/sbin/getty tty2 VC linux
+3:23:respawn:/sbin/getty tty3 VC linux
+4:23:respawn:/sbin/getty tty4 VC linux
+S2:3:respawn:/sbin/uugetty ttyS2 M19200
+
+.fi
+.sp
+.RE
+.\"}}}
+.\"{{{  Files
+.SH FILES
+/etc/inittab
+.\"}}}
+.\"{{{  Author
+.SH AUTHOR
+Init was written by Miquel van Smoorenburg
+(miquels@cistron.nl), the manual page was written by
+Sebastian Lederer (lederer@francium.informatik.uni-bonn.de) and modified
+by Michael Haardt (u31b3hs@pool.informatik.rwth-aachen.de).
+.\"}}}
+.\"{{{  See also
+.SH "SEE ALSO"
+init(8), telinit(8)
+.\"}}}
+
+
+

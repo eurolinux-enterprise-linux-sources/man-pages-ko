@@ -1,0 +1,139 @@
+.\" -*- nroff -*-
+.\" Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
+.\" This file may be copied under the terms of the GNU Public License.
+.\" 
+.TH MKE2FS 8 "1996년 5월" "E2fsprogs 버전 1.04"
+.SH 이름
+mke2fs \- 리눅스 개정판 확장 화일 시스템 생성
+.SH 개요
+.B mke2fs
+[
+.B \-c
+| 
+.\" .B \-t
+.\" test
+.\" |
+.B \-l
+화일명
+]
+[
+.B \-b
+블럭 크기
+]
+[
+.B \-f
+프레그먼트 크기
+]
+[
+.B \-i
+노드 당 바이트수
+]
+[
+.B \-m
+예약 블럭 퍼센트
+]
+[
+.B \-q
+]
+[
+.B \-v
+]
+[
+.B \-F
+]
+[
+.B \-S
+]
+장치명
+[
+블럭 갯수
+]
+.SH 설명
+.B mke2fs
+는 보통 디스크 파티션에 해당하는 장치에 리눅스 개정판 확장 화일
+시스템을 생성하는데 사용된다.
+.br
+.I 장치명
+은 예를 들어 /dev/hdXX 와 같이 어떤 장치에 해당하는 특수 화일명이다.
+.br
+.I 블럭 갯수
+장치가 포함하는 블럭 갯수를 정한다. 만약 생략하면
+.B mke2fs
+는 자동으로 화일 시스템의 크기를 계산한다.
+.SH 옵션
+.TP
+.I -b 블럭 크기
+블럭 크기를 바이트 수로 지정한다.
+.TP
+.I -c
+읽기 전용 테스트를 빠르게 수행하면서 화일 시스템 생성시 배드 블럭을 체크하도록
+한다.
+.TP
+.I -f 프레그먼트 크기
+프레그먼트의 크기를 바이트 수로 지정한다.
+.TP
+.I -i 아이노드 당 바이트수
+아이노드(inode)당 바이트수를 정한다.
+.B mke2fs
+는
+.I bytes-per-inode
+에서 정한 바이트 수마다 아이노드를 디스크 상에 생성한다.
+기본값은 4096 바이트이다.
+.I bytes-per-inode
+는 최소한 1024 는 되어야 한다.
+.TP
+.I -l 화일명
+.I 화일명
+으로부터 배드 블럭 리스트를 읽는다.
+\.
+.TP
+.I -m 예약 블럭 퍼센트
+수퍼유저에게 예약해둘 블럭의 퍼센트를 정한다. 기본값은 5% 이다.
+.\" .TP
+.\" .I -t test
+.\" Check the device for bad blocks before creating the file system
+.\" using the specified test.
+.TP
+.I -q
+아무런 메세지 출력없이 조용히 실행한다. 스크립트 안에서 실행할 때 주로
+사용한다.
+.TP
+.I -v
+메세지를 자세히 보여준다.
+.TP
+.I -F
+지정한 장치가 블럭 장치가 아니어도 mke2fs 를 무조건 실행하도록 한다.
+.TP
+.I -S
+수퍼블럭, 그룹 기술자(descriptor)만을 쓴다. 수퍼블럭과 백업 수퍼블럭만이
+모두 깨졌을 때 그리고 최후의 복구 방법을 사용할 때 사용된다. 아이노드 테이블,
+블럭, 아이노드 비트맵을 건드리지 않고 수퍼블럭과 그룹 기술자만 다시
+초기화하도록 한다.
+.B e2fsck
+프로그램을 실행 후 즉시 사용해야 한다. 자료를 모두 복구할 수 있다는 보장은
+없다.
+.SH 저자
+.B mke2fs
+Theodore Ts'o <tytso@mit.edu>씨에 의해 만들어졌다.
+.SH 버그
+.B mke2fs
+은 -f 옵션을 받아들기는 하지만 프로그먼트를 지원하지 않으므로 무시된다.
+.br
+버그가 더 있을 지 모르므로 발견 즉시 저자에게 보고해주기 바란다.
+.SH 구할 수 있는 곳
+.B mke2fs
+는
+ftp.ibp.fr 나 tsx-11.mit.edu 에서 익명 ftp 로
+/pub/linux/packages/ext2fs 디렉토리에서 구할 수 있다.
+.SH 참고
+.BT badblocks (8),
+.BR dumpe2fs (8),
+.BR e2fsck (8),
+.BR tune2fs (8)
+
+.SH 번역자
+.br
+이 만 용
+.B <geoman@nownuri.nowcom.co.kr>
+.br
+.B "         <freeyong@soback.kornet.nm.kr>"

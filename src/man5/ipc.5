@@ -1,0 +1,218 @@
+.\" Copyright 1993 Giorgio Ciucci (giorgio@crcc.it)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH IPC 5 "1993년 11월 1일" "리눅스 0.99.13" "리눅스 프로그래머 메뉴얼" 
+.SH 이름
+ipc \- System V 상호프로세스(interprocess) 통신 메카니즘.
+.SH 사용법
+.nf
+.B
+# include <sys/types.h>
+.B
+# include <sys/ipc.h>
+.B
+# include <sys/msg.h>
+.B
+# include <sys/sem.h>
+.B
+# include <sys/shm.h>
+.SH 설명
+메뉴얼은 메시지큐, 신호설정과 공유메모리분할과 같은 System V 상호프로세스(interprocess) 
+통신 메카니즘의 리눅스 구현을 참조한다.
+.B 자원
+은 이러한 메카니즘에서 하나의 예이다.
+.I <sys/ipc.h>
+시스템 헤더파일에 의해 정의되는 
+.B ipc_perm
+구조는 다음의 멤버들을 포함한다:
+.sp
+.B
+	ushort cuid;	
+/* 만든 사용자 id */
+.br
+.B
+	ushort cgid;	
+/* 만든 그룹 id */
+.br
+.B
+	ushort uid;
+/* 소유자 id */
+.br
+.B
+	ushort gid;
+/* 소유그룹 id */
+.br
+.B
+	ushort mode;
+/* 읽기/쓰기 권한 */
+.PP
+.B mode
+member of the
+.B ipc_perm
+구조는 ipc시스템 호출을 실행하는 프로세스를 위한 자원의 접근 권한을 정의한다.
+권한은 다음과 같이 해석된다:
+.sp
+.nf
+	0400	Read by user.
+	0200	Write by user.
+.sp .5
+	0040	Read by group.
+	0020	Write by group.
+.sp .5
+	0004	Read by others.
+	0002	Write by others.
+.fi
+.PP
+비트 0100, 0010 and 0001 (실행 비트)는 시스템의 의해 사용되지 않는다.
+덪붙여 
+"write"
+는 시그널 설정을 위한 "alter"를  의미한다.
+.PP
+같은 시스템 헤더파일은 또한 다음의 심볼릭 상수를 정의한다.
+.TP 14
+.B IPC_CREAT
+키(key)가 없다면 entry를 생성한다.
+.TP
+.B IPC_EXCL
+키가 있으면 실패한다.
+.TP
+.B IPC_NOWAIT
+요청이 대기되어져야만 에러가 난다.
+.TP
+.B IPC_PRIVATE
+개인 키.
+.TP
+.B IPC_RMID
+자원 삭제.
+.TP
+.B IPC_SET
+자원 옵션 설정.
+.TP
+.B IPC_STAT
+자원 옵션을 갖는다.
+.TP 11
+.B msg_perm
+메세지 큐에 접근권한을 지정하는 
+.B ipc_perm
+구조.
+.TP
+.B msg_qnum
+메세지 큐의 메세지 번호.
+.TP
+.B msg_qbytes
+메세지 큐에 허용된 메세지 텍스트의 최대크기.
+.TP
+.B msg_lspid
+마지막
+.B msgsnd
+시스템 호출을 실행하는 프로세스의 ID.
+.TP
+.B msg_lrpid
+마지막
+.B msgrcv
+시스템 호출을 실행하는 프로세스의 ID.
+.TP
+.B msg_stime
+마지막
+.B msgsnd
+시스템 호출의 시간.
+.TP
+.B msg_rtime
+마지막
+.B msgcv
+시스템 호출의 시간.
+.TP
+.B msg_ctime
+.B msqid_ds
+구조의 멤버를 바꾸는 마지막 시스템 호출의 시간.
+.TP
+.B sem_perm
+시그널 설정의 접근 권한을 지정하는 
+.B ipc_perm
+구조.
+.TP
+.B sem_otime
+마지막
+.B semop
+시스템 호출의 시간.
+.TP
+.B sem_ctime
+마지막
+.B semctl
+시스템 호출의 시간.
+.TP 11
+.B semval
+시그널 값: 0이나 양의 정수.
+.TP
+.B semncnt
+증가하는 
+.B semval
+를 위해 정지된 프로세스의 수.
+.TP 11
+.B shm_perm
+고유메모리 구간에 접근 권한을 지정하는 
+.B ipc_perm
+구조.
+.TP
+.B shm_segsz
+공유메모리 구간의 크기.
+.TP
+.B shm_cpid
+공유메모리 구간을 생성하는 프로세스의 ID.
+.TP
+.B shm_lpid
+.B shmat
+나
+.B shmdt
+시스템 호출을 실행하는 마지막 프로세스의 ID.
+.TP
+.B shm_atime
+마지막
+.B shmat
+시스템 호출의 시간.
+.TP
+.B shm_dtime
+마지막
+.B shmdt
+시스템 호출의 시간.
+.TP
+.B shm_ctime
+.BR shmid_ds 
+을 바꾸는 마지막
+.B shmctl
+시스템 호출의 시간.
+
+.SH 관련 항목
+.BR ftok (3),
+.BR msgctl (2),
+.BR msgget (2),
+.BR msgrcv (2),
+.BR msgsnd (2),
+.BR semctl (2),
+.BR semget (2),
+.BR semop (2),
+.BR shmat (2),
+.BR shmctl (2),
+.BR shmget (2),
+.BR shmdt (2).

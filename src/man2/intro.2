@@ -1,0 +1,178 @@
+.\"
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de),
+.\"   Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Tue Jul  6 12:42:46 MDT 1993 <dminer@nyx.cs.du.edu>
+.\" Added "Calling Directly" and supporting paragraphs
+.\"
+.\" Modified Sat Jul 24 15:19:12 1993 by Rik Faith <faith@cs.unc.edu>
+.\"
+.\" Modified 21 Aug 1994 by Michael Chastain <mec@shell.portal.com>:
+.\"   Added explanation of arg stacking when 6 or more args.
+.\"
+.\" Modified 10 June 1995 by Andries Brouwer <aeb@cwi.nl>
+.\"
+.TH INTRO 2 "1996년 5월 2일" "리눅스 1.2.13" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+intro \- 시스템 콜에 대한 소개
+.SH 설명
+여기서는 리눅스 시스템 콜을 설명한다. 리눅스 2.0에 있는 164개의 시스템 콜의 
+목록은 syscalls(2)를 보아라.
+.SS 직접 호출하기
+대부분의 경우, 시스템 콜을 직접 호출할 필요는 없지만, 당신에게 필요한 함수가
+표준 C 라이브러리에 구현되지 않는 경우도 있다.
+.SS 사용법
+.B #include <linux/unistd.h>
+
+_syscall 매크로
+
+원하는 시스템 콜
+
+.SS 설정
+시스템 콜에 대해 알아야 하는 중요한 사항은 프로토타입이다. 인자의 개수, 인자의
+타입과 함수 리턴 타입을 알 필요가 있다. 시스템으로의 실제적인 호출을 더 쉽게 
+해주는 6개의 매크로가 있다. 다음과 같은 형식이다:
+.sp
+.RS
+.RI _syscall X ( type , name , type1 , arg1 , type2 , arg2 ,...)
+.RS
+.HP
+\fIX\fP는 0\(en5, 시스템 콜이 취하는 인자의 개수이다.
+system call
+.HP
+\fItype\fP는 시스템 콜의 리턴 타입
+.HP
+\fIname\fP는 시스템 콜의 이름
+.HP
+\fItypeN\fP는 N번째 인자의 타입
+.HP
+\fIargN\fP는 N번째 인자의 이름
+.RE
+.RE
+.sp
+이 매크로는 명시한 인자를 갖는 \fIname\fP 이름의 함수를 만든다. 소스 파일에
+_syscall()을 포함시키면, \fIname\fP으로 시스템 콜을 호출할 수 있다.
+.SH 예제
+.nf
+.sp
+#include <stdio.h>
+#include <linux/unistd.h>	/* _syscallX 매크로/관련된 것 */
+#include <linux/kernel.h>	/* struct sysinfo */
+
+_syscall1(int, sysinfo, struct sysinfo *, info);
+
+/* 주의: nroff 소스에서 바로 복사를 한다면, printf 문에서 
+여분의 백슬레쉬(\\)를 지워야한다. */
+
+int main(void)
+{
+	struct sysinfo s_info;
+	int error;
+
+	error = sysinfo(&s_info);
+	printf("code error = %d\\n", error);
+        printf("Uptime = %ds\\nLoad: 1 min %d / 5 min %d / 15 min %d\\n"
+                "RAM: total %d / free %d / shared %d\\n"
+                "Memory in buffers = %d\\nSwap: total %d / free %d\\n"
+                "Number of processes = %d\\n",
+		s_info.uptime, s_info.loads[0],
+		s_info.loads[1], s_info.loads[2],
+		s_info.totalram, s_info.freeram,
+		s_info.sharedram, s_info.bufferram,
+		s_info.totalswap, s_info.freeswap,
+		s_info.procs);
+	return(0);
+}
+.fi
+.SH 예제 출력
+.nf
+code error = 0
+uptime = 502034s
+Load: 1 min 13376 / 5 min 5504 / 15 min 1152
+RAM: total 15343616 / free 827392 / shared 8237056
+Memory in buffers = 5066752
+Swap: total 27881472 / free 24698880
+Number of processes = 40
+.fi
+.SH 주의
+_syscall() 매크로는 프로토타입을 만들지는 않는다. 특히 C++ 사용자라면,
+프로토타입은 생성해야만 할 것이다.
+.sp
+시스템 콜은 양수나 음수 에러 코드만을 리턴해야만 하지는 않는다. 어떻게 
+에러를 리턴하는지를 알려면 소스를 읽을 필요가 있다. 보통 음수는 표준 
+에러 코드이다. 즉, \-\fBEPERM\fP. _syscall() 매크로는 \fIr\fP이 음수가
+아닐 때 \fIr\fP를 리턴하지만, \fIr\fP이 음수일 때 \-\fIr\fP를 
+.IR errno 에
+설정하고 \-1을 리턴한다. 에러 코드에 대해서는 
+.BR errno (3)을
+보아라.
+.sp
+.BR mmap 과 
+같은 몇몇의 시스템 콜은 5개 이상의 인자를 갖는다. 이는 인자를 스택에 
+넣고 인자 블럭을 포인터를 넘기는 방법으로 처리된다.
+.sp
+시스템 콜을 정의할 때, 인자는 반드시 값이나 포인터(구조체 같은 집합형의 
+경우)로 넘겨져야만 한다.
+.SH 호환
+시스템 콜이 어떤 유닉스 변형이나 표준과 호환이 되는지 나타내는 코드는
+다음과 같다:
+.TP
+SVr4
+시스템 V 릴리즈 4 유닉스 (System V Release 4 Unix), "Programmer's Reference
+Manual: Operating System API (Intel processors)" (Prentice-Hall
+1992, ISBN 0-13-951294-2)에 설명되있다.
+.TP
+SVID
+시스템 V 인터페이스 정의 (System V Interface Definition), "The System V Interface
+Definition, Fourth Edition"에 설명되있고, 이는
+ftp://ftp.fpk.novell.com/pub/unix-standards/svid에 포스트스크립트 
+파일로 있다.
+.TP
+POSIX.1
+IEEE 1003.1-1990 part 1, 별칭 ISO/IEC 9945-1:1990s, 별칭 "IEEE Portable
+Operating System Interface for Computing Environments",
+Donald Lewine의 "POSIX Programmer's Guide" (O'Reilly & Associates,
+Inc., 1991, ISBN 0-937175-73-0)에 설명되있다.
+.TP
+POSIX.1b
+IEEE Std 1003.1b-1993 (POSIX.1b standard)는 포터블 운영 체제를 위한 실시간
+인터페이스를 설명한다, 별칭 ISO/IEC 9945-1:1996,
+Biil O. Gallmeister의 "Programming for the real world \- POSIX.4"
+(O'Reilly & Associates, Inc. ISBN 1-56592-074-0)에 설명되있다.
+.TP
+SUS, SUSv2
+단일 유닉스 명세 (Single Unix Specification).
+(X/Open과 The Open Group에서 만들었다. 
+http://www.UNIX-systems.org/version2/를 참조하라.)
+.TP
+4.3BSD/4.4BSD
+버클리 유닉스의 4.3과 4.3 배포본. 4.4BSD는 4.3부터 호환성이 유지되었다.
+.TP
+V7
+버전 7 (Version 7), 벨 연구소의 원조 유닉스.
+.SH 파일
+.I /usr/include/linux/unistd.h
+.SH 관련 항목
+.BR errno (3)
+.SH 역자
+임종균 <hermes44@secsm.org>, 2000년 4월 19일

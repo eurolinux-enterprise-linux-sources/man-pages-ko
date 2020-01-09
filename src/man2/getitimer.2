@@ -1,0 +1,141 @@
+.\" Copyright 7/93 by Darren Senn <sinster@scintilla.santa-clara.ca.us>
+.\" Based on a similar page Copyright 1992 by Rick Faith
+.\" May be freely distributed
+.\" Modified Tue Oct 22 00:22:35 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH GETITIMER 2 "5 August 1993" "Linux 0.99.11" "Linux Programmer's Manual"
+.SH 이름
+getitimer, setitimer \- interval timer의 값을 얻거나 설정한다.
+.SH 사용법
+.PD 0
+.HP
+.B #include <sys/time.h>
+.sp
+.HP
+.B int getitimer(int
+.IB which ,
+.B struct itimerval
+.BI * value );
+.HP
+.B int setitimer(int
+.IB which ,
+.B const struct itimerval
+.BI * value ,
+.B struct itimerval
+.BI * ovalue );
+.PD
+.SH 설명
+시스템은 3개의 interval timer를 가진 각 프로세스를 제공한다. 모든 타이머가 작동을
+멈추면, 프로세스가 시그널을 보내고 타이머는 다시 작동을 시작한다.
+.TP 1.5i
+.B ITIMER_REAL
+실시간의 감소율과 
+.B SIGALRM
+의 만료기간을 넘겨준다.
+.TP
+.B ITIMER_VIRTUAL
+프로세스가 실행되고 있을때 감소율과 
+.B SIGVTALRM
+의 만료기간을 넘겨준다.
+.TP
+.B ITIMER_PROF
+프로세스가 진행되고 있거나, 시스템이 프로세스를 대신해 실행할때 감소율.
+.BR ITIMER_VIRTUAL ,
+를 결부시켜 생각하면, 이 타이머는 대개 사용자와 커널공간에 응용프로그램에 의해
+보내진 프로파일 시간에 쓰인다. 
+.B SIGPROF
+는 만료기간을 넘겨준다.
+.LP
+타이머 값은 다음 구조에의해 정의된다:
+.PD 0
+.RS .5i
+.nf
+struct itimerval {
+    struct timeval it_interval; /* next value */
+    struct timeval it_value;    /* current value */
+};
+struct timeval {
+    long tv_sec;                /* seconds */
+    long tv_usec;               /* microseconds */
+};
+.fi
+.RE
+.PD
+.LP
+.BR Getitimer (2)
+는 
+.BR ITIMER_REAL ,
+.BR ITIMER_VIRTUAL ,
+나
+.BR ITIMER_PROF
+중 하나에 의해 지정된 타이머를 위해 현재 설정한
+.I value
+에 의해 지정된 구조로 채워진다.
+.B it_value
+는 타이머에 남겨진 시간의 양으로 설정되거나 타이머가 작동하지 않으면 0이다.
+비슷하게,
+.B it_interval
+는 reset 값으로 설정된다.
+.BR Setitimer (2)
+는 
+.IR value
+값으로 지정된 타이머를 설정한다.
+.I ovalue
+가 0이 아니면, 타이머의 이전 값은 그곳에 저장된다.
+.LP
+시그널을 생성하는 
+.I it_value
+에서 0까지 타이머 감소와 
+.IR it_interval 
+로 재설정한다. 0으로 설정된 타이머는 멈춘다.
+.RI ( it_value
+는 0이거나 타이머가 만표되었고
+.I it_interval
+는 0이다
+)
+.LP
+Both
+.I tv_sec
+와
+.I tv_usec
+는 모두 타이머의 지속기간 결정에 중요하다.
+.LP
+타이머는 시간이 요청되기 전엔 절대 만료되지 않을것이다. 그 대신 몇몇 짧은 
+만료기간은 시스템 타이머 해석(현재 10ms)에 의지한다. 만료기간에 시그널은
+생성될 것이고, 타이머는 새설정된다. 타이머가 프로세스가 실행중인 동안 만료된다
+면 시그널이 생성될때 즉시 전달될 것이다. 그렇지 않으면 시스템 로딩에 의지하는
+짧은 시간에의해 상쇄될 것이다.
+.LP
+.SH 반환값
+성공시, 0이 반환된다. 실패시, \-1이 반환되고, 
+.I errno
+는 적절히 설정된다.
+.SH 에러
+.TP
+.B EFAULT
+.I value
+나 
+.I ovalue
+가 유효한 포인터가 아니다.
+.TP
+.B EINVAL
+.BR ITIMER_REAL ,
+.BR ITIMER_VIRT ,
+or
+.BR ITIMER_PROF .
+중의 어떤것도 아니다.
+.SH 호환
+SVr4, 4.4BSD (이것은 4.2BSD에서 처음 보였다).
+.SH 관련 항목
+.BR gettimeofday (2),
+.BR sigaction (2),
+.BR signal (2).
+.SH 버그
+리눅스에서, 시그널의 생성과 전달은 별개이고, 각 시그널은 중요한 이벤트에 허용된다. 
+.B ITIMER_REAL
+가 이전 만료기간으로 부터 시그널이 전달되기 전에 만료될 것이다.
+이벤트같은 초 시그널은 잃게 될것이다.
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29일

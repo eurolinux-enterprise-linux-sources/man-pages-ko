@@ -1,0 +1,45 @@
+.TH INITSCRIPT 5 "December 23, 1995" "" "Linux System Administrator's Manual"
+.SH NAME
+initscript \- inittab 명령을 실행하는 스크립트.
+.SH SYNOPSIS
+/bin/sh /etc/initscript id runlevels action process
+.SH DESCRIPTION
+\fI/etc/initscript\fP 파일이 존재하면, 
+\fBinit\fP는 \fIinittab\fP으로 부터 명령을 실행하기 위해 이 파일을 
+사용한다. 이 스크립트는 모든 프로세스를 위한 
+\fBulimit\fP나 \fBumask\fP 초기값같은 것을 지정하는데, 
+사용될 수 있다. 
+.SH EXAMPLES
+아래는 initscript의 한 예제이다. 
+이 파일은 자신의 시스템에 \fI/etc/initscript.sample\fP 파일로 
+있을 것이다.
+.RS
+.sp
+.nf
+.ne 7
+
+#
+# initscript   Executed by init(8) for every program it
+#              wants to spawn like this:
+#
+# /bin/sh /etc/initscript <id> <level> <action> <process>
+#
+
+# Set umask to safe level, and enable core dumps.
+umask 022
+ulimit -c 2097151
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export PATH
+
+# Execute the program.
+eval exec "$4"
+
+.sp
+.RE
+.SH FILES
+/etc/inittab,
+/etc/initscript.
+.SH AUTHOR
+Miquel van Smoorenburg ,<miquels@cistron.nl>
+.SH "SEE ALSO"
+init(8), inittab(5).

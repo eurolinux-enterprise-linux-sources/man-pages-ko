@@ -1,0 +1,48 @@
+.TH ZDIFF 1
+.SH 이름
+zcmp, zdiff \- 압축된 파일 비교
+.SH 사용법
+.B zcmp
+[ cmp_options ] file1
+[ file2 ]
+.br
+.B zdiff
+[ diff_options ] file1
+[ file2 ]
+.SH 설명
+.I  Zcmp
+와
+.I zdiff
+는 압축된 파일에 
+.I cmp
+또는 
+.I diff
+프로그램을 호출하기 위해 사용된다.
+모든 지시된 옵션은 
+.I cmp
+또는
+.IR diff 
+에 직접 전달된다.
+만일 단지 한 파일만 지정되면,
+.I file1
+과 
+.IR file1 ".gz"
+의 압축을 풀어서 비교한다.
+만일 2개의 파일들이 지정되면, 필요할 경우 압축되지 않고, 
+.I cmp
+또는
+.IR diff 
+에 직접 전달된다.
+.I cmp
+또는
+.I diff
+의 종료 상태는 보존된다.
+.SH 관련 항목
+cmp(1), diff(1), zmore(1), zgrep(1), znew(1), zforce(1), gzip(1), gzexe(1)
+.SH 버그
+.I cmp
+또는
+.IR diff
+프로그램으로부터의 메시지는 지정된 그것들 대신 임시 파일명을 참조한다. 
+.SH 역자
+배성훈 <plodder@kldp.org>, 2000년 4월 22일

@@ -1,0 +1,102 @@
+.\" Copyright (c) 1990, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Chris Torek and the American National Standards Committee X3,
+.\" on Information Processing Systems.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)fflush.3	5.4 (Berkeley) 6/29/91
+.\"
+.\" Converted for Linux, Mon Nov 29 15:22:01 1993, faith@cs.unc.edu
+.\"
+.\" Modified 2000-07-22 by Nicolás Lichtmaier <nick@debian.org>
+.\"
+.TH FFLUSH 3  "1993³â 11¿ù 29ÀÏ" "BSD MANPAGE" "¸®´ª½º ÇÁ·Î±×·¡¸Ó ¸Å´º¾ó"
+.SH ÀÌ¸§
+fflush \- ½ºÆ®¸² ºñ¿ì±â
+.SH »ç¿ë¹ý
+.B #include <stdio.h>
+.sp
+.BI "int fflush(FILE *" stream );
+.SH ¼³¸í
+ÇÔ¼ö
+.B fflush
+´Â ½ºÆ®¸² ±â¹Ý write ÇÔ¼ö¸¦ ÅëÇØ ÁÖ¾îÁø Ãâ·ÂÀÌ³ª ¾÷µ¥ÀÌÆ® 
+.I stream
+À» À§ÇØ ¹öÆÛµÈ ¸ðµç À¯Àú °ø°£ÀÇ µ¥ÀÌÅÍ¸¦ ¾²µµ·Ï °­¿äÇÑ´Ù.
+½ºÆ®¸²ÀÇ ¿­·ÁÁø »óÅÂ´Â ¿µÇâÀ» ¹ÞÁö ¾Ê´Â´Ù.
+.PP
+¸¸ÀÏ
+.I stream
+ÀÎÀÚ°¡
+.BR NULL ÀÌ¶ó¸é,
+.B fflush
+´Â
+¸ðµç ¿­·ÁÁø ½ºÆ®¸²À» ºñ¿î´Ù.
+.SH ¹ÝÈ¯°ª
+¼º°ø½Ã 0ÀÌ ¸®ÅÏµÈ´Ù. ±×·¸Áö ¾ÊÀ¸¸é,
+.B EOF
+°¡ ¸®ÅÏµÇ¸ç Àü¿ª º¯¼ö
+.I errno
+´Â ¿¡·¯¸¦ °¡¸®Å°µµ·Ï ¼³Á¤µÈ´Ù.
+.SH ¿¡·¯
+.TP
+.B EBADF
+.I stream
+Àº ¿­¸° ½ºÆ®¸²ÀÌ ¾Æ´Ï°Å³ª ¾²±â À§ÇØ ¿­·ÁÁöÁö ¾Ê¾Ò´Ù.
+.PP
+ÇÔ¼ö
+.B fflush
+´Â ½ÇÆÐÇÏ¸ç 
+.I errno
+´Â 
+.BR write (2)
+·çÆ¾À» À§ÇØ ÁöÁ¤µÈ ¿¡·¯·Î ¼³Á¤µÈ´Ù.
+.SH ÁÖÀÇ
+.B fflush
+´Â C ¶óÀÌºê·¯¸®°¡ Á¦°øÇÏ´Â À¯Àú °ø°£ ¹öÆÛ¸¸À» Áö¿î´Ù´ÂÁ¡¿¡ ÁÖÀÇÇØ¶ó.
+µ¥ÀÌÅÍ°¡ µð½ºÅ©¿¡ ÀúÀåµÇµµ·Ï È®½ÇÈ÷ ÇÏ±â À§ÇØ, Ä¿³Î ¹öÆÛµéÀº 
+.BR sync (2)³ª
+.BR fsync (2)·Î 
+¿ª½Ã ºñ¿öÁ®¾ß ÇÑ´Ù.
+.SH È£È¯
+.B fflush
+ÇÔ¼ö´Â ANSI X3.159-1989 (``ANSI C'')¿Í È£ÈºµÈ´Ù.
+.SH °ü·Ã Ç×¸ñ
+.BR write (2),
+.BR fclose (3),
+.BR fopen (3),
+.BR fsync (2),
+.BR sync (2),
+.BR write (2),
+.BR setbuf (3)
+.SH ¿ªÀÚ
+Á¤°­ÈÆ <skyeyes@soback.kornet.net>, 2001³â 4¿ù 9ÀÏ

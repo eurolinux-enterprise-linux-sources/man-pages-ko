@@ -1,0 +1,59 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1995 Michael Chastain (mec@shell.portal.com), 15 April 1995.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified Tue Oct 22 08:11:14 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.TH IPC 2 "1995년 5월 15일" "Linux 1.2.4" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+ipc \- 시스템 V IPC 시스템 콜
+.SH 사용법
+.BI "int ipc(unsigned int" " call, " "int" " first, " "int" " second, "
+.BI "int" " third, " "void *" "ptr, " "long" " fifth);"
+.SH 설명
+.BR ipc 는 
+메세지 큐, 세마포어, 공유 메모리 등 시스템 V IPC 호출을 위한 커널 엔트리 포인터이다.
+.IR call 는 
+호출될 IPC 함수를 결정한다: 
+다른 인자는 적당한 호출값으로 설정된다.
+.PP
+사용자 프로그램은 일반적으로 알려져 있는 이름에 의해 
+적절한 함수를 호출해야 한다.
+표준 라이브러리 개발자나 커널 해커만이 
+.BR ipc 에
+관하여 알 필요가 있다.
+.SH 호환
+\fBipc\fP는 리눅스에 의존적이므로, 호환성을 염두에 둔 프로그램에서 사용해서는 안된다.
+.SH 관련 항목
+.BR msgctl (2),
+.BR msgget (2),
+.BR msgrcv (2),
+.BR msgsnd (2),
+.BR semctl (2),
+.BR semget (2),
+.BR semop (2),
+.BR shmat (2),
+.BR shmctl (2),
+.BR shmdt (2),
+.BR shmget (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 6월 19일

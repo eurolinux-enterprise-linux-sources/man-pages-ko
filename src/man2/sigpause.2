@@ -1,0 +1,79 @@
+.\" Copyright (c) 1983, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)sigpause.2	6.6 (Berkeley) 3/10/91
+.\"
+.\" Modified Sat Jul 24 10:09:26 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified 1995 by Mike Battersby <mib@deakin.edu.au>
+.\" Modified Tue Oct 22 22:07:56 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX    2000년 7월 26일
+.\"
+.TH SIGPAUSE 2 "1993년 7월 23일" "리눅스 1.3" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+sigpause \- 블록화된 시그널을 자동으로 릴리즈하고 인터럽트 대기한다.
+.SH 사용법
+.B #include <signal.h>
+.sp
+.BI "int sigpause(int " sigmask );
+.SH 설명
+이 인터페이스는 
+.BR sigsuspend (2)
+때문에 쓰이지 않는다.
+
+.B sigpause
+는 masked signal의 설정을 위해 
+.I sigmask
+를 할당하고, 시그널이 도착하길 기다린다; 반환시 
+masked signal 설정은 재저장된다.
+.PP
+.I sigmask
+는 대개 어떠한 시그널도 블록화되지 않은 것을 나타내도록 0이다.
+.B sigpause
+은 항상 
+.I errno
+가 
+.BR EINTR
+로 설정된 \-1을 돌려주는 인터럽트에 의해 종료된다.
+.SH 호환
+4.4BSD. 
+.B sigpause
+함수 호출은 4.3BSD에서만 나타난다.
+.SH 관련 항목
+.BR sigsuspend (2),
+.BR kill (2),
+.BR sigaction (2),
+.BR sigprocmask (2),
+.BR sigblock (2),
+.BR sigvec (2)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 26일

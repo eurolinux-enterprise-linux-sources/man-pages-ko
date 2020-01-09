@@ -1,0 +1,59 @@
+.\" Reboot/halt and Linux information extracted from Rick Faith's original
+.\" sync(8) manpage, dating back to the Linux 0.99 days.  The Linux-specific
+.\" information is attributed to Linus Torvalds
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH SYNC 8 "1998년 11월 " "GNU fileutils 4.0"
+.SH 이름
+sync \- 메모리를 디스크 자료와 동기화
+.SH SYNOPSYS
+.B "sync [\-\-help] [\-\-version]"
+.SH
+DESCRIPTION
+sync는 모든 디스크밖의 버퍼링된 데이타를 기록한다. 이것은 수정된 
+수퍼블록,아이노드(inodes), 지연된 읽기와 쓰기를 포함할 수 있다. 
+이것은 커널에 의해 실행되어야 한다; sync 프로그램은 sync(2)시스템 호출에
+영향을 미친다.
+.PP
+커널은 비교적 느린 디스크에 읽고 쓰고것은 피하기 위해 메모리에 
+데이타를 저장한다. 이것은 실행속도를 증가 시키지만,
+만일 컴퓨터가 파손되면, 자료가 소실되거나 그결과 파일시스템이 손상된다.
+.PP
+sync는 프로세서가 비정상으로 정지되기 전에 호출되어져야 한다. 대게, 
+프로세서는 셧다운(shutdown)이나 리부트(reboot), 할트(halt) 명령어를 이용해 
+정지된다; 그것은 시스템이 sync(2)가 호출되기 전에 정지상태로 만들것이다.
+.SH "GNU STANDARD OPTIONS"
+.TP
+.B "\-\-help"
+표준출력으로 메시지를 출력하고 풀그림을 빠져나온다.
+.TP
+.B "\-\-version"
+버전 정보를 표준출력하고, 풀그림을 빠져나온다.
+.TP
+.B "\-\-"
+옵션리스트를 종료한다.
+.SH 환경
+변수 LANG, LC_ALL, LC_CTYPE, LC_MESSAGES는 일반적인 의미를 갖는다.
+.SH 호환
+POSIX(포식) 1003.2
+.SH 주의
+리눅스에서 sync는 기록을 위해 쓰여진 블록 사용을 보장한다. 실제 그것은
+짧은 시간이 걸린다. 
+reboot와 halt명령이 sync호출이후 몇분동안의 휴지하는 것으로 설명한다.
+.PP
+이 페이지는 utils-4.0패키지에서 찾은 것은 기술한다; 다른 버전과 약간 차이가 
+있을지도 모른다. 정정과 추가를 위한 메일은 aeb@cwi.nl로 보내기 바란다. 
+프로그램의 버그리포트는 fileutils-bugs@gun.ai.mit.edu로 메일을 보내기 바란다.
+.SH 관련 항목
+.BR sync (2),
+.BR halt (8),
+.BR reboot (8),
+.BR update (8)
+
+
+
+
+

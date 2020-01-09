@@ -1,0 +1,53 @@
+.\" -*- nroff -*- 
+.\"
+.\" This man-page is Copyright (C) 1997 John S. Kallal 
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" correction, aeb, 970825
+.TH FULL 4 "1997년 8월 2일" "리눅스" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+full \- 항상 가득찬 장치
+.SH 설명   
+\fB/dev/full\fP 파일은 주번호 1과 부번호 7을 갖는다.
+.LP 
+\fB/dev/full\fP 장치에 쓰면 ENOSPC 에러로 실패할 것이다.
+
+\fB/dev/full\fP 장치에서 읽으면 \\0 문자를 리턴할 것이다.
+
+\fB/dev/full\fP에 대한 탐색(seek)은 항상 성공할 것이다.
+.SH 설정
+시스템에 \fB/dev/full\fP가 만들어져 있지 않다면, 다음과 같은 명령으로
+만들 수 있다.
+.nf
+
+        mknod -m 666 /dev/full c 1 7
+        chown root:root /dev/full
+
+.fi
+.SH 파일
+/dev/full
+.SH 관련 항목
+.BR mknod (1),
+.BR null (4),
+.BR zero (4)
+.SH 역자
+임종균 <hermes44@secsm.org>, 2000년 4월 21일

@@ -1,0 +1,101 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"                               1993 Michael Haardt, Ian Jackson.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Wed Jul 21 22:45:39 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified 21 Aug 1994 by Michael Chastain <mec@shell.portal.com>:
+.\"   Fixed typoes.
+.\" Modified Fri Jan 31 16:23:46 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH DUP 2 "1994년 8월 21일" "리눅스 1.1.46" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+dup, dup2 \- 파일 디스크립터를 복사한다.
+.SH 사용법
+.nf
+.B #include <unistd.h>
+.sp
+.BI "int dup(int " oldfd );
+.BI "int dup2(int " oldfd ", int " newfd );
+.fi
+.SH 설명
+.BR dup " 그리고 " dup2 는 
+파일 디스크립터
+.IR oldfd 에 
+대한 복사본을 생성한다.
+
+\fBdup\fR 또는 \fBdup2\fR가 성공적으로 수행되면,
+.IR oldfd
+디스크립터와 복사된 새로운 디스크립터는 서로 공유되어 사용될 것이다.
+이 디스크립터들은 락(lock), 파일 위치 포인터 그리고 플래그를 공유한다; 
+예를 들어, 만약 파일 위치가 한 디스크립터에서
+.BR lseek 를 
+사용해 변경되면 이 변경된 위치는 다른 디스크립터에도 영향을 미친다.
+
+그러나 이 두 디스크립터는 close-on-exec 플래그는 공유하지 않는다.
+
+.BR dup 는 
+복사되어질 새로운 디스크립터로, 사용되지 않는 가장 작은 디스크립터 
+번호를 이용한다.
+
+.BR dup2 는
+.RI "필요하다면 먼저 " newfd "를 닫고, " oldfd "를 " newfd
+에 복사한다.
+.SH 반환값
+.BR dup " 그리고 " dup2
+는 복사된 새로운 디스크립터를 리턴하다. 또는 에러 
+(\fIerrno\fP 값을 적절하게 설정한다)
+가 발생한 경우에는 \-1을 리턴한다.
+.SH 에러
+.TP
+.B EBADF
+.IR oldfd 이 
+열린 파일 디스크립터가 아니거나,
+.IR newfd 가 
+파일 디스크립터의 허용된 범위를 넘어선 경우이다.
+.TP
+.B EMFILE
+프로세스가 이미 최대로 열 수있는 파일 디스크립터의 갯수를 가진 상태에서
+새로운 파일 디스크립터를 열고자 시도한 경우이다.
+.SH 경고
+.IR newfd 가 
+허용 가능한 범위 밖의 값일 때,
+.BR dup2 에 
+의해 리턴된 에러값은
+.BR fcntl( "..., " F_DUPFD ", ..." ) 에 
+의해 리턴된 에러값과는 다르다. 어떤 시스템에서는 
+.BR dup2 가 
+.BR F_DUPFD 와 
+같은
+.BR EINVAL 을 
+리턴하기도 한다.
+.SH 호환
+SVr4, SVID, POSIX, X/OPEN, BSD 4.3. SVr4에서는 추가적으로
+EINTR와 ENOLINK 에러 상태를 기술하고 있다. POSIX.1는 EINTR을
+추가했다.
+.SH 관련 항목
+.BR fcntl (2),
+.BR open (2),
+.BR close (2).
+.SH 역자
+정동현 <dhjung@serome.co.kr>, 2000년 4월 20일

@@ -1,0 +1,114 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified Wed Jul 21 22:10:52 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified 15 April 1995 by Michael Chastain <mec@shell.portal.com>:
+.\"   Added 'fchdir'.
+.\"   Fix bugs in error section.
+.\" Modified Mon Oct 21 23:05:29 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified by Joseph S. Myers <jsm28@cam.ac.uk>, 970821
+.\"
+.TH CHDIR 2 "1997년 8월 21일" "리눅스 2.0.30" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+chdir, fchdir \- 작업 디렉토리를 바꾼다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.BI "int chdir(const char *" path );
+.br
+.BI "int fchdir(int " fd ");"
+.SH 설명
+.BR chdir 는 
+현재 디렉토리를 
+.IR path 가 
+지정한 곳으로 바꾼다.
+.PP
+.BR fchdir 는 
+.BR chdir 와 
+동일하며, 단지 열려진 파일 기술자가 인자로 주어진다.
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되며, 
+.IR errno 는 
+적당한 값으로 설정된다.
+.SH 에러
+파일 시스템에 의존적이며, 다른 에러가 리턴될 수 있다.
+.BR chdir 에서 
+발생하는 일반적인 에러는 다음과 같다:
+.TP
+.B EFAULT
+.IR path 는 
+접근할 수 없는 메모리 영역을 가리키고 있다.
+.TP
+.B ENAMETOOLONG
+.IR path 가 
+너무 길다.
+.TP
+.B ENOENT
+파일이 존재하지 않는다.
+.TP
+.B ENOMEM
+커널 메모리가 충분하지 않다.
+.TP
+.B ENOTDIR
+.IR path 가 
+디렉토리가 아니다.
+.TP
+.B EACCES
+허가가 거부되었다.
+.TP
+.B ELOOP
+.IR path 를 
+찾아갈 때, 너무 많은 심볼릭 링크가 존재한다.
+.TP
+.B EIO
+I/O 에러가 발생했다.
+.PP
+.BR fchdir 에서 
+발생하는 일반적인 에러는 다음과 같다:
+.TP
+.B EBADF
+.IR fd 가 
+유효한 파일 기술자가 아니다.
+.TP
+.B EACCES
+.IR fd 로 
+지정된 디렉토리를 여는데 허가가 거부되었다.
+.SH 호환
+.BR chdir 은 
+SVr4, SVID, POSIX, X/OPEN, 4.4BSD과 호환이다.  SVr4문서는 
+EINTR, ENOLINK 그리고 EMULTIHOP 에러 상태를 추가적으로 기술하지만
+ENOMEM은 언급하지 않았다.  POSIX.1은 ENOMEM 또는 ELOOP 에러 상태를 포함하고
+있지 않다.
+X/OPEN은 EFAULT, ENOMEM 또는 EIO 에러 상태를 포함하고 있지 않다.
+
+.B fchdir
+시스템 콜은 SVr4, 4.4BSD 그리고 X/OPEN과 호환이다.
+SVr4 문서는 EIO, EINTR 그리고  ENOLINK 에러 상태를 추가적으로 기술한다.
+X/OPEN 문서는 EINTR 그리고 EIO 에러 상태를 추가적으로 기술한다.
+.SH 관련 항목
+.BR getcwd (3),
+.BR chroot (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 5월 1일

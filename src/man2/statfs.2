@@ -1,0 +1,187 @@
+.\" Copyright (c) 1989, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)statfs.2	6.5 (Berkeley) 7/23/91
+.\"
+.\" Modified Sat Jul 24 11:27:31 1993 by Rik Faith (faith@cs.unc.edu)
+.\"
+.TH STATFS 2 "1997년 8월 21일" "Linux 2.0.30" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+statfs, fstatfs \- 파일 시스템 통계를 가져온다.
+.SH 사용법
+.B #include <sys/vfs.h>
+.sp
+.BI "int statfs(const char *" path ", struct statfs *" buf );
+.br
+.BI "int fstatfs(int " fd ", struct statfs *" buf );
+.SH 설명
+.B statfs
+는 마운트된 파일시스템에 관한 정보를 반환한다.
+.I path
+는 마운트된 파일 시스템내 파일의 경로 이름이다.
+.I buf
+는 다음과 같이 정의된
+.I statfs
+구조체에 대한 포인터이다:
+
+.RS
+.nf
+struct statfs {
+   long    f_type;     /* 파일 시스템 타입(아래에서 보여준다) */
+   long    f_bsize;    /* 최적화된 전송 블럭 크기 */
+   long    f_blocks;   /* 파일 시스템내 총 데이터 블럭들 */
+   long    f_bfree;    /* 파일 시스템내 여유 블럭들 */
+   long    f_bavail;   /* 비-슈퍼 유저를 위한 여유 블럭들 */
+   long    f_files;    /* 파일 시스템내 총 파일 노드들 */
+   long    f_ffree;    /* 파일 시스템내 여유 파일 노드들 */
+   fsid_t  f_fsid;     /* 파일 시스템 ID */
+   long    f_namelen;  /* 파일 이름의 최대 길이 */
+   long    f_spare[6]; /* 나중을 위한 여유분 */
+};
+
+파일 시스템 타입들:
+
+linux/affs_fs.h:
+   AFFS_SUPER_MAGIC      0xADFF
+linux/ext_fs.h:
+   EXT_SUPER_MAGIC       0x137D
+linux/ext2_fs.h:
+   EXT2_OLD_SUPER_MAGIC  0xEF51
+   EXT2_SUPER_MAGIC      0xEF53
+linux/hpfs_fs.h:
+   HPFS_SUPER_MAGIC      0xF995E849
+linux/iso_fs.h:
+   ISOFS_SUPER_MAGIC     0x9660
+linux/minix_fs.h:
+   MINIX_SUPER_MAGIC     0x137F /* orig. minix */
+   MINIX_SUPER_MAGIC2    0x138F /* 30 char minix */
+   MINIX2_SUPER_MAGIC    0x2468 /* minix V2 */
+   MINIX2_SUPER_MAGIC2   0x2478 /* minix V2, 30 char names */
+linux/msdos_fs.h:
+   MSDOS_SUPER_MAGIC     0x4d44
+linux/ncp_fs.h:
+   NCP_SUPER_MAGIC       0x564c
+linux/nfs_fs.h:
+   NFS_SUPER_MAGIC       0x6969
+linux/proc_fs.h:
+   PROC_SUPER_MAGIC      0x9fa0
+linux/smb_fs.h:
+   SMB_SUPER_MAGIC       0x517B
+linux/sysv_fs.h:
+   XENIX_SUPER_MAGIC     0x012FF7B4
+   SYSV4_SUPER_MAGIC     0x012FF7B5
+   SYSV2_SUPER_MAGIC     0x012FF7B6
+   COH_SUPER_MAGIC       0x012FF7B7
+linux/ufs_fs.h:
+   UFS_MAGIC             0x00011954
+linux/xia_fs.h:
+   _XIAFS_SUPER_MAGIC    0x012FD16D
+.fi
+.RE
+.PP
+특별한 파일 시스템을 위해 정의되지 않은 필드들은 \-1로 설정된다.
+.B fstatfs
+는 기술자
+.IR fd 에
+의해 참조되는 열린 파일에 관한 같은 정보를 반환한다.
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되며, 
+.I errno
+는 적당한 값으로 설정된다.
+.SH 에러
+.BR statfs :
+.TP
+.B ENOTDIR
+.I path
+의 경로 요소가 디렉토리가 아니다.
+.TP
+.B ENAMETOOLONG
+.I path
+가 너무 길다.
+.TP
+.B ENOENT
+.I path
+가 가리키는 파일이 존재하지 않는다.
+.TP
+.B EACCES
+탐색 허가권이 
+.IR path 의
+경로 요소에서 거부되었다.
+.TP
+.B ELOOP
+너무 많은 상징 연결들을 
+.IR path 해석시에
+만났다.
+.TP
+.B EFAULT
+.I Buf
+나
+.I path
+가 유효하지 않는 주소를 가리키고 있다.
+.TP
+.B EIO
+파일 시스템을 읽거나 슬는 동안 I/O 에러가 발생했다.
+.TP
+.B ENOMEM
+이용할수 있는 커널 메모리가 충분하지 않다.
+.TP
+.B ENOSYS
+파일 시스템
+.I path
+는 
+.BR statfs 를
+지원하지 않는다.
+.PP
+.BR fstatfs :
+.TP
+.B EBADF
+.I fd
+는 유효한 열려진 파일 기술자가 아니다.
+.TP
+.B EFAULT
+.I buf
+가 유효하지 않은 주소를 가리키고 있다.
+.TP
+.B EIO
+파일 시스템을 읽고 쓰는 동안 I/O 에러가 발생했다.
+.TP
+.B ENOSYS
+파일 시스템
+.I fd
+가
+.BR statfs 를
+지원하지 않는다.
+.SH 호환
+4.4BSD.
+.SH 관련 항목
+.BR stat (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 9월 16일
