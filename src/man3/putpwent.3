@@ -1,0 +1,73 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:43:46 1993 by Rik Faith (faith@cs.unc.edu)
+.TH PUTPWENT 3  "1993년 5월 9일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+putpwent \- 패스워드 파일 엔트리를 쓴다.
+.SH 사용법
+.nf
+.B #include <pwd.h>
+.B #include <stdio.h>
+.B #include <sys/types.h>
+.sp
+.BI "int putpwent(const struct passwd *" p ", FILE *" stream );
+.fi
+.SH 설명
+\fBputpwent()\fP 함수는 \fIstream\fP과 관련된 파일에 구조체 \fIp\fP 인 
+패스워드 엔트리를 쓴다.
+.PP
+\fIpasswd\fP 구조체는 다음처럼 \fI<pwd.h>\fP에 정의되어 있다:
+.sp
+.RS
+.nf
+.ta 8n 16n 32n
+struct passwd {
+        char    *pw_name;		/* 유저 이름 */
+        char    *pw_passwd;		/* 유저 패스워드 */
+        uid_t   pw_uid;			/* 유저 id */
+        gid_t   pw_gid;			/* 그룹 id */
+        char    *pw_gecos;      	/* 실제 이름 */
+        char    *pw_dir;  		/* 홈 디렉토리 */
+        char    *pw_shell;      	/* shell 프로그램 */
+};
+.ta
+.fi
+.RE
+.SH 반환값
+\fBputpwent()\fP 함수는 성공시 0을 리턴하고, 에러가 발생하면 \-1을 반환한다.
+occurs.
+.SH 에러
+.TP
+.B EINVAL
+유효하지 않은 인자가 주어졌다.
+.SH 호환
+SVID 3
+.SH 관련 항목
+.BR fgetpwent "(3), " getpwent "(3), " setpwent (3),
+.BR endpwent "(3), " getpwnam "(3), " getpwuid "(3), " getpw (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 4월 30일 

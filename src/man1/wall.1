@@ -1,0 +1,54 @@
+.\" Korean manpage ChangeLog
+.\" Original manpage - wall.1 in SysVinit-2.88 package.
+.\"
+.\" r1.2 2004-03-29 12:51:03 +14-4     윤현호
+.\" r1.1 2004-03-29 01:08:16           윤현호
+.\"
+.TH WALL 1 "2000년 9월 12일" "" "Linux User's Manual"
+.SH 이름
+wall \- 모든 사람의 터미널에 메시지를 보낸다.
+.SH 사용법
+.B wall
+.RB [ " message " ]
+.SH 설명
+.BR wall 은
+시스템에 로그인된 사용자 중
+.BR mesg (1)
+퍼미션이
+.BR yes 로
+설정된 모든 사용자에게 메시지를 보낸다.
+이 메시지는
+.BR wall 의
+인자로 주어질 수도 있고,
+.BR wall 을
+실행한 후 표준 입력으로 줄 수도 있다.
+표준 입력으로 메시지를 입력할 때, 메시지의 마지막에
+.B EOF
+문자를 넣어서 입력을 종료시킨다. (보통 Control-D가 여기에 해당한다.)
+.PP
+메시지의 최대 길이는 20 줄이다.
+.SH 주의
+문서화되어 있지 않은 (앞으로도 사용할 예정이 없는) 옵션 "-n"이 있다.
+이 옵션은
+.BR wall 이
+표시하는 배너를 억제한다. 이 옵션은
+.BR rwalld (8)
+에서 사용하기 위한 것이다.
+.BR wall 이
+sgid(set-group-id)을 가지고 설치되어 있거나, root 이외의 사용자가
+실행한 경우에는 이 옵션을 사용할 수 없다.
+.PP
+.BR wall 을
+사용한 모든 시도는 syslog에 LOG_USER와 LOG_INFO 레벨로 기록이 남겨진다.
+.SH "환경 변수"
+.BR wall 은
+.B TZ
+환경 변수를 무시한다.
+배너에 출력되는 시간은 시스템 시간을 기준으로 한다.
+.SH "관련 항목"
+.BR mesg (1),
+.BR rpc.rwalld (8).
+.SH 저자
+Miquel van Smoorenburg, miquels@cistron.nl
+.SH 번역
+윤현호 <hhyoon@kldp.org> 2004년 3월 29일

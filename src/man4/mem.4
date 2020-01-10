@@ -1,0 +1,78 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified Sat Jul 24 16:59:10 1993 by Rik Faith (faith@cs.unc.edu)
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH MEM 4 "1992년 11월 21일" "리눅스" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+mem, kmem, port \- 시스템메모리, 커널메모리와 시스템포트.
+.SH 설명
+\fBMem\fP은 컴퓨터 메인메모리의 이미지인 문자장치 파일이며,
+시스템검사에 쓰인다.
+.LP
+mem의 바이트주소는 물리적인 메모리주소로 해석된다.
+.LP
+검사와 패칭은 read-only나 write-only비트가 주어졌을때, 예기치
+못한 결과를 낳을 수 있다.
+.LP
+\fBMem\fP은 다음에 의해 생성된다:
+.RS
+.sp
+mknod -m 660 /dev/mem c 1 1
+.br
+chown root:mem /dev/mem
+.sp
+.RE
+.LP
+kmem파일은 물리적 메모리보다는 커널 가상메모리가 액세스되는 것을
+제외하고는 mem파일과 같다.
+.LP
+kmem은 다음에 의해 생성된다:
+.RS
+.sp
+mknod -m 640 /dev/kmem c 1 2
+.br
+chown root:mem /dev/kmem
+.sp
+.RE
+.LP
+\fBPort\fP는 IO포트가 액세스되는 걸 제외하고는
+mem과 같다.
+.LP
+\fBPort\fP은 다음에 의해 생성된다:
+.RS
+.sp
+mknod -m 660 /dev/port c 1 4
+.br
+chown root:mem /dev/port
+.sp
+.RE
+.SH 파일
+/dev/mem
+.br
+/dev/kmem
+.br
+/dev/port
+.SH 관련 항목
+.BR mknod "(1), " chown "(1), " ioperm (2)

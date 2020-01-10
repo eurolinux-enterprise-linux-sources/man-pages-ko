@@ -1,0 +1,55 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:00:10 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Mon Jan 20 12:04:18 1997 by Andries Brouwer (aeb@cwi.nl)
+.TH STRSEP 3  "1993년 4월 12일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+strsep \- 문자열에서 토큰을 뽑아낸다.
+.SH 사용법
+.nf
+.B #include <string.h>
+.sp
+.BI "char *strsep(char **" stringp ", const char *" delim );
+.fi
+.SH 설명
+\fBstrsep()\fP 함수는 문자열 \fIstringp\fP에서 \fIdelim\fP로 구분되는
+다음 토큰을 반환한다. 토큰은 `\\0' 문자로 끝나며 \fIstringp\fP은 토큰을
+지나가는 시점에서 갱신된다.
+.SH 반환값
+\fBstrsep()\fP 함수는 토큰에 대한 포인터를 반환하거나 만일 \fIdelim\fP가
+\fIstringp\fP에서 발견되지 않는다면 NULL을 반환한다.
+.SH 주의
+\fBstrsep()\fP 함수는 \fBstrtok()\fP에 대한 대체 함수로 소개되었다. 
+왜냐하면 나중에 빈 필드를 처리하지 못하기 때문이다.
+(그러나, \fBstrtok()\fP 함수는 ANSI-C에서 확정되었고 훨씬 호환적이다.)
+.SH 호환
+BSD 4.4
+.SH 관련 항목
+.BR index "(3), " memchr "(3), " rindex "(3), " strchr (3),
+.BR strpbrk "(3), " strspn "(3), " strstr "(3), " strtok (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 2월 24일

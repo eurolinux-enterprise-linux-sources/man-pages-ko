@@ -1,0 +1,176 @@
+.\" Copyright (c) 1999 Andries Brouwer (aeb@cwi.nl), 1 Nov 1999
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" 1999-11-10: Merged text taken from the page contributed by
+.\" Reed H. Petty (rhp@draper.net)
+.\"
+.TH VFORK 2 "1999년 11월 1일" "Linux 2.2.0" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+vfork \- 자식 프로세스를 만들고 부모 프로세스를 봉쇄한다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.B pid_t vfork(void);
+.SH 표준 설명
+(XPG4 / SUSv2 / POSIX 초안에서.)
+.IR vfork ()함수는
+.IR vfork ()에
+의해 생성된 프로세스가 
+.IR vfork ()의
+반환 값을 저장하기 위해 사용된 pid_t 타입의 변수외 다른 데이터를 수정하거나,
+.IR vfork ()를
+호출하기 전에 함수에서 리턴되거나,
+.IR _exit ()를
+성공적으로 호출하기 전에 다른 함수를 호출하거나, 
+.I exec
+함수 계열중 하나를 호출할경우 행동을 정의할수 없다는 것을 제외하고는
+.IR fork ()와 
+같은 효과를 가진다.
+
+.SH 에러
+.TP
+.B EAGAIN
+프로세스들이 너무 많다. - 다시 시도.
+.TP
+.B ENOMEM
+새 프로세스를 위한 스왑 공간이 충분하지 않다.
+.SH "리눅스 설명"
+.BR fork (2)처럼,
+.BR vfork 는
+호출 프로세스의 자식 프로세스를 만든다. 
+세부 사항과 반환 값 그리고 에러는 
+.BR fork (2)를
+참조해라.
+.PP
+.B vfork()
+는 
+.BR clone (2)의
+특별한 경우이다.
+이 함수는 부모 프로세스의 페이지 테이블을 복사하지 않고 새 프로세스를 만든다.
+이 함수는 자식이 
+.IR execve() 후에
+즉시 만들어져야 하는 성능에 민감한 응용 프로그램에서는 유용하다.
+.PP
+.B vfork()
+는 자식이 
+.BR execve (2)나
+.BR _exit (2)를
+호출할때까지 부모가 일시 중지되기 때문에 fork와는 다르다.
+자식 프로세스는 
+.I execve() 
+가 자식에 의해 실행될때까지 스택을 포함하여 부모와 모든 메모리를 공유한다.
+자식 프로세스는 현재 함수나 
+.IR exit() 호출에서
+반환해서는 않되지만 
+.IR _exit() 호출에서는
+된다.
+.PP
+시그널 핸들러는 상속되지만 공유되지는 않는다. 부모 프로세스에 대한 신호는
+자식이 부모를 놓아준 후에 도착한다.
+.SH "역사적 설명"
+리눅스에서,
+.IR fork ()는
+copy-on-write 페이지를 사용하여 수행된다. 그래서 단지 
+.IR fork ()에
+의해 생긴 불이익은 부모 페이지 테이블 복사 및 자식을 위한 단일 태스크 구조체를 
+만들기 위해 요구되는 시간과 메모리이다.
+그러나, 오래전에 
+.IR fork() 는
+.IR exec ()를
+실행한 후 즉시 불 필요하게, 호출 프로세스의 데이터 공간의 완전한 복사를 하도록
+요구 했다.
+그후 효율성을 위해, BSD 는
+부모 프로세스의 주소 공간을 완전히 복사하지는 않지만 
+.IR execve ()가
+호출되거나 종료 될때까지 부모의 메모리와 쓰레드 제어를 빌리는
+.B vfork 
+시스템 콜을 소개했다.
+부모 프로세스는 자식 프로세스가 해당 자원을 사용할때까지 일시 중지 된다.
+vfork의 사용은 신중해야 한다. -- 예를 들어, 변수들이 레지스터에 잡혀 있는지를
+알고 있는 경우에 부모 프로세스에 있는 데이터를 수정해서는 안된다.
+
+.SH 버그
+이 함수는 리눅스가 과거에 이러한 불안의 원인을 되살아나게 하는 것보다 더 운이 없다.
+BSD 맨 페이지 상태:
+"이 스스템 콜은 적당한 시스템 메카니즘이 수행될때 사라질 것이다.
+사용자들은 
+.I vfork
+의 메모리 공유 의미론에 의존해서는 안된다. 왜냐하면 그런 경우
+이 함수는 
+.IR fork \c 
+의 동의어이기 때문이다.
+"
+
+정상적으로 말해서, 위에 보여준 표준 설명은 
+다음
+.IR exec 가
+실패하고 그리고 다음에 일어날일이 정의되지 않기 때문에
+.IR vfork ()의
+사용을 허용하지 않는다.
+BSD 맨 페이지 상태:
+" 가능한 데드 락(deadlock) 상태를 피하기 위해, 
+.I vfork 
+상태에 있는 자식 프로세세스들은 SIGTTOU 나 SIGTTIN 신호를 보내서는 안된다;
+그보다 출력 또는 
+.IR ioctl s 
+는 허용되며 입력 시도는 파일 끝을 가리키게 된다.
+
+현재(Linux 2.3.25), 
+.BR strace (1)는
+.IR vfork() 을
+따라갈수 없으며 커널 패치를 해야 한다.
+
+.SH 역사
+.IR vfork ()시스템
+콜은 3.0 BSD에서 나타났다. 
+BSD 4.4에서 이 함수는 
+.IR fork ()와
+동의어이지만, NetBSD는 이 함수를 다시 소개했다.
+cf. http://www.netbsd.org/Documentation/kernel/vfork.html .
+리눅스에서, 이 함수는 2.2.0-pre6 나 그때까지 
+.IR fork ()와
+같다.
+2.2.0-pre9(i386에서는 다른 아키텍쳐보다 다소 늦다) 이후에, 이 함수는 독립적인 
+시스템 콜이다. 지원은 glibc 2.0.112 에서 추가되었다.
+.SH 호환
+.B vfork
+함수는 다른 OS에서 같은 이름을 가지고 있는 함수들과 약간 비슷하다.
+표준에서 
+.B vfork
+를 수행할때의 요구들은 
+.BR fork 를
+수행할때의 것보다도 적다.
+그래서 두 함수가 동의어일때의 수행은 잘 된다.
+특히, 프로그래머는 
+.I execve()
+나
+.I _exit()
+가 호출될때까지 블럭된 채로 남아 있는 부모 프로세스에 의존할수 없으며
+어떤 특정 행동 w.r.t 공유 메모리에 의존할수도 없다.
+.\" AIXv3.1에서 vfork 는 fork와 같다.
+.SH 관련 항목
+.BR clone (2),
+.BR execve (2),
+.BR fork (2),
+.BR wait (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 9월 16일

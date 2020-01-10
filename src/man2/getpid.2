@@ -1,0 +1,59 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\"
+.\" 한국어 번역: 최윤용 <markboy@secsm.org> 2000년 4월 22일
+.\"
+.\" r1.2 2005-02-17 16:29:20 +10-2 윤현호
+.\" r1.1 2004-03-29 15:03:46  210.117.186.69
+.\"
+.TH GETPID 2 "1993년 7월 23일" "리눅스 0.99.11" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+getpid, getppid \- 프로세스 식별값(identification)을 얻는다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.B pid_t getpid(void);
+.br
+.B pid_t getppid(void);
+.SH 설명
+.BR getpid 는
+현재 프로세스의 프로세스 ID를 돌려준다. (이것은 유일한 임시 파일 이름을 만드는
+루틴에서 종종 사용된다.)
+
+.BR getppid 는
+현재 프로세스의 부모 프로세스 ID를 돌려준다.
+.SH "호환"
+POSIX, BSD 4.3, SVID
+.SH "관련 항목"
+.BR exec (3),
+.BR fork (2),
+.BR kill (2),
+.BR mkstemp (3),
+.BR tmpnam (3),
+.BR tempnam (3),
+.BR tmpfile (3)
+.SH 번역
+최윤용 <markboy@secsm.org> 2000년 4월 22일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 17일

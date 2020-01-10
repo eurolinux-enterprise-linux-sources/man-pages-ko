@@ -1,0 +1,64 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1995 Michael Chastain (mec@shell.portal.com), 15 April 1995.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified Tue Oct 22 22:11:53 1996 by Eric S. Raymond <esr@thyrsus.com>
+.TH IPC 2 "1995년 5월 15일" "Linux 1.2.4" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+socketcall \- 소켓 시스템 콜들
+.SH 사용법
+.BI "int socketcall(int" " call, " "unsigned long *" "args);"
+.SH 설명
+.B socketcall
+은 소켓 시스템 콜들을 위한 일반적인 커널 엔트리 포인터이다.
+.I call
+은 호출할 소켓 함수를 결정한다.
+.I args
+는 적당한 호출에 전달될 실제 인자를 포함하는 블럭을 가리킨다.
+.PP
+사용자 프로그램은 사용 이름들로 적당한 함수들을 호출해야 한다.
+단지 표준 라이브러리 수행자나 해커들만이 
+.BR socketcall 를
+알 필요가 있다.
+
+.SH 호환
+이 함수는 리눅스에 의존하며 호환성을 염두에 둔 프로그램에서는 사용해서는 
+안된다.
+.SH 관련 항목
+.BR accept (2),
+.BR bind (2),
+.BR connect (2),
+.BR getpeername (2),
+.BR getsockname (2),
+.BR getsockopt (2),
+.BR listen (2),
+.BR recv (2),
+.BR recvfrom (2),
+.BR send (2),
+.BR sendto (2),
+.BR setsockopt (2),
+.BR shutdown (2),
+.BR socket (2),
+.BR socketpair (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 8월 7일

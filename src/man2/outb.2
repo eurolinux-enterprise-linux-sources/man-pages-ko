@@ -1,0 +1,63 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1995 Paul Gortmaker
+.\" (gpg109@rsphy1.anu.edu.au)
+.\" Wed Nov 29 10:58:54 EST 1995
+.\" 
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX    2000년 7월 26일
+.\"
+.TH OUTB 2 "1995년 11월 29일" "리눅스" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+outb, outw, outl, outsb, outsw, outsl \- port output
+.br
+inb, inw, inl, insb, insw, insl \- port input
+.br
+outb_p, outw_p, outl_p, inb_p, inw_p, inl_p \- paused I/O
+.sp
+.SH 설명
+이 함수그룹은 낮은 레벨의 포트에서 입력과 출력을 하는데 사용된다.
+내부 커널 사용을 위해 만들어졌으나, 사용자 공간에서도 사용할 수
+있고, 
+.I outb(9)
+에서 주어지는 것에 더해서 아래와 같은 정보가 주어진다.
+.sp
+\fB\-O\fP나 \fB\-O2\fP, 혹은 비슷한 것으로 컴파일 할 수 있다. 함수는 내부 매크로로 정의되고, 최적화 되지 않은 상태에서 대체 되지 않는다.
+.sp
+커널이 문제의 I/O 포트에 접근할 수 있도록 사용자 공간 어플리케이션을 허가하도록 알리는데
+.I ioperm(2)
+나 선택적으로
+.I iopl(2)
+을 사용한다. 이것을 하는데 실패하면, 어플리케이션은 분할 결점을 받게 된다.
+
+.SH 호환
+\fBoutb\fP 와 그 부류의 것들은 하드웨어 특화 되어 있다.
+.I port
+와 
+.I value
+독립 변수는 대부분의 도스에서 순서가 반대이다.
+.SH 관련 항목
+.BR ioperm (2),
+.BR iopl (2)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29

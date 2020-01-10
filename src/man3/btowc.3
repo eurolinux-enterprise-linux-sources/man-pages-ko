@@ -1,0 +1,44 @@
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single Unix specification http://www.UNIX-systems.org/online.html
+.\"   ISO/IEC 9899:1999
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH BTOWC 3  "July 25, 1999" "GNU" "Linux Programmer's Manual"
+.SH 이름
+btowc \- single byte 를 wide 문자로 변환
+.SH 사용법
+.nf
+.B #include <wchar.h>
+.sp
+.BI "wint_t btowc (int " c );
+.fi
+.SH 설명
+\fBbtowc\fP 함수는 초기 이동 상태에서 시작해서 길이 1의 멀티바이트 시퀀스로 
+해석되는 \fIc\fP를 wide 문자로 바꾸고, 그것을 반환한다. 
+\fIc\fP가 EOF이거나 확실한 길이 1의 멀티바이트 시퀀스라면, ,
+\fBbtowc\fP 함수는 WEOF로 돌아간다.
+.SH 반환값
+\fBbtowc\fP 함수는 1 바이트를 바꾼 wide 문자를 반환한다.
+\fIc\fP 가 EOF거나 확실한 길이 1의 멀티바이트 시퀀스라면,
+WEOF를 반환한다..
+.SH 호환
+ISO/ANSI C, UNIX98
+.SH 관련 항목
+.BR mbtowc (3)
+.SH 주의
+\fBbtowc\fP의 실행은 현제 로컬의 LC_CTYPE 분류에 따른다..
+.PP
+This function should never be used. It does not work for encodings which have
+state, and unnecessarily treats single bytes differently from multibyte
+sequences. Use the function \fBmbtowc\fP instead.

@@ -1,0 +1,199 @@
+'\" t
+.\" Copyright (c) 1993 Michael Haardt (michael@cantor.informatik.rwth-aachen.de)
+.\" and 1994,1995 Alain Knaff (Alain.Knaff@imag.fr)
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified, Sun Feb 26 15:00:02 1995, faith@cs.unc.edu
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH FD 4 "January 29, 1995" "Linux" "Special files"
+.SH 이름
+fd \- 플로피 디스크 장치 
+.SH CONFIGURATION
+플로피 드라이브는 블록 장치로서 메이저 넘버 2를 갖는다. 일반적으로 
+프롤피 드라이브는 roo.floppy(예를 들면, user root, group floppy)에 의해 
+소유되며, 모드 0660(그룹 멤버쉽을 통한 액세스 체킹)이거나, 모드 0666(누구나 
+액세스할 수 있음)
+마이너 넘버는 장치 유형, 장치 번호, 제어기 번호를 인코딩한다. 각 장치 유형(밀도와 
+트랙 수의 결합)에 대해서는, 기본 마이너 넘버가 있다. 이 기본 넘버에, 드라이브의 번호를 
+제어기에 추가하고, 만일 드라이브가 두번째 제어기 상에 있다면, 128을 추가한다. 다음의 장치 
+테이블에서 \fIn\fP는 드라이브 번호를 상징한다. 
+.PP
+
+\fB경고: 만일 드라이브에 의해 지원된 것보다 더 많은 트랙들을 지닌 포맷을 사용한다면, 여러분은 
+이러한 기계상의 손실을 초래할 수 있다. \fP  보통 40/80보다 더 많은 트랙들이 지원된다면, 이에 손상
+을 초래해서는 안되고, 이에 대한 어떤 보상도 이루어지지 않는다. 이러한 활용을 방지하기 위한 
+형식들에 대한 장치 항목들을 만들지 마시오. 
+.PP
+미디어 포맷 및 용량을 자동적으로 감지하는 드라이브 독립 장치 파일들:
+.PP
+.TS
+l l.
+이름  기본 마이너(Base minor) #
+_
+\fBfd\fP\fIn\fP	0
+.TE
+.PP
+5.25인치 두배의 밀도를 지닌 장치 파일: 
+.PP
+.TS
+lw(1i) l l l l l.
+이름 용량 실린더 섹터 헤드 기본 마이너 #
+\fBfd\fP\fIn\fP\fBd360\fP	360K	40	9	2	4
+.TE
+.PP
+5.25인치 두배의 밀도를 지닌 장치 파일: 
+.PP
+.TS
+lw(1i) l l l l l.
+이름 용량 실린더 섹터 헤드 기본 마이너 #
+_
+\fBfd\fP\fIn\fP\fBh360\fP	360K	40	9	2	20
+\fBfd\fP\fIn\fP\fBh410\fP	410K	41	10	2	48
+\fBfd\fP\fIn\fP\fBh420\fP	420K	42	10	2	64
+\fBfd\fP\fIn\fP\fBh720\fP	720K	80	9	2	24
+\fBfd\fP\fIn\fP\fBh880\fP	880K	80	11	2	80
+\fBfd\fP\fIn\fP\fBh1200\fP	1200K	80	15	2	8
+\fBfd\fP\fIn\fP\fBh1440\fP	1440K	80	18	2	40
+\fBfd\fP\fIn\fP\fBh1476\fP	1476K	82	18	2	56
+\fBfd\fP\fIn\fP\fBh1494\fP	1494K	83	18	2	72
+\fBfd\fP\fIn\fP\fBh1600\fP	1600K	80	20	2	92
+.TE
+.PP
+3.5인치 두배의 밀도를 지닌 장치 파일: 
+.PP
+.TS
+lw(1i) l l l l l.
+이름 용량 실린더 섹터 헤드 기본 마이너 #
+_
+\fBfd\fP\fIn\fP\fBD360\fP	360K	80	9	1	12
+\fBfd\fP\fIn\fP\fBD720\fP	720K	80	9	2	16
+\fBfd\fP\fIn\fP\fBD800\fP	800K	80	10	2	120
+\fBfd\fP\fIn\fP\fBD1040\fP	1040K	80	13	2	84
+\fBfd\fP\fIn\fP\fBD1120\fP	1120K	80	14	2	88
+.TE
+.PP
+3.5인치 두배의 밀도를 지닌 장치 파일: 
+.PP
+.TS
+lw(1i) l l l l l.
+이름 용량 실린더 섹터 헤드 기본 마이너 #
+_
+\fBfd\fP\fIn\fP\fBH360\fP	360K	40	9	2	12
+\fBfd\fP\fIn\fP\fBH720\fP	720K	80	9	2	16
+\fBfd\fP\fIn\fP\fBH820\fP	820K	82	10	2	52
+\fBfd\fP\fIn\fP\fBH830\fP	830K	83	10	2	68
+\fBfd\fP\fIn\fP\fBH1440\fP	1440K	80	18	2	28
+\fBfd\fP\fIn\fP\fBH1600\fP	1600K	80	20	2	124
+\fBfd\fP\fIn\fP\fBH1680\fP	1680K	80	21	2	44
+\fBfd\fP\fIn\fP\fBH1722\fP	1722K	82	21	2	60
+\fBfd\fP\fIn\fP\fBH1743\fP	1743K	83	21	2	76
+\fBfd\fP\fIn\fP\fBH1760\fP	1760K	80	22	2	96
+\fBfd\fP\fIn\fP\fBH1840\fP	1840K	80	23	2	116
+\fBfd\fP\fIn\fP\fBH1920\fP	1920K	80	24	2	100
+.TE
+.PP
+3.5인치 두배의 밀도를 지닌 장치 파일: 
+.PP
+.TS
+lw(1i) l l l l l.
+이름 용량 실린더 섹터 헤드 기본 마이너 #
+_
+\fBfd\fP\fIn\fP\fBE2880\fP	2880K	80	36	2	32
+\fBfd\fP\fIn\fP\fBCompaQ\fP	2880K	80	36	2	36
+\fBfd\fP\fIn\fP\fBE3200\fP	3200K	80	40	2	104
+\fBfd\fP\fIn\fP\fBE3520\fP	3520K	80	44	2	108
+\fBfd\fP\fIn\fP\fBE3840\fP	3840K	80	48	2	112
+.TE
+.SH 설명
+\fBfd\fP 특수 파일들은 플로피 디스크 드라이브를 raw 모드로 액세스한다. 
+다음의 
+.BR ioctl (2)
+호출은 \fBfd\fP 장치들에 의해 지원된다. 
+.IP \fBFDCLRPRM\fP
+는 드라이버의 매체 정보(드라이브내의 디스크 맵)를 지운다. 
+.IP \fBFDSETPRM\fP
+는 디스크의 매체 정보를 설정한다. 매체 정보는 매체가 변경되면 상실된다. 
+.IP \fBFDDEFPRM\fP
+는 디스크의 매체정보를 설정한다. 매체 정보는 매체가 변경되더다로 상실되지 않는다. 
+이는 자동 감지를 작동하지 못하도록 한다. 자동 감지를 다시 활성화하려면, 
+\fBFDCLRPRM\fP 명령을 내려야 한다. 
+.IP \fBFDGETDRVTYP\fP
+는 드라이브의 유형(name 매개변수)을 리턴한다. 몇개 드라이브 유형에서 동작할 포맷들에 대해서는, 
+이 포맷을 지원하는 가장 오래된 드라이브 유형에 적절한 이름을 \fBFDGETDRVTYP\fP이 리턴한다. 
+.IP \fBFDFLUSH\fP
+는 주어진 드라이브에 대한 버퍼 캐시를 무효로 만든다. 
+
+.IP \fBFDSETMAXERRS\fP
+는 에러를 보고하고, 연산을 중지시키며, 눈금을 재고, 재설정하며, 섹터별로 읽어내기 위해 
+에러 임계치를 설정한다. 
+.IP \fBFDSETMAXERRS\fP
+는 현재 에러 임계치를 얻어낸다. 
+.IP \fBFDGETDRVTYP\fP
+는 드라이브의 내부 이름을 얻는다. 
+.IP \fBFDWERRORCLR\fP
+쓰기 에러 통계를 소거한다. 
+.IP \fBFDWERRORGET\fP
+는 쓰기 에러 통계를 읽어낸다. 이는 쓰기 에러, 첫번째 쓰기 에러의 위치 및 디스크,
+마지막 쓰기 에러의 위치 및 디스크의 총숫자를 포함한다. 디스크들은 각 디스크 변화에 따라 점증되는 
+생성 번호에 의해 확인된다. 
+
+.IP \fBFDTWADDLE\fP
+약간의 마이크로초 동안 드라이브 모터를 끈다. 이는 디스크 섹터가 서로 너무 
+가까운 섹터들을 지닌 디스크에 액세스하는데 필요할 수도 있다. 
+.IP \fBFDSETDRVPRM\fP
+는 다양한 드라이브 매개변수들을 설정한다. 
+.IP \fBFDGETDRVPRM\fP
+는 이러한 변수들을 다시 읽어들인다. 
+.IP \fBFDGETDRVSTAT\fP
+캐싱된 드라이브 상태를 얻는다. (변경된 디스크, 쓰기 금지된 등등)
+.IP \fBFDPOLLDRVSTAT\fP
+드라이브를 폴링(poll)하고, 이 상태를 리턴한다. 
+.IP \fBFDGETFDCSTAT\fP
+플로피 제어기 상태를 얻어낸다. 
+.IP \fBFDRESET\fP
+어떤 조건들하에서 플로피 제어기를 재설정한다. 
+.IP \fBFDRAWCMD\fP
+raw 명령을 플로피 제어기에 전달한다. 
+.PP
+좀더 정확한 정보에 대해서는, <linux/fd.h>와 <linux/fdreg.h>의 include 파일들을 
+참조하고, floppycontrol에 관한 맨 페이지를 참조하라. 
+.SH 주의
+다양한 포맷들은 다양한 유형의 디스크들을 읽고 쓰는데 도움을 준다. 하지만, 만일 플로피가 
+너무나 작은 내부 섹터 틈으로 포맷되어 있다면, 성능이 저하되어, 전체 트랙을 액세스하는데 
+몇초가 필요할 수가 있다. 애플 II나 맥킨토시 컴퓨터에 사용되는 GCR(그룹 코드 기록)을
+사용하여 포맷된 플로피들을 읽는 것은 불가능하다. 
+.SH 파일
+/dev/fd*
+.SH 저자
+Alain Knaff (Alain.Knaff@imag.fr), David Niemi
+(niemidc@clark.net), Bill Broadhurst (bbroad@netcom.com).
+.SH 관련 항목
+.BR floppycontrol (1),
+.BR mknod (1),
+.BR chown (1),
+.BR getfdprm (1),
+.BR superformat (1),
+.BR mount (8),
+.BR setfdprm (8)

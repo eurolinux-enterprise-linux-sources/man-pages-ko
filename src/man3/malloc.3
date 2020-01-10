@@ -1,0 +1,178 @@
+.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Modified Sat Jul 24 19:00:59 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Clarification concerning realloc, iwj10@cus.cam.ac.uk (Ian Jackson), 950701
+.\" Documented MALLOC_CHECK_, Wolfram Gloger (wmglo@dent.med.uni-muenchen.de)
+.\"
+.\"
+.\" 한국어 번역: 정강훈 <skyeyes@soback.kornet.net> 2001년 3월 11일
+.\"
+.\" r1.2 2005-02-15 20:27:24 +14-7 윤현호
+.\" 맞춤법 보정  
+.\" r1.1 2004-08-18 20:56:07  xaos
+.\"
+.TH MALLOC 3  "1993년 4월 4일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+calloc, malloc, free, realloc \- 동적 메모리 할당 및 해제
+.SH 사용법
+.nf
+.B #include <stdlib.h>
+.sp
+.BI "void *calloc(size_t " "nmemb" ", size_t " "size" ");"
+.nl
+.BI "void *malloc(size_t " "size" ");"
+.nl
+.BI "void free(void " "*ptr" ");"
+.nl
+.BI "void *realloc(void " "*ptr" ", size_t "  "size" ");"
+.fi
+.SH 설명
+.B calloc()
+함수는 원소의 크기가
+.I size
+바이트인
+.I nmemb
+개의 원소로 이루어진 배열을 위한 메모리를 할당하고 할당된 메모리에 대한
+포인터를 반환한다.
+메모리는 0 으로 설정된다.
+.PP
+.B malloc()
+함수는
+.I size
+바이트를 할당하고 할당된 메모리에 대한 포인터를 할당한다.
+메모리를 클리어하지 않는다.
+.PP
+.B free()
+는
+.BR malloc() ,
+.B calloc()
+또는
+.BR realloc() 
+에 대한 호출시 반환되는
+.IR ptr 
+이 가리키는 메모리 공간을 해제한다.
+그렇지 않고, 만일
+.BI "free(" "ptr" )
+가 전에 이미 호출되었다면, 정의되지 않은 행동이 일어난다.
+만일
+.I ptr
+이
+.BR NULL 
+이라면, 어떤 작동도 행해지지 않는다.
+.PP
+.B realloc()
+함수는
+.I ptr
+이 가리키는 메모리 블럭의 크기를
+.I size
+바이트로 바꾼다.
+내용은 예전의 최소 크기에서 새 크기로 바뀌지 않는다.
+새롭게 할당된 메모리는 초기화되지 않는다.
+만일
+.I ptr
+이
+.BR NULL 
+이라면, 호출은
+.BR malloc(size) 
+과 동일하다;
+만일 크기가 0 이라면, 호출은
+.BI "free(" "ptr" )
+와 동일하다.
+만약
+.I ptr
+이
+.BR NULL 
+이 아니라면, 이 함수는
+.BR malloc() ,
+.BR calloc()
+이나
+.BR realloc() 
+에 대한 초기 호출시 반환되어야 한다.
+.SH 반환값
+.BR calloc() " 그리고 " malloc() 함수
+에서, 반환 값은 할당된 메모리를 가리키며, 이것은 어떤 종류의 변수를
+위해 적당히 정렬된다. 만일 요구가 실패하면,
+.B NULL
+이 반환된다.
+.PP
+.B free()
+는 어떤 값도 반환하지 않는다.
+.PP
+.B realloc()
+은 새로 할당된 메모리를 가리키는 포인터를 반환하며 이 메모리는 어떤 종류의
+변수를 위해 적당히 정렬되며
+.IR ptr 과는
+다를 것이다. 그렇지 않고, 만일 요구가 실패하거나 크기가 0 이라면
+.B NULL
+을 반환한다.
+만일
+.B realloc()
+이 실패한다면 원래 블럭은 건드리지 않고 남아있다 -- 해제되거나 이동되지
+않는다.
+.SH 호환
+ANSI-C
+.SH 관련 항목
+.BR brk (2)
+.SH 주의
+Unix98 표준은 실패시
+.I errno
+를 ENOMEM으로 설정하도록
+.BR malloc() ,
+.BR calloc() ,
+그리고
+.BR realloc ()
+을 요구한다.
+Glibc는 이렇게 설정된 것으로 생각된다. (그리고 이 루틴들의 glibc 버전은 이것을 한다);
+만일 여러분이
+.IR errno 를
+설정하지 않는 개인적인 malloc 수행을 사용한다면, 라이브러리 루틴들은
+.IR errno 를
+가지는 것 없이 이유없이 실패할 것이다.
+.LP
+.BR malloc() ,
+.BR free()
+또는
+.BR realloc()
+함수에서 크래쉬는 할당된 영역의 오버 플로우나 같은 포인터를 두번 해제 하는 것과
+같은 힙 오염과 항상 관련이 있다.
+.PP
+Linux libc (5.4.23 이후)의 최근 버전과 GNU libc (2.x) 버전은 환경 변수를 통해
+조정할수 있는 malloc 수행을 포함한다.
+.BR MALLOC_CHECK_
+이 설정되었다면, 특별한 (덜 효율적이지만) 행동이 행해지며, 이것은 같은 인자를 가지고
+.BR free()
+를 두번 호출하거나 단일 바이트(off-by-one 버그)의 초과 같은 간단한 에러에 대한
+안전을 위해 디자인되었다.
+그러나 그런 에러들은 항상 보호되지는 않으며 메모리 누수가 생길 수 있다.
+만일
+.BR MALLOC_CHECK_
+을 0 으로 설정하면, 발견된 힙 오염은 무시된다;
+만일 1 로 설정하면, 진단은 stderr로 출력된다;
+만일 2 로 설정하면,
+.BR abort()
+가 즉시 호출된다. 이것은 유용하다. 왜냐하면 크래쉬가 나중에 생길것이고
+문제의 원인을 찾아가는것이 매우 어려워지기 때문이다.
+.SH 번역
+정강훈 <skyeyes@soback.kornet.net> 2001년 3월 11일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 15일

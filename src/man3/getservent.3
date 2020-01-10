@@ -1,0 +1,111 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:19:11 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Wed Oct 18 20:23:54 1995 by Martin Schulze <joey@infodrom.north.de>
+.\" Modified Mon Apr 22 01:50:54 1996 by Martin Schulze <joey@infodrom.north.de>
+.\"
+.TH GETSERVENT 3  "1996년 4월 22일" "BSD" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+getservent, getservbyname, getservbyport, setservent, \
+endservent - 서비스 엔트리를 가져온다.
+.SH 사용법
+.nf
+.B #include <netdb.h>
+.sp
+.B struct servent *getservent(void);
+.sp
+.BI "struct servent *getservbyname(const char *" name ", const char *" proto );
+.sp
+.BI "struct servent *getservbyport(int " port ", const char *" proto );
+.sp
+.BI "void setservent(int " stayopen );
+.sp
+.B void endservent(void);
+.fi
+.SH 설명
+\fBgetservent()\fP 함수는 파일 \fI/etc/services\fP에서 다음 라인을 읽고 그 
+라인에서 뽑아낸 필드들을 포함하는 구조체 \fIservent\fP를 반한한다.
+\fI/etc/services\fP 파일은 필요하다면 열려진다.
+.PP
+\fBgetservbyname()\fP 함수는 \fI/etc/services\fP에서 프로토콜 \fIproto\fP을 
+사용하며 서비스 \fIname\fP 과 일치하는 라인에 해당하는 \fIservent\fP 
+구조체를 반환한다.
+.PP
+\fBgetservbyport()\fP 함수는 프로토콜 \fIproto\fP을 사용하며 네트웍 
+바이트 순서로 주어진 포트 \fIport\fP과 일치하는 \fIservent\fP 구조체를 
+반환한다.
+.PP
+\fBsetservent()\fP 함수는 \fI/etc/services\fP 파일을 열고 다시 원래대로 
+돌려놓는다.
+만일 \fIstayopen\fP 가 참(1)이라면, 파일은 \fBgetservbyname()\fP 과 
+\fBgetservbyport()\fP 호출시 닫혀지지 않는다.
+.PP
+\fBendservent()\fP 함수는 \fI/etc/services\fP를 닫는다.
+.PP
+\fIservent\fP 구조체는 다음처럼 \fI<netdb.h>\fP에 정의되어 있다:
+.sp
+.RS
+.nf
+.ne 6
+.ta 8n 16n 32n
+struct servent {
+	char	*s_name;		/* 공식적인 서비스 이름 */
+	char	**s_aliases;		/* 별칭 리스트 */
+	int	s_port;			/* 포트 번호 */
+	char	*s_proto;		/* 사용하는 프로토콜 */
+}
+.ta
+.fi
+.RE
+.PP
+\fIservent\fP 구조체의 멤버는:
+.TP
+.I s_name
+서비스의 공식적인 이름.
+.TP
+.I s_aliases
+서비스를 위해 선택할수 있는 널로 종료된 리스트 
+.TP
+.I s_port
+네트웍 바이트 순서로 주어진 서비스의 포트 번호 
+.TP
+.I s_proto
+이 서비스에서 사용하는 프로토콜 이름 
+.SH 반환값
+\fBgetservent()\fP, \fBgetservbyname()\fP 그리고 \fBgetservbyport()\fP
+함수는 \fIservent\fP 구조체를 반환하거나, 만일 에러가 일어나거나 파일의 
+끝에 도착한다면 NULL 포인터를 반환한다.
+.SH 파일
+.TP
+.I /etc/services
+서비스 데이터 파일 
+.SH 호환
+BSD 4.3
+.SH 관련 항목
+.BR getprotoent "(3), " getnetent "(3), " services (5)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 4월 30일 

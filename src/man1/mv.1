@@ -1,0 +1,96 @@
+.TH MV 1 "GNU File Utilities" "FSF" \" -*- nroff -*-
+.SH NAME
+mv \- 파일 옮기기
+.SH SYNOPSIS
+.B mv
+[options] source dest
+.br
+.B mv
+[options] source... directory
+.br
+Options:
+.br
+[\-bfiuv] [\-S backup-suffix] [\-V {numbered,existing,simple}]
+[\-\-backup] [\-\-force] [\-\-interactive] [\-\-update] [\-\-verbose]
+[\-\-suffix=backup-suffix] [\-\-version-control={numbered,existing,simple}]
+[\-\-help] [\-\-version]
+.SH DESCRIPTION
+이 문서는 더이상 최신 정보를 담고 있지않다. 그래서, 
+몇몇 틀릴 경우도 있고, 부족한 경우도 있을 것이다. 
+완전한 매뉴얼을 원하면, Texinfo 문서를 참조하기 바란다.
+.PP
+이 매뉴얼 페이지는 
+.BR mv
+명령의 GNU 버전에 대한 것이다.
+마지막 인자로 경로 이름이 사용되면, 
+원본 파일을 그 경로로 이름 똑같게 이동시킨다.
+반면, 마지막 인자가 파일이름이면, 그 이름으로 바꾼다.
+마지막 인자가 경로 이름이 아니거나, 원본과 대상이 파일 이름이 
+아닌 경우는 오류 메시지를 보인다.
+.B mv
+명령은 파일 시스템에 접근이 가능할 때만 사용될 수 있다. 
+(일반 사용자는 DOS 파티션의 파일 시스템과 자신의 홈 경로 외에는 
+읽기 접근을 뺀 나머지는 불가능하다. 이런데, 바로 이런 파일 
+시스템으로 파일을 옮기고자 한다면, mv 명령은 오류 메시지를 낸다.)
+.P
+만약에 파일 모드가 읽기 전용이고, 표준 입력이 tty이고, 
+\fI\-f\fR나 \fI\-\-force\fR 옵션이 지정되지 않으면, 
+.B mv
+명령은 사용자에게 지정한 파일을 정말 지울것인지 물어본다. 
+이때, `y'나 `Y'를 입력해 주어야지만 그 파일을 옮긴다.
+.SS OPTIONS
+.TP
+.I "\-b, \-\-backup"
+대상 파일이 이미 있어, 지워지는 것을 대비해 백업 파일을 만든다.
+.TP
+.I "\-f, \-\-force"
+대상 파일이 이미 있어도 사용자에게 어떻게 처리할지를 묻지 않는다.
+.TP
+.I "\-i, \-\-interactive"
+대상 파일이 이미 있어, 사용자에게 어떻게 처리할지를 물어 본다.
+이때, `y'나 `Y'를 입력해 주어야지만 그 파일을 옮긴다.
+(초기값)
+.TP
+.I "\-u, \-\-update"
+대상 파일이 이미 있는데, 그 파일의 최근 변경시간(modification time)이
+원본 파일보다 최근의 것이면 파일을 옮기지 않는다.
+.TP
+.I "\-v, \-\-verbose"
+파일 옮기는 과정을 자세하게 보여준다.
+.TP
+.I "\-\-help"
+도움말을 보여주고 마친다.
+.TP
+.I "\-\-version"
+버전 정보를 보여주고 마친다.
+.TP
+.I "\-S, \-\-suffix backup-suffix"
+만약에 이동 대상이 이미 있어, 백업을 해야할 경우에
+그 백업 파일에서 사용할 파일 이름의 꼬리 문자를 지정한다. 
+이것은 이미 지정되어 있는
+.B SIMPLE_BACKUP_SUFFIX
+환경 변수를 무시하게 된다. 
+만약 이 환경변수도 지정되어 있지 않고, 이 옵션도 사용하지 
+않는다면, 초기값으로 Emacs과 같이 `~' 문자를 사용한다.
+.TP
+.I "\-V, \-\-version-control {numbered,existing,simple}"
+백업하는 방법을 지정하는데, 
+이 옵션은 이미 지정되어 있는
+.B VERSION_CONTROL
+환경 변수를 무시한다. 
+만약 이 환경 변수도 지정되어 있지 않고, 이 옵션도 사용하지
+않는다면, 초기값으로 `existing'을 사용한다. 
+여기서 사용하는 백업방법은 GNU Emacs의 `version-control' 값과 같다.
+아래와 같이 보다 짧은 지시어들도 사용될 수 있다. 
+여기서 사용될 수 있는 백업 방법은 아래와 같다.
+.RS
+.TP
+`t' 또는 `numbered'
+항상 숫자 있는 백업본을 만든다.
+.TP
+`nil' or `existing'
+대상 파일이 이미 있을 경우에만 백업본을 만든다.
+.TP
+`never' or `simple'
+간단한 백업을 만듬.
+

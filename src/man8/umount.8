@@ -1,0 +1,105 @@
+.\" Copyright (c) 1996 Andries Brouwer
+.\" This page is somewhat derived from a page that was
+.\" (c) 1980, 1989, 1991 The Regents of the University of California
+.\" and had been heavily modified by Rik Faith and myself.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.\" 번역자 이만용 <geoman@nownuri.nowcom.co.kr>
+.TH MOUNT 8 "1996년 7월 5일" "리눅스 버전 2.0" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+umount \- 화일 시스템을 언마운트
+.SH 개요
+.BI "umount [\-hV]"
+.LP
+.BI "umount -a [\-nv] [\-t " 화일시스템유형 ]
+.br
+.BI "umount [\-nv] " "장치 " | " 디렉토리 " [...]
+.SH 설명
+.B umount
+명령은 화일 계층구조로부터 화일 시스템을 떼어낸다. 화일 시스템 지정방법은
+마운트된 디렉토리를 명시하거나 또는 직접 장치명을 적어주는 방법 2 가지가
+있다.
+
+만약 사용 중(`busy') - 예를 들어 화일 시스템 상의 화일이 열려 있거나 어떤
+프로세스가 작업 디렉토리로 사용중이거나 그 위에 있는 스왑 화일이 사용중-인
+경우에는 언마운트시킬 수 없다는 것을 명심하라.
+또는 
+.B umount
+명령 자체가 libc 를 열고 libc가 예를 들어 로케일(locale)화일을 여는 경우도
+생각해볼 수 있다.
+
+.B umount
+명령에 대한 옵션은 다음과 같다:
+.TP
+.B \-V
+버전을 출력하고 종료한다.
+.TP
+.B \-h
+도움말 메세지를 출력하고 종료한다.
+.TP
+.B \-v
+자세한 출력 모드.
+.TP
+.B \-n
+.IR /etc/mtab
+를 갱신하지 않고 언마운트한다.
+.TP
+.B \-a
+.I /etc/mtab
+화일에 명시한 모든 화일 시스템을 언마운트한다.
+.TP
+.BI \-t " 화일시스템유형"
+특정 화일시스템유형에만 적용하도록 지정한다. 둘 이상의 유형에 대해서는
+콤마(,)로 구분한다. 화일 시스템 목록에 대해서는 
+.B no
+를 접두사로 씀으로써 그것을 제외시킬 수도 있다.
+
+.SH "루프 장치(THE LOOP DEVICE)"
+.B umount
+명령은 만약 사용 중인 루프 장치가 있다면 그것을 해제한다.
+.IR /etc/mtab
+에 `loop=...'이라는 옵션을 찾을 때 그렇게 한다.
+자동으로 해제되지 않은 장치에 대해서는 `losetup -d'를 사용한다.
+.BR losetup (8)
+를 읽어보기 바란다.
+
+
+.SH "관련 화일"
+.I /etc/mtab
+마운트된 화일 시스템에 대한 테이블
+
+.SH "참고"
+.BR umount (2),
+.BR mount (8),
+.BR losetup (8).
+
+.SH HISTORY
+.B umount
+명령은 AT&T UNIX 버전 6 에서 생겼다.
+
+.SH 번역자
+.br
+이 만 용
+.B <geoman@nownuri.nowcom.co.kr>
+.br
+.B "         <freeyong@soback.kornet.nm.kr>"
+

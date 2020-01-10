@@ -1,0 +1,61 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified Sat Jul 24 12:51:53 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 22:39:04 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Thu May  1 06:05:54 UTC 1997 by Nicolás Lichtmaier
+.\"  <nick@debian.com> with Lars Wirzenius <liw@iki.fi> suggestion
+.TH UMASK 2 "1998³â 8¿ù 9ÀÏ" "¸®´ª½º" "¸®´ª½º ÇÁ·Î±×·¡¸Ó ¸Þ´º¾ó"
+.SH ÀÌ¸§
+umask \- ÆÄÀÏ »ý¼º ¸¶½ºÅ©(mask)À» ¼³Á¤ÇÑ´Ù.
+.SH »ç¿ë¹ý
+.B #include <sys/types.h>
+.br
+.B #include <sys/stat.h>
+.sp
+.BI "mode_t umask(mode_t " mask );
+.SH ¼³¸í
+.B umask ´Â 
+umask¸¦ 
+.I mask 
+& 0777 À¸·Î ¼³Á¤ÇÑ´Ù.
+
+umask´Â »õ·Î »ý¼ºµÈ ÆÄÀÏÀÇ ÃÊ±â Çã°¡±ÇÀ» ¼³Á¤ÇÏ±â À§ÇØ 
+.BR open (2)¿¡ 
+ÀÇÇØ »ç¿ëµÈ´Ù.
+Æ¯È÷, umaskÀÇ Çã°¡±ÇÀº
+.BR open (2)ÀÇ
+\fBmode\fR ÀÎÀÚ¸¦ÀÇ Çã°¡±ÇÀ» ¸·´Â´Ù.
+(¿¹¸¦ µé¾î, ÀÏ¹ÝÀûÀÎ umask ±âº»°ªÀÌ 022ÀÎ °æ¿ì \fBmode\fR°¡ 0666À¸·Î 
+ÁöÁ¤µÇ¾î ÀÖÀ¸¸é 0666 & ~022 = 0644 = rw-r--r-- Çã°¡±ÇÀ¸·Î ÆÄÀÏÀ» ¸¸µç´Ù.)
+.SH ¹ÝÈ¯°ª
+ÀÌ ½Ã½ºÅÛ ÄÝÀº Ç×»ó ¼º°øÇÏ¸ç ¸¶½ºÅ©ÀÇ ÀÌÀü°ªÀ» ¸®ÅÏÇÑ´Ù.
+.SH È£È¯
+SVr4, SVID, POSIX, X/OPEN, BSD 4.3
+.SH °ü·Ã Ç×¸ñ
+.BR creat (2),
+.BR open (2)
+.SH ¿ªÀÚ
+Á¤°­ÈÆ <skyeyes@soback.kornet.net>, 2000³â 5¿ù 1ÀÏ

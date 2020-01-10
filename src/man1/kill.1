@@ -1,0 +1,97 @@
+.\" Copyright 1994 Salvatore Valente (svalente@mit.edu)
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.\"
+.\"
+.\" Korean manpage ChangeLog
+.\" original manpage from util-linux-2.11z package
+.\"
+.\" r1.2 2004-03-29 00:02:26 +68-26     윤현호
+.\" r1.1 2004-03-18 17:47:10            218.235.53.208
+.\"
+.TH KILL 1 "1994년 10월 14일" "Linux Utilities" "Linux Programmer's Manual"
+.SH 이름
+kill \- 프로세스를 종료시킨다.
+.SH 사용법
+.BI "kill [ \-s " signal " | \-p ] [ \-a ] [ \-\- ] " "pid ..."
+.br
+.BI "kill -l [ " signal " ]"
+.SH 설명
+.B kill
+명령은 지정한 프로세스에 지정한 신호(signal)를 보낸다.
+지정한 신호가 없으면, TERM 신호를 보낸다.
+이 신호는 프로세스를 종료시킬 것이다.
+TERM 신호로 종료되지 않는 프로세스는, 필요하다면
+KILL (9) 신호를 보낼 수도 있다.
+.PP
+대부분의 요즘 쉘들은 여기에서 설명한 것과 유사한 방법으로 쓸 수 있는
+내장 kill 함수를 가지고 있다.
+(그래서 이 명령을 사용할 경우가 잘 없지만, 한 프로세스를 비정상적으로
+종료해야 할 경우에 이 명령을 사용한다.)
+.SH 옵션
+.TP
+.IR pid ...
+.BR kill 이
+신호를 보낼 프로세스들을 나열한다.
+각각의
+.IR pid 는
+아래 다섯 가지 중 하나일 수 있다.
+.RS
+.TP
+.I n
+.IR n 은
+0보다 큰 정수이다. pid
+.IR n 을
+갖는 프로세스에 신호를 보낸다.
+.TP
+.B 0
+현재 프로세스 그룹에 포함된 모든 프로세스에 신호를 보낸다.
+.TP
+.B -1
+1보다 큰 pid를 갖는 모든 프로세스에게 신호를 보낸다.
+.TP
+.BI - n
+여기에서
+.IR n 은
+1보다 큰 정수이다.
+프로세스 그룹
+.IR n 에
+속한 모든 프로세스에게 신호를 보낸다.
+여기에서 주의할 것은, 프로세스 그룹을 나타내기 위해 `-n'과 같은 형식으로 인자를 줄 경우,
+반드시 신호가 이 옵션보다 먼저 주어져야 한다는 것이다.
+혹은, `-n' 인자는 반드시 `--' 옵션 다음에 와야 한다.
+그렇지 않으면 `-n' 옵션은 보내야할 신호로 인식되어 버린다.
+.TP
+.I commandname
+.IR commandname 으로
+실행된 모든 프로세스에게 신호를 보낸다.
+.RE
+.TP
+.BI \-s " signal"
+특별히 보낼 신호를 지정한다.
+여기에는 신호 이름이나 번호가 온다.
+.TP
+.BR \-l
+신호로 사용할 수 있는 신호 이름들을 보여준다.
+이것은
+.I /usr/include/linux/signal.h or /usr/include/asm/signal.h
+파일에서도 알 수 있다.
+.TP
+.B \-a
+.\" Do not restrict the commandname-to-pid conversion to processes
+.\" with the same uid as the present process.
+프로세스 이름을 pid로 변환할 때, 다른 uid를 갖는 프로세스도 변환시킬 수 있도록 허용한다.
+.TP
+.BR \-p
+프로세스 ID를 지정한 경우 그 프로세스에 신호를 보내지는 않고,
+그 프로세스의 이름만 보여준다.
+.SH "관련 항목"
+.BR bash (1),
+.BR tcsh (1),
+.BR kill (2),
+.BR sigvec (2)
+.SH 저자
+Taken from BSD 4.4.  The ability to translate process names to process
+ids was added by Salvatore Valente <svalente@mit.edu>.
+.SH 번역
+한글 Manpage 프로젝트 (http://man.kldp.org) 2004년 3월 28일

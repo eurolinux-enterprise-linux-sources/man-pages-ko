@@ -1,0 +1,40 @@
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single Unix specification http://www.UNIX-systems.org/online.html
+.\"
+.\" Modified, aeb, 990824
+.\"
+.TH MB_CUR_MAX 3 "1999년 7월 4일" "리눅스" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+MB_CUR_MAX \- 현재 사용 중인 로케일에서 멀티바이트 문자의 최대 길이
+.SH 사용법
+.nf
+.B #include <stdlib.h>
+.fi
+.SH 설명
+.B MB_CUR_MAX
+매크로는 현재 사용 중인 로케일에서 한 문자를 표현하기 위해 필요한
+바이트 수를 정의한다. 이 상수의 값은 사용 중인 로케일에 따라 달라지기
+때문에 컴파일 시간에 결정되지 않는다.
+.SH "반환 값"
+1 이상이고 MB_LEN_MAX 보다 작은 정수 값이다. 여기에서 말하는 1이란
+전통적인 8비트 문자(char)를 말한다.
+.SH 호환
+ANSI C, POSIX.1
+.SH "관련 항목"
+.BR MB_LEN_MAX (3),
+.BR mblen (3),
+.BR mbtowc (3),
+.BR mbstowcs (3),
+.BR wctomb (3),
+.BR wcstombs (3)
+.SH 역자
+류정욱 <compiler@kldp.org>, 2000년 4월 19일

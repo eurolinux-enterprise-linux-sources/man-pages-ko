@@ -1,0 +1,137 @@
+.\" Copyright 1999 Red Hat Software, Inc.
+.\"
+.\" This man page is free documentation; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this man page; if not, write to the Free Software
+.\" Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.TH PUMP 8 "1999년 3월 22일" "리눅스" "리눅스 관리자 매뉴얼"
+.SH 이름
+pump \- BOOTP나 DHCP 프로토콜을 사용하여 네트워크 인터페이스를 설정
+.SH 사용법
+/sbin/pump [-krRst?] [-i \fIiface\fP] [-l \fIhours\fP] [--usage]
+.SH 설명
+pump는 DHCP나 BOOTP에 의해 조정되는 네트워크 인터페이스를 관리하는 데몬이다.
+
+pump를 수동으로 시작할 수도 있지만, 보통 BOOTP나 DHCP에 의해 설정되는
+장치에 대해 /sbin/ifup 스크립트에 의해서 자동으로 실행된다.
+
+일단 pump가 인터페이스를 관리하게 되면, 그 인터페이스의 상태를
+질의하기 위해 pump를 실행시킬 수 있다.
+예를 들면,
+.br
+\f(CW/sbin/pump -i eth0 --status \fR
+.br
+은 장치 eth0의 현재 상태를 출력할 것이다.
+
+.SH "명령행 옵션"
+.TS
+lB lB lB
+lfCW lfCW l.
+스위치	긴 옵션	설명
+.TH
+-c	--config-file=ARG	/etc/pump.conf 대신 사용할 설정 파일
+-h	--hostname=hostname	요청할 호스트이름
+-i	--interface=iface	설정할 인터페이스 (보통 eth0)
+-k	--kill	데몬을 죽임 (그리고 모든 인터페이스를 비활성화함)
+-l	--lease=hours	요청할 Lease 시간 (시간으로)
+	--lookup-hostname	DNS에서 언제나 호스트 이름과 도메인을 검색
+-r	--release	인터페이스를 방출
+-R	--renew	강제로 즉시 lease 갱신
+-s	--status	인터페이스 상태를 출력
+-?	--help	이 도움말을 출력함
+	--usage	간단한 사용 메시지를 출력
+.TE
+.SH 기록하기
+Pump는 충분한 양의 정보를 syslog에 전달하는데, DEBUG 수준에서 
+대부분이 기록된다.
+만약 어떤 문제를 겪게 된다면, syslog의 기록 수준을 높이는 것도 좋은 생각이다.
+
+.SH 설정 파일
+Pump는 pump의 행동을 조절하도록 하는 간단한 설정 파일을 지원한다.
+기본값으로, \fI/etc/pump.conf\fR을 찾아보는데, \fB-c\fR 옵션으로
+설정 내용을 변경할 수 있다.
+ 
+설정 파일은 행 단위이며, 대부분의 행은 지시자(directive)를 포함하고, 그 뒤에는
+인자가 없던가 많은 인자가 있을수도 잇다.
+인자는 쉘이 명령 인자를 다루는 것과 비슷하게 다루어져서,
+인용기호와 역슬래쉬 이스케이프를 사용할 수있다.
+주석도 서용되며, # 문자로 시작해야 하며, 공백과 탭은 무시된다.
+
+지시자는 두가지 수준으로 지정할 수 있는데, 전역적인(global) 것과 
+특정적인(specific) 것이다.
+전역 지시자는 pump가 관리하는 모든 장치에 대해 pump의 행동을 변경하고,
+특정 지시자는 단일 장치에 대해 pump의 행동을 변경한다.
+나중에 지정한 특정 지시자는 먼저 지정한 전역 지시자보다 우선(override)한다.
+
+이것은 /etc/pump.conf 의 예제이다.:
+
+.nf
+.ta +3i
+# 견본 /etc/pump.conf 파일
+
+domainsearch "my.own.org own.org at.work.com"
+retries 3
+
+device eth1 {
+    nodns
+}
+.fi
+
+.pp
+이 설정 파일은 pump가 DHCP나 BOOTP 서버의 응답에서 얻어지는 DNS 검색 경로 
+대신 특정한 DNS 검색 경로를 사용하도록 하며, 
+각각의 요청은 3번 시도한다.(전체로는 4번)
+그리고 eth1 장치를 설정할때 어떤 DNS 설정도 변경하지 않도록 한다.
+
+지시자의 전체 목록이다.
+
+.TP
+\fBdevice\fR \fIdevice\fR
+지정된 장치에 대해 특정 지시자를 지정한다.
+이 지시자는 { 이 뒤에 와야 하며, 특정한 지시자의 목록은 
+} 만이 있는 줄로 끝나야 한다.
+지정된 장치에 대해 특정 지시자를 지정한다.
+이러한 지시자은 차례대로 있지 않을 수도 있다.
+
+.TP
+\fBdomainsearch\fR \fIsearchpath\fR
+
+DNS 검색 경로(/etc/resolv.conf에 대해)를 이끌어내기보다, 
+주어진 한가지를 사용한다.
+단일 DNS 검색 경로를 가진 머신에서, 이 지시자는 전역적으로만 사용될 수 있다. 
+
+.TP
+\fBnodns\fR
+이 인터페이스가 설정된 이후 새로운 /etc/resolv.conf 파일을 만들지는 않는다.
+이 지시자는 오직 \fBdevice\fR 지시자 안에서만 사용된다.
+
+.TP
+\fBretries\fR \fIcount\fR
+DHCP 프로세스의 각 단계를 \fIcount\fR번 재시도한다.
+
+.TP
+\fBtimeout\fR \fIcount\fR
+어떤 DHCP 프로세스의 한 단계도 \fIcount\fR 이상 걸리지 않도록 한다.
+
+.SH 버그
+아마도 이더넷에만 동작할 것이고, PLIP에서는 동작할 수도 있지만,
+ARCnet과 토큰 링에서는 동작하지 않을 것이다.
+설정 파일은 당신이 보다 많은 것을 할 수 있도록 도와줄 것이다.
+
+버그 레포트는 http://developer.redhat.com/의 Bug Track 링크에 제출하라.
+.SH 익살
+pump 는 boot[p]처럼 발에 신는 것이다.
+우리 중 누군가는 그 이름을 좋아한다(믿기 어렵지만 나는 알고 있다)!
+
+.SH 역자
+서성용 <pooh@kldp.org> 2000년 6월 2일

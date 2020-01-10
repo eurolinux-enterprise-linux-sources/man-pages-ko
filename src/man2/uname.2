@@ -1,0 +1,79 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified Sat Jul 24 12:53:43 1993 by Rik Faith <faith@cs.unc.edu>
+.\"
+.TH UNAME 2 "1993년 7월 24일" "리눅스 0.99.11" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+uname \- 현재 커널에 관한 이름과 정보를 얻어온다.
+.SH 사용법
+.B #include <sys/utsname.h>
+.sp
+.BI "int uname(struct utsname *" buf );
+.SH 설명
+.BR uname 은
+.IR buf 가 
+가리키는 구조체에 시스템 정보를 리턴한다.
+.I utsname 
+구조체는 다음과 같다.
+.IR <sys/utsname.h> :
+.br
+.nf
+.in 10
+struct utsname {
+.in 22
+char sysname[SYS_NMLN];
+char nodename[SYS_NMLN];
+char release[SYS_NMLN];
+char version[SYS_NMLN];
+char machine[SYS_NMLN];
+.in 10
+#ifdef _GNU_SOURCE
+.in 22
+char domainname[SYS_NMLN];
+.in 10
+#endif
+};
+.fi
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되며 
+.IR errno 가
+적절한 값으로 설정된다.
+.SH 에러
+.TP
+.B EFAULT
+.IR buf 가
+유효하지 않다.
+.SH 호환
+SVr4, SVID, POSIX, X/OPEN
+.PP
+.I domainname 변수는
+GNU 확장이다.
+.SH 관련 항목
+.BR uname (1),
+.BR getdomainname (2),
+.BR gethostname (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 4월 27일

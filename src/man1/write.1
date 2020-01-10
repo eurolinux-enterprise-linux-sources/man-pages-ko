@@ -1,0 +1,87 @@
+.\" Copyright (c) 1989, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Jef Poskanzer and Craig Leres of the Lawrence Berkeley Laboratory.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)write.1	8.1 (Berkeley) 6/6/93
+.\"
+.\" Modified for Linux, Sun Mar 12 10:21:01 1995, faith@cs.unc.edu
+.\"
+.TH WRITE 1 "12 March 1995" "" "Linux Programmer's Manual"
+.SH NAME
+write \- 다른 사용자에게 메시지를 보낸다.
+.SH SYNOPSIS
+.BI write " user " [ ttyname ]
+.SH DESCRIPTION
+.B Write
+명령은 
+행단위로 다른 사용자와 의사소통을 할 수 있게 한다.
+.PP
+write 명령을 사용하면, 상대방의 화면에는 다음과 같은 
+메세지가 나타난다.
+.PP
+.RS
+Message from yourname@yourhost on yourtty at hh:mm ...
+.RE
+.PP
+상대방이 어느 위치에 있건 간에 이 메시지는 나타난다.
+상대방도 이 소식에 대한 답을 하기 위해서는 똑같이 
+write 명령을 사용하면 된다.
+.PP
+write 명령을 끝내려면, 파일 끝문자(eof)나, 중지 문자를
+입력한다. 이러면, 상대방 화면에는 EOF 글자가 나타나고,
+더이상의 메시지 입력은 되지 않는다.
+.PP
+이 메시지 수신을 거부 하려면, mesg(1) 명령을 사용한다.
+예를 들어,  nroff(1)와 pr(1)명령들도, 자동 수신 거부
+기능을 제공하고 있다.
+하지만, 슈퍼 유저의 메시지는 거부할 수 없다. 
+.PP
+만약, 이야기를 전할 사용자가 한번 이상 로그인하고 있는 
+상태라면, 이야기를 전할 사용자의 터미날까지 지정해 
+주어야한다. 이것은 사용자ID 다음에 공백문자를 두고 다음에 
+지정한다.
+.PP
+누군가에게 전할 메시지의 통신 약자로 관례적으로 
+`-O'를 줄의 맨 끝에 추가하거나, `-O'만 있는 줄로 
+나타낸다. `OO'는 전할 소식이 끝났다는 기호로, 
+write가 종료되기전에 사용되는 것이 관례이다.
+
+(참고로 일반적인 write는 한글을 사용할 수 없다. - 옮긴이 말)
+.SH "SEE ALSO"
+.BR mesg (1),
+.BR talk (1),
+.BR who (1)
+.SH HISTORY
+A
+.B write
+command appeared in Version 6 AT&T UNIX.

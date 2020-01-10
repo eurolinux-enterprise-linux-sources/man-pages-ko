@@ -1,0 +1,63 @@
+.\"/* Copyright 1988,1990,1993 by Paul Vixie
+.\" * All rights reserved
+.\" *
+.\" * Distribute freely, except: don't remove my name from the source or
+.\" * documentation (don't take credit for my work), mark your changes (don't
+.\" * get me blamed for your possible bugs), don't alter or remove this
+.\" * notice.  May be sold if buildable source is provided to buyer.  No
+.\" * warrantee of any kind, express or implied, is included with this
+.\" * software; use at your own risk, responsibility for damages (if any) to
+.\" * anyone resulting from the use of this software rests entirely with the
+.\" * user.
+.\" *
+.\" * Send bug reports, bug fixes, enhancements, requests, flames, etc., and
+.\" * I'll try to keep a version up to date.  I can be reached as follows:
+.\" * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
+.\" */
+.\" 
+.\" $Id: crond.8,v 1.1.1.1 2002/07/18 10:40:12 hhyoon Exp $
+.\" 
+.TH CRON 8 "20 December 1993"
+.UC 4
+.SH 이름
+crond \- 계획된 명령을 실행하는 데몬 (Vixie Cron)
+.SH 사용법
+cron
+.SH 설명
+.I crond
+명령은 /etc/rc 또는 /etc/rc.local 파일에 의해서 실행되어야만 한다. 
+이 명령은 즉시 리턴함으로 `&' 문자를 끝에 사용할 필요는 없다.
+.PP
+.I crond
+명령은 crontab 파일로 
+/var/spool/cron/ 디렉토리 안에 있는 각 사용자의 crontab 파일을 
+메모리에 실는다.
+또한, 
+.I crond
+명령은 시스템 전체의 crontab 파일인 /etc/crontab 파일을 찾아, 
+그것을 메모리에 실는다. 
+다음, 
+.I crond
+명령은 매분마다, 저장된 crontab 내용들을 확인하고, 
+그에 맞는 작업을 수행한다. 
+프로그램이 실행될 때, 필요에 따라, 그 결과를 
+MAILTO 환경 변수에 지정된 사용자에게 편지로 보내기도 한다.
+.PP
+추가로,
+.I crond
+명령은 cron 스풀 디렉토리가 바뀌었는지도 검사한다. 
+(또한 
+.I /etc/crontab
+파일도 검사한다.)
+그래서, 바뀌었다면, 그대로 적용된다.
+그래서, 비록 그 내용이 바뀌었다고 하더라도, 
+.I crond
+명령을 다시 실행 시킬 필요는 없다.
+각 사용자의 crontab 내용을 바꾸고 싶다면, 
+.IR crontab (1)
+명령을 사용한다.
+.SH "관련 항목"
+crontab(1), crontab(5)
+.SH 만든이
+.nf
+Paul Vixie <paul@vix.com>

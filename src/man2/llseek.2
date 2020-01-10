@@ -1,0 +1,79 @@
+.\" Copyright (C) 1995 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Written 10 June 1995 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified Thu Oct 31 15:16:23 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH LLSEEK 2 "1995년 6월 10일" "리눅스 1.2.9" "리눅스 프로그래머 매뉴얼"
+.SH NAME
+_llseek \- 읽기/쓰기 파일 변위(offset)을 재배치한다.
+.SH SYNOPSIS
+.B #include <unistd.h>
+.sp
+.B #include <linux/unistd.h>
+.sp
+.B _syscall5(int, _llseek, uint, fd, ulong, hi, ulong, lo, loff_t *, res, uint, wh);
+.sp
+.BI "int _llseek(unsigned int " fd ", unsigned long " offset_high ", unsigned long " offset_low ", loff_t * " result ", unsigned int " whence );
+.SH DESCRIPTION
+.B _llseek
+함수는 파일 시작 혹은 
+.I  whence
+가 
+.BR SEEK_SET ,
+.BR SEEK_CUR ,
+.BR SEEK_END ,
+에 각각 영향을 받는
+파일의 끝부분과 관련된
+.I (offset_high<<32) | offset_low
+바이트에 파일 디스크립터
+.I fd
+의 변위(offset)를 재배치한다.
+인수 
+.IR result
+에 결과 파일 위치를 반환한다.
+
+.SH "RETURN VALUE"
+성공시
+.B _llseek
+는 0을 반환한다. 그 외에는 \-1을 반환하고
+.I errno
+는 에러를 지정하기 위해 설정된다.
+.SH ERRORS
+.TP
+.B EBADF
+.I fd
+는 파일열기 디스크립터가 아니다.
+.TP
+.B EINVAL
+.I whence
+는 유효하지 않다.
+.SH "CONFORMING TO"
+이 함수는 리눅스에서만 쓰이며, 다른 프로그램에서 쓰여서는 안된다.
+.SH BUGS
+ext2 파일시스템은 2GB이상의 파일은 지원하지 않는다.
+.SH "SEE ALSO"
+.BR lseek (2)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 27일

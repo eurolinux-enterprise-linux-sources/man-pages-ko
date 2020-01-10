@@ -1,0 +1,77 @@
+.\" Copyright (c) 1989, 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" This code is derived from software contributed to Berkeley by
+.\" Kim Letkeman.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)cal.1	8.1 (Berkeley) 6/6/93
+.\"
+.Dd June 6, 1993
+.Dt CAL 1
+.Os
+.Sh NAME
+.Nm cal
+.Nd 달력 출력
+.Sh SYNOPSIS
+.Nm cal
+.Op Fl jy
+.Op Ar month Op Ar year
+.Sh DESCRIPTION
+.Nm Cal
+명령은 간단한 달력을 보여준다.
+아무런 명령행 인자가 없으면, 시스템의 현재 달을 보여준다.
+사용할 수 있는 옵션은 다음과 같다:
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl j
+율리우스력(구태양력)으로 출력.
+.It Fl y
+현재 년도 모든 달을 모두 보여준다.
+.El
+.Pp
+사용할 수 있는 연도는 1-9999 이며, 
+년도를 지정할 경우에는 세기가 생략되어서는 안된다. 
+.Dq Li cal 89
+명령이면 1989년 달력을 보여주지 않고 89년 달력을 보여준다.
+연도 다음에 오는 숫자는 달로 인식한다. 그렇기 때문에, 
+1-12까지만의 숫자만 사용할 수 있다. 
+이런 명령행 인자가 아무것도 없으면, 현재 달의 달력만 보여준다.
+.Pp
+즉, 명령행 인자로 사용할 수 있는 가장 작은 값은 1 1 (서기 1년 1월)이다.
+.Pp
+그레고리오력(지금의 태양력)은 1752년에 9월에 세번째 개정된 것을 
+사용한다. 
+이번 버전에서는 1900년 이전의 년도들에 대해서 제대로 인식한다.
+재 개정되면서 1900년 이전 년도들의 날짜 수가 10일 삭제되었다.
+그래서, 1900년 이전의 달력들을 볼 때 조금 이상하게 생각할 수도 있다.
+.Sh HISTORY
+.Nm
+명령은 Version 6 AT&T UNIX에서 처음 나타났다.

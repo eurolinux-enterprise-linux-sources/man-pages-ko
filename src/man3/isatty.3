@@ -1,0 +1,43 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sat Jul 24 17:38:23 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Thu Apr 20 20:43:53 1995 by Jim Van Zandt <jrv@vanzandt.mv.com>
+.TH ISATTY 3 "1995년 4월 20일" "Linux" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+isatty \- 이 기술자가 터미널을 지시하는지 검사한다.
+.SH 사용법
+.ad l
+.nf
+.B #include <unistd.h>
+.sp
+.BI "int isatty ( int " desc " );"
+.fi
+.ad b
+.SH 설명
+만일 \fIdesc\fP가 터미널에 연결된 열린 기술자라면 1을 그렇지 않으면 0을 반환한다.
+.SH 호환
+SVID, AT&T, X/OPEN, BSD 4.3
+.SH 관련 항목
+.BR fstat "(2), " ttyname (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 5월 1일

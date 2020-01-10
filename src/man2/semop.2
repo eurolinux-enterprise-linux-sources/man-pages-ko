@@ -1,0 +1,350 @@
+.\" Copyright 1993 Giorgio Ciucci (giorgio@crcc.it)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Tue Oct 22 17:55:06 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX <man@asp-linux.co.kr> 2000년 7월 29일
+.\"
+.\" r1.5 2005-02-13 16:00:43 +22-31 윤현호
+.\" r1.4 2004-07-29 20:02:02 +10-11 xaos
+.\" r1.3 2004-06-04 21:14:41 +41-31 61.97.137.68
+.\" r1.2 2004-06-03 21:23:56 +10-10 61.97.137.68
+.\" r1.1 2004-06-03 20:55:22  61.97.137.68
+.\"
+.TH SEMOP 2 "November 1, 1993" "Linux 0.99.13" "Linux Programmer's Manual"
+.SH 이름
+semop \- 세마포어 조작.
+.SH 사용법
+.nf
+.B
+# include <sys/types.h>
+.B
+# include <sys/ipc.h>
+.B
+# include <sys/sem.h>
+.fi
+.sp
+.BI "int semop ( int " semid ,
+.BI "struct sembuf *" sops ,
+.BI "unsigned " nsops " )"
+.SH 설명
+ 이 함수는 
+.IR semid
+가 지시하는 세마포어 집합 중 선택된 멤버들에 대하여 연산을 수행한다. 
+.I sops
+가 가리키는 
+.I nsops
+개의 원소를 갖는 배열의 각 원소는 다음과 같은 
+.B struct sembuf
+이며, 세마포어에 수행될 연산을 지정한다.
+.sp
+.B
+.br
+.B
+ short sem_num;
+/* semaphore number: 0 = first */
+.br
+.B
+ short sem_op;
+/* semaphore operation */
+.br
+.B
+ short sem_flg;
+/* operation flags */
+.sp
+.B sem_flg
+플래그는
+.B IPC_NOWAIT
+혹은
+.BR SEM_UNDO
+이다.
+만일 플래그가
+.BR SEM_UNDO
+로 지정되어 있으면,
+프로세스가 종료할 때 세마포어를 원래대로 되돌려 놓을 것이다.
+.PP
+시스템 호출 시맨틱은 오직 모든 프로세스가 성공할 때만 연산들이 수행될 것을 보장한다.
+세트 중 첫번째 세마포어가 0인 곳에서
+연산들이 수행될 것이고 다음의 세가지 중 하나이다 라는 것을 보증한다.
+Each operation is performed on the
+각 연산은 세마포어 세트의 
+.BR sem_num \-th 
+세마포어상(세트 중 첫번째 세마포어가 0인 곳에서)에서 수행되고,
+다음의 세가지 중 하나이다.
+.PP
+만일
+.B sem_op
+가 양수라면, 연산은 이 값을 
+.BR  semval
+으로 추가시킨다.
+더욱이,
+만일
+.B SEM_UNDO
+가 이 연산에 대해 주장된다면, 시스템은  이 세마포어에 대한
+프로세스 undo 카운트를 업데이트한다.
+연산은 계속적으로 실행되고, 따라서 유휴하는 프로세스는 발생하지 않는다.
+호출 프로세스는 세마포어 세트에 대해 변경 권한들을 갖고 있어야 한다.
+.PP
+만일
+.B sem_op
+이 zero이면, 프로세스는 세마포어 세트에 대한 읽기 접근 권한들을 갖고 있어야 한다.
+만일
+.B semval
+이 제로라면, 연산은 실행된다.
+그렇지 않으면, 만일
+.B IPC_NOWAIT
+이
+.BR sem_flg
+내에서 주장되면,
+.BR EAGAIN
+으로 설정된 
+.B errno
+에 의해 실패한다.
+.
+그렇지 않으면,
+.B semzcnt
+은 하나씩 증가하고, 프로세스는 다음중 하나가 일어나기 전까지 유휴에 든다.
+.IP
+.RS
+.IP \(bu
+.B semval
+은 
+.B semzcnt
+의 값이 감소하는 때에 0이 된다.
+.IP \(bu
+세마포어 세트는 삭제된다. 시스템 호출은 
+.BR EIDRM
+으로 설정된  
+.B errno
+에 의해 실패한다.
+.IP \(bu
+호출 프로세스는 감지되어야 하는 세마포어을 수신한다.
+.B semzcnt
+ 값은 감소되고, 시스템 호출은 
+.BR EINTR
+로 설정된 
+.B errno
+에 의해 실패한다.
+.RE
+.PP
+만일
+.B sem_op
+이 0보다 낮다면, 프로세스는 세마포어 세트에 대한 변경 권한들을 갖고 있어야 한다.
+만일
+.B semval
+이 
+.BR sem_op
+의 절대값보다 높거나 동일하다면,
+.B sem_op
+의 절대값은 
+.BR semval
+에 의해 감소된다 .
+더우기, 만일
+.B SEM_UNDO
+이 이 연산에 대해 단언된다면, 시스템은 이 세마포어에 대한
+프로세스 undo 카운트를 업데이트한다.
+그리고나서, 연산은 계속된다.
+그렇지 않고, 만일
+Otherwise, if
+.B IPC_NOWAIT
+이 
+.BR sem_flg
+내에서 단언된다면,
+시스템 호출은
+.BR EAGAIN
+로 설정된 
+.B errno
+에 의해 실패한다.(수행된 이전의 액션들을
+취소함으로서)
+그렇지 않으면,
+Otherwise
+.B semncnt
+는 하나에 의해 증가되고, 프로세스는 다음 중 하나가 발생하기 전까지 유휴한다.
+.IP
+.RS
+.IP \(bu
+.B semval
+는 
+.BR sem_op
+의 절대값보다 동일하거나 더 높아진다.
+.B semncnt
+ 값이 감소될때, .B sem_op의 절대값은 
+.B semval에서 감해진다.
+그리고
+.B SEM_UNDO
+이 이 연산에 대해  주장되면, 시스템은  세마포어에 대한
+프로세스 undo 카운트를 업데이트한다.
+.IP \(bu
+세마포어 세트는 시스템에서 삭제된다. 시스템 호출은 
+.BR EIDRM
+으로 설정된  
+.B errno에 의해
+실패한다.
+.IP \(bu
+호출 프로세스는 감지되어야 한는 세마포어을 수신한다. 
+.B semncnt
+의 값은 감소되고,
+시스템 호출은 
+.BR EINTR
+으로 설정된  
+.B errno
+에 의해 실패한다.
+.RE
+.PP
+In case of success, the
+성공할 경우, 
+.I sops
+에 의해 지시된 배열내에 명시된 개별 세마포어에 대한 구조 
+.B sem
+의
+.B sempid 멤버는 호출 프로세스의 process\-ID 로 설정된다.
+더욱이, 
+.B sem_otime
+와 
+.B sem_ctime
+모두 현재 시간으로 설정된다.
+.SH 반환값
+시스템 호출이 성공적이면
+.BR 0
+을 반환하고
+그렇지 않으면, 에러를 가리키는 
+.B errno
+와 
+.B \-1
+을 반환한다.
+.SH 에러
+실패했을 때, 
+.B errno
+는 다음 중 하나를 갖는다.
+.TP 11
+.B E2BIG
+인수 
+.I nsops
+는 시스템 호출 한 개에 허용된 연산의 갯수인
+.BR SEMOPM
+를 넘는다.
+.TP
+.B EACCES
+프로세스가 호출한 연산들이 요구하는 세마포어 집합에 대한
+접근 권한을 갖고 있지 않다.
+.TP
+.B EAGAIN
+.IB sem_flg
+가 
+.BR IPC_NOWAIT
+이었고, 연산이 즉시 실행될 수 없었거나,
+.I timeout
+으로 지정된 시간 제한을 넘어서까지 실행되지 않았다.
+.TP
+.B EFAULT
+.I sops
+이 지정한 주소, 혹은
+.I timeout
+을 접근할 수 없다.
+.TP
+.B EFBIG
+일부 연산에 대하여, 
+.B sem_num 
+값이
+0 보다 작거나, 이 집합의 세마포어 갯수 이상이다.
+.TP
+.B EIDRM
+세마포어 집합이 삭제되었다.
+.TP
+.B EINTR
+대기 열에서 유휴시, 프로세스는 감지되어야 하는 세마포어을 수신한다.
+.TP
+.B EINVAL
+세마포어 집합이 존재하지 않거나, 
+.I semid
+가 0보다 작다. 또는,
+.I nsops가 양수가 아니다.
+.TP
+.B ENOMEM
+.I sem_flg 
+가 
+.B SEM_UNDO
+이지만, 시스템이 undo 구조를 할당할 만큼 충분한
+메모리를 갖고 있지 않다.
+.TP
+.B ERANGE
+일부 연산에 대하여,
+.I semop+semval
+가 구현에 따라 다르게 정해지는
+.BR semval
+의 최대값
+.BR SEMVMX
+보다 더 크다.
+.SH 주의
+프로세스의 
+.B sem_undo 
+구조들은 
+.BR fork (2) 
+시스템 호출시 자식 프로세스로
+상속되지 않는다.
+대신에 이 구조들은 
+.BR execve (2) 
+시스템 호출의 실행을 통한 대체 프로세스로 상속 가능하다.
+.PP
+다음들은 세마포어 세트상에서 
+.B semop 
+호출에 영향을 미침으로서 자원에 대한 한계이다.
+.TP 11
+.B SEMOPM
+하나의 
+.B semop 
+호출에 대해 허용된 연산들의 최대 숫자. 정책 의존적이다.
+.TP
+.B SEMVMX
+.BR semval
+에 대해 최대로 허용된 값. 구현 의존적이다 (32767).
+.SH 버그
+시스템은 undo 요청으로 프로세스에 의해 변경된 개별 세마포어에 대한 개별
+프로세스 
+.B sem_undo 
+구조를 관리한다.
+이러한 구조들은 프로세스 exit에 자유롭다.
+undo 메커니즘에 있어 잘못된 점의 주요한 원인은 연산의 극소 세트를
+세마포머의 배열로 만드는
+관념에 적합하게 한다는데 있다.
+수많은 배열 및 개별 세마포어에 대한 undo 요청들은 
+.B semopt 
+호출들 위에 축적될 수 있다.
+빠져나갈때, 프로세스가 잠자고 있어야 하는가? 또는 모든 undo 연산들이 
+.B IPC_NOWAIT 
+플래그에
+효력이 될 수 있도록 적용되어야 하는가?
+즉시 적용되어야 하는 현재의 undo 연산들은 기다림이 필요한 연산들은 무시된다.
+따라서, 악의 없는 undo의 활용은 사적인 세마포어에 의해서만 보증된다.
+.SH 호환
+SVr4, SVID.  SVr4는 EINVAL, EFBIG, ENOSPC의 추가 에러 조건들에 대한 문서를 제공한다.
+.SH 관련 항목
+.BR ipc (5),
+.BR semctl (2),
+.BR semget (2)
+.SH 번역
+ASPLINUX <man@asp-linux.co.kr> 2000년 7월 29일
+.br
+배성훈 <plodder@kldp.org> 2000년 11월 18일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 13일

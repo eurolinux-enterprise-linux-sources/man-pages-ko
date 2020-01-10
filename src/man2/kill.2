@@ -1,0 +1,141 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt (michael@moria.de)
+.\" Modified by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\" Modified Fri Jul 23 21:51:36 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Jul 25 10:53:24 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Wed Nov 01 18:56:43 1995 by Michael Haardt
+.\"  (michael@cantor.informatik.rwth-aachen.de)
+.\" Modified Sun Apr 14 17:04:32 1996 by Andries Brouwer (aeb@cwi.nl)
+.\"  [added some polishing contributed by Mike Battersby (mib@deakin.edu.au)]
+.\" Modified Sun Jul 21 21:25:26 1996 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Fri Jan 17 23:49:46 1997 by Andries Brouwer (aeb@cwi.nl)
+.\"
+.\"
+.\" 한국어 번역: 임종균 <hermes44@secsm.org> 2000년 4월 20일
+.\"
+.\" r1.6 2005-02-17 16:35:26 +30-8 윤현호
+.\" r1.5 2004-06-03 11:32:06 +1-1 165.213.1.1
+.\" r1.4 2004-06-03 11:28:38 +5-3 165.213.1.1
+.\"  리눅스 역사 부분 추가, 관련항목 변경
+.\" r1.3 2004-06-03 11:10:59 +2-4 165.213.1.1
+.\" r1.2 2004-06-03 11:03:25 +14-1 165.213.1.1
+.\"  "버그"라는 제목을 "주의"로 수정, 주의에 POSIX 관련 내용 추가  
+.\" r1.1 2004-06-03 10:41:25  165.213.1.1
+.\"  1. EPERM 에러 시그널에 내용 추가 
+.\"
+.TH KILL 2 "1997년 9월 4일" "리눅스 2.0.30" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+kill \- 프로세스에게 시그널을 보낸다.
+.SH 사용법
+.nf
+.B #include <sys/types.h>
+.br
+.B #include <signal.h>
+.sp
+.BI "int kill(pid_t " pid ", int " sig );
+.fi
+.SH 설명
+.B kill
+시스템 콜은 어떤 프로세스 그룹이나 프로세스에 시그널을 보낼 때 사용될 수
+있다.
+.PP
+\fIpid\fP가 양수이면, \fIsig\fP 시그널은 \fIpid\fP로 보내진다.
+.PP
+\fIpid\fP가 0이면, \fIsig\fP는 현재 프로세스가 속한 프로세스 그룹의
+모든 프로세스에 보내진다.
+.PP
+\fIpid\fP가 -1이면, \fIsig\fP는 1번 프로세스를 제외한 모든 프로세스에게
+큰 번호의 프로세스에서 작은 번호 순으로 보내진다.
+.PP
+\fIpid\fP가 -1보다 작으면, \fIsig\fP는 \fI\-pid\fP 프로세스 그룹의
+모든 프로세스에 보내진다.
+.PP
+\fIsig\fP가 0이면, 어떤 시그널도 보내지지는 않지만, 에러 검사는 행해진다.
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되고
+.IR errno 가
+적절히 설정된다.
+.SH 에러
+.TP
+.B EINVAL
+잘못된 시그널이 지정되었다.
+.TP
+.B ESRCH
+프로세스나 프로세스 그룹이 존재하지 않는다.
+존재하는 프로세스이지만 좀비(zombie)일 수도 있음에 주의하라.
+좀비는 이미 종료했지만 아직 \fBwait()\fP 처리되지 않은
+프로세스이다.
+.TP
+.B EPERM
+시그널을 받는 프로세스중 어떤 프로세스에게 시그널을 보낼 권한이 없다.
+프로세스가
+.I pid
+프로세스에 시그널을 보낼 권한을 가지려면 루트 권한을 가지거나,
+보내는 프로세스의 실(real) 사용자 ID나 유효(effective) 사용자 ID가
+받는 프로세스의 실 사용자 ID나 저장된 set-user-ID와 같아야만 한다.
+SIGCONT인 경우에는 보내는 프로세스와
+받는 프로세스가 같은 세션에 속해 있는 상황을 만족시킨다.
+.SH 주의
+1번 태스크인 init 프로세스에게 시그널을 보낼 수 없다. 따라서 init 프로세스는
+시그널 핸들러를 가질 수 없다. 이는 시스템이 사고로 다운되지 않게 하기 위해서
+이다.
+
+POSIX 1003.1-2001의 규정에 의하면
+.I kill(-t,sig)
+는
+.I sig
+를 모든 프로세스에 보내는 것이다. 이때 발생될 수 있는
+어떤 구현-정의된(implementation-defined) 시스템 프로세스는
+제외될 수 있다. 리눅스는 시그널 그 자체에 대한 프로세스가
+가능하지만 리눅스 상에서
+.IR kill(-t,sig) 를
+호출하는 것으로 현재 프로세스에 시그널을 보낼 수는 없다.
+.SH 리눅스 역사
+하나의 권한 없는 프로세스가 또 다른 프로세스에 시그널을 보내는 것에 대한
+허용권한에 대해 서로 다른 리눅스 커널 버젼에 간에 서로 다른 규칙을 갖는다.
+커널 1.0 에서 1.2.2 에서는 만약 받는 프로세스의 유효 사용자 ID가 보내는
+프로세스의 유효 사용자 ID와 서로 부합(matched)하거나,
+받는 프로세스의 실제(real) 사용자 ID가 보내는 프로세스의 실제 사용자 ID와
+서로 부합할때 시그널이 보내질 수 있다.
+커널 1.2.3 에서 1.3.77 에서는 받는 프로세스의 유효 사용자 ID가
+보내는 프로세스의 실제 또는 유효 사용자 ID와 부합(match)할 때
+시그널이 보내질 수 있다.
+POSIX 1003.1-2001에서 인증된 현재의 규칙은 커널 1.3.78에서 채용되었다.
+.SH 호환
+SVr4, SVID, POSIX.1, X/OPEN, BSD 4.3, POSIX 1003.1-2001
+.SH 관련 항목
+.BR _exit (2),
+.BR _killpg (2)
+.BR signal (2),
+.BR tkill (2),
+.BR exit (3),
+.BR signal (7)
+.SH 번역
+임종균 <hermes44@secsm.org> 2000년 4월 20일
+.br
+한우섭 <wshan@samsung.com> 2004년 6월 3일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 17일

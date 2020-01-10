@@ -1,0 +1,182 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (C) 1996 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" 
+.\"
+.\" 한국어 번역 : ASPLINUX    2000년 7월 29일
+.\"
+.TH QUOTACTL 2 "14 April 1996" "Linux 1.3.88" "Linux Programmer's Manual"
+.SH 이름
+quotactl \- 디스크 분할을 다룬다
+.SH 사용법
+.B #include <sys/types.h>
+.br
+.B #include <sys/quota.h>
+.sp
+.BI "int quotactl (int " cmd ", const char *" special ", int " id
+.BI ", caddr_t " addr );
+.sp
+.B #include <linux/unistd.h>
+.sp
+.BI "_syscall4(int, quotactl, int, " cmd ", const char *, " special
+.BI ", int, " id ", caddr_t, " addr );
+.SH 설명
+quota system은 각각의 사용자나 그룹을 위해 주어진 파일 시스템상에서 사용할 수 있는 디스크 공간의 양을 soft limit나 hard limit로 묶어주는 것이다. hard limit는 연결될 수 없다. soft limit는 연결될 수 있다. 하지만 주의가 필요하다. 게다가, 덧붙여서 사용자는 디폴트 상태에서 한번에 일주일 이상 soft limit 상에 있을 수 없다. 일주일 후에는 hard limit로 계산된다.
+
+.B quotactl
+시스템 호출은 이 quota를 다룬다. 이것은 첫번째 독립변수는
+.IB QCMD( subcmd , type )
+의 형태이다.
+.I type
+은
+.B USRQUOTA
+나
+.B GRPQUOTA
+(각각 사용자 quota와 그룹 quota)이고,
+.I subcmd
+는 아래를 참조하자.
+
+두번째 독립변수
+.I special
+는 quota에 적용되는 특별한 장치이다.
+반드시 마운트 시켜야 한다.
+
+세번째 독립변수
+.I id
+는 이 quota가 적용되는 사용자나 그룹의 id이다.
+
+네번째 독립변수
+.I addr
+는 명령어에 따른 데이터 구조의 주소이다.
+
+.I subcmd
+는
+.TP 1.1i
+.B Q_QUOTAON
+가능 quota중 하나 이다.
+.I addr
+독립변수는 파일 시스템을 위한 quota를 포함하는 파일의 경로명이다.
+.TP
+.B Q_QUOTAOFF
+quota 사용불가.
+.TP
+.B Q_GETQUOTA
+limit과 현재 디스크 공간의 사용양을 가진다.
+.I addr
+독립변수는 dqblk structure (
+.IR <sys/quota.h>
+에 정의된 )를 가르키는 포인터이다.
+.TP
+.B Q_SETQUOTA
+limit과 현재 사용양을 설정한다;
+.I addr
+는 이전과 같이 쓰인다.
+.TP
+.B Q_SETQLIM
+limit를 설정한다;
+.I addr
+는 이전과 같이 쓰인다.
+.TP
+.B Q_SETUSE
+사용량 설정.
+.TP
+.B Q_SYNC
+filesystems quotas의 Sync disk copy 
+.TP
+.B Q_GETSTATS
+현제 상태를 가진다.
+
+.SH 반환값
+성공시,
+.B quotactl
+는 0을 반환한다. 에러시, \-1을 반환한다.
+.I errno
+는 적절히 설정된다.
+.SH 에러
+.TP 0.9i
+.B ENOPKG
+커널이 quota 지원 없이 컴파일 되었다.The kernel was compiled without quota support.
+.TP
+.B EFAULT
+부적당한
+.I addr
+값.
+.TP
+.B EINVAL
+.I type
+이 알려지지 않은 type이다. 혹은,
+.I special
+을 찾을 수 없다.
+.TP
+.B ENOTBLK
+.I special
+이 block special device이 아니다.
+.TP
+.B ENODEV
+.I special
+을 마운트 테이블에서 찾을 수 없다.
+.TP
+.B EACCES
+quota가 일반 파일이 아니다.
+.TP
+.B EIO
+quota 파일을 읽거나 쓸 수 없다.
+.TP
+.B EMFILE
+너무 많은 파일이 열려 있어서 quota파일을 열 수 없다.
+.TP
+.B EBUSY
+.B Q_QUOTAON
+이 요구되었지만, quota가 이미 사용되고 있다.
+.TP
+.B ESRCH
+.B Q_GETQUOTA
+나
+.B Q_SETQUOTA
+나
+.B Q_SETUSE
+난
+.B Q_SETQLIM
+가 quota가 가능한 파일시스템에게 요구되었다.
+.TP
+.B EPERM
+The process was not root (for the file system), and
+.B Q_GETQUOTA
+가 다른 이미 사용되고 있는
+.I id
+에게 요구되었다. 혹은
+.B Q_GETSTATS
+나
+.B Q_SYNC
+가 요구되었다.
+.SH 호환
+BSD
+.SH 관련 항목
+.BR quota (1),
+.BR getrlimit (2),
+.BR setrlimit (2),
+.BR ulimit (2),
+.BR quotacheck (8),
+.BR quotaon (8)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29

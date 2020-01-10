@@ -1,0 +1,53 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt (michael@moria.de)
+.\" Modified Sat Jul 24 14:26:24 1993 by Rik Faith (faith@cs.unc.edu)]
+.\"
+.TH STIME 2 "1993년 6월 24일" "Linux 0.99.11" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+stime \- 시간을 설정한다.
+.SH 사용법
+.B #include <time.h>
+.sp
+.BI "int stime(time_t *" t );
+.SH 설명
+\fBstime\fP은 시스템 개념(idea)의 시간과 날짜를 설정한다.
+\fIt\fP가 지정하는 시간은 00:00:00 GMT January 1, 1970 이후의 초로 
+계산된다.
+\fBstime()\fP은 단지 슈퍼 사용자(root)만이 사용할수 있다.
+.SH 반환값
+성공시, 0을 반환한다. 에러시, \-1을 반환하며,
+.IR errno 는 
+적당한 값으로 설정된다.
+.SH 에러
+.TP
+.B EPERM
+호출 프로세스는 슈퍼 사용자가 아니다.
+.SH 호환
+SVr4, SVID, X/OPEN
+.SH 관련 항목
+.BR date (1)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 5월 26일

@@ -1,0 +1,71 @@
+.\" Copyright (c) 1980, 1990 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)colrm.1	6.6 (Berkeley) 3/14/91
+.\"
+.Dd March 14, 1991
+.Dt COLRM 1
+.Os BSD 3
+.Sh NAME
+.Nm colrm
+.Nd 파일에서 칸(colrum)을 지운다.
+.Sh SYNOPSIS
+.Nm colrm
+.Op Ar startcol Op Ar endcol
+.Sh DESCRIPTION
+.Nm Colrm
+필터는 파일에서 선택된 colum을 지운다. 
+표준 입력, 표준 출력을 사용한다.
+.Pp
+명령행 인자로 하나만 사용되고, 그것이 숫자이면, 
+그 지정한 숫자가 시작 colum이 되어 시작 colum에서부터 
+그줄 끝까지 지운다. 
+명령행 인자로 두개가 사용되면, 첫째 것은 시작 colum, 
+둘째 것은 끝 colum이 되어 그 범위안에 있는 내용을 지운다.
+.Pp
+시작 colum으로 지정될 수 있는 가장 작은 값은 1이다.
+.Sh SEE ALSO
+.Xr awk 1 ,
+.Xr column 1 ,
+.Xr expand 1 ,
+.Xr paste 1
+.Sh HISTORY
+.Nm
+명령은 
+.Bx 3.0
+에서 처음 사용되었다.
+
+
+
+
+
+
+

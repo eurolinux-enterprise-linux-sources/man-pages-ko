@@ -1,0 +1,116 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1996 Tom Bjorkholm <tomb@mydata.se>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" 1996-04-12 Tom Bjorkholm <tomb@mydata.se>
+.\"            First version written
+.\" Modified Tue Oct 22 17:41:07 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH READV 2 "1999년 1월 20일" "Linux 2.2.0-pre8" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+readv, writev \- 벡터를 읽거나 쓴다.
+.SH 사용법
+.B #include <sys/uio.h>
+.sp
+.BI "int readv(int " fd ", const struct iovec * " vector ", int " count );
+.sp
+.BI "int writev(int " fd ", const struct iovec * " vector ", int " count );
+.sp
+.B
+\fBstruct iovec {\fR
+.br
+  \fB__ptr_t \fIiov_base\fB;\fR /* 시작 주소 */
+.br  
+  \fBsize_t \fIiov_len\fB;\fR   /* 바이트수 길이 */
+.br
+\fB};\fR
+.fi
+.SH 설명
+\fBreadv\fR 는 파일 기술자 \fIfd\fR 에서 데이터를 읽고,  그리고 결과를 
+\fIvector\fR 가 가리키고 있는 버퍼에 넣는다. 버퍼의 숫자는 
+\fIcount\fR 에 의해 지정된다. 버퍼는 지정된 순서로 채워진다.
+데이터가 연속적인 버퍼 대신에 
+\fIvector\fR 에 넣어지는것을 제외하고 
+\fBread\fR 처럼 작동한다.
+
+\fBwritev\fR 는 \fIvector\fR 가 가리키고 있는 버퍼에서
+파일 기술자 \fIfd\fR 에 데이터를 쓴다.
+버퍼의 숫자는 \fIcount\fR 에 의해 지정된다. 버퍼는 지정된 순서로 사용된다.
+데이터를 연속적인 버퍼 대신에 
+\fIvector\fR 에서 가져오는것을 제외하고 
+\fBwrite\fR 처럼 작동한다.
+
+.SH 반환값
+성공시, \fBreadv\fR 는 읽은 바이트수를 반환한다.
+성공시, \fBwritev\fR 는 쓰여진 바이트의 수를 반환한다.
+에러시, \-1이 리턴되고 \fIerrno\fR 는 적당한 값으로 설정된다.
+
+.SH 에러
+.TP
+.B EINVAL
+유효하지 않은 인자가 주어졌다. 예를 들어 \fIcount\fR 가 
+\fBMAX_IOVEC\fR, 또는 0보다 크다. 
+\fIfd\fR 가 읽거나(\fBreadv\fR) 쓰기(\fBwritev\fR) 에 알맞지 않은 객체와 
+연결되어 있다.
+.TP
+.B EFAULT
+"Segmentation fault." 대체로 \fIvector\fR 나  
+\fIiov_base\fR 의 몇몇 포인터들이 올바르게 할당되지 않은 메모리를 가리키고 있다.
+.TP
+.B EBADF
+파일 기술자 \fIfd\fR 가 유효하지 않다.
+.TP
+.B EINTR
+함수가 어떤 데이터를 읽고 쓰기 전에 신호에 의해 인터럽트되었다.
+.TP
+.B EAGAIN
+Non-blocking I/O 가 
+\fBO_NONBLOCK\fR 를 사용하여 선택되어 졌고 읽기 위해 즉시 이용할수 있는 
+데이터가 없다.
+(또는 파일 기술자 \fIfd\fR가 잠겨져 있는 객체를 위한 것이다.)
+.TP
+.B EISDIR
+\fIfd\fR 가 디렉토리를 가리킨다.
+.TP
+.B EOPNOTSUP
+\fIfd\fR 가 읽기/쓰기가 지원되지 않는 소켓이나 장치를 가리킨다.
+.TP
+.B ENOMEM
+이용할수 있는 커널 메모리가 충분하지 않다.
+.PP
+\fIfd\fR 와 연결된 객체에 의존하여 다른 에러들이 발생할수 있다.
+.SH 호환
+4.4BSD (
+.B readv
+그리고
+.B writev
+함수는 BSD 4.2에서 처음 나타났다), Unix98.  Linux libc5 는 
+\fIcount\fR 인자의 타입으로써
+\fBsize_t\fR 를 사용하였다. 이것은 타당하지만 표준은 아니다.
+.SH 관련 항목
+.BR read (2),
+.BR write (2),
+.BR fprintf (3),
+.BR fscanf (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 8월 7일

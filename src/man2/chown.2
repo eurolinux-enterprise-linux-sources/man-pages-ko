@@ -1,0 +1,171 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\" Copyright (c) 1998 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified Wed Jul 21 21:53:01 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Jul  9 13:59:51 1996 by Andries Brouwer <aeb@cwi.nl>
+.\" Modified Wed Nov  6 03:49:07 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Sun May 18 10:34:09 1997 by Michael Haardt <michael@cantor.informatik.rwth-aachen.de>
+.\"
+.TH CHOWN 2 "1997년 5월 18일" "Linux 2.1.81" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+chown, fchown, lchown \- 파일에 대한 소유권을 바꾼다.
+.SH 사용법
+.B #include <sys/types.h>
+.br
+.B #include <unistd.h>
+.sp
+.BI "int chown(const char *" path ", uid_t " owner ", gid_t " group );
+.br
+.BI "int fchown(int " fd ", uid_t " owner ", gid_t " group );
+.br
+.BI "int lchown(const char *" path ", uid_t " owner ", gid_t " group );
+.SH 설명
+.IR path 나
+.IR fd 로 
+지정된 파일의 소유자를 바꾼다.
+슈퍼 사용자(root)만이 파일의 소유자를 바꿀수 있다. 파일의 소유자는 파일의 
+그룹을 그 소유자가 멤버인 어떤 그룹으로 바꿀수 있다.
+슈퍼 사용자는 임의로 그룹을 변경할 수 있다.
+
+.IR owner 나
+.IR group 가 
+\-1로 지정되었다면, 그 ID는 바뀌지 않는다.
+
+실행 파일의 소유자나 그룹이 슈퍼 사용자(root)가 아닌 사용자에 의해 
+변경되면, S_ISUID 그리고 S_ISGID 모드 비트는 지워진다(clear). POSIX는 
+루트(root)가 
+.IR chown 을 
+할 때 이 작업이 실행 가능한 지 여부를 기술하지 않는다;
+리눅스에서는 이 작업이 커널 버전에 의존한다.
+그룹에 의해 실행되는 파일이 아닐 경우에는 S_ISGID 비트는 권고 잠금
+(mandatory locking)을 가리키며 (S_IXGRP bit는 지워진다),
+.IR chown 에
+의해 지워지지 않는다.
+
+.SH 반환값
+성공시, 0을 반환한다. 에러시, \-1이 반환하며,
+.IR errno 는 
+적당한 값으로 설정된다.
+.SH 에러
+파일 시스템에 의존하여, 다른 에러 코드가 반환될 수 있다.
+.BR chown 의 
+일반적인 에러 목록은 다음과 같다:
+
+.TP
+.B EPERM
+유효 UID는 파일의 소유자와 일치하지 않으며 0이 아니다;
+또는 소유자나 그룹이 정확히 지정되지 않았다.
+.TP
+.B EROFS
+지정된 파일이 읽기-전용 파일 시스템에 있다.
+.TP
+.B EFAULT
+.IR path 가 
+접근할수 없는 주소 공간을 가리키고 있다.
+.TP
+.B ENAMETOOLONG
+.IR path 가 
+너무 길다.
+.TP
+.B ENOENT
+파일이 존재하지 않는다.
+.TP
+.B ENOMEM
+이용할 수 있는 커널 메모리가 충분하지 않다.
+.TP
+.B ENOTDIR
+경로명의 앞부분(prefix)이 디렉토리가 아니다.
+.TP
+.B EACCES
+찾기 허가권이 경로명의 앞부분에서 거부되었다.
+.TP
+.B ELOOP
+너무 많은 심볼릭 링크를 
+.IR path 에서 
+만났다.
+.PP
+.BR fchown 의  
+일반적 에러는 아래와 같다:
+.TP
+.B EBADF
+기술자가 유효하지 않다.
+.TP
+.B ENOENT
+위를 참조해라.
+.TP
+.B EPERM
+위를 참조해라.
+.TP
+.B EROFS
+위를 참조해라.
+.TP
+.B EIO
+하위 레벨 I/O 에러가 inode 수정 시 발생했다.
+.SH 주의
+2.1.81이전의 리눅스 버전에서
+.BR chown 는 
+심볼릭 링크를 허용하지 않는다.
+리눅스 커널 2.1.81 이후에,
+.B chown
+심볼릭 링크를 허용하며, 새로운 시스템 콜
+.BR lchown 는 
+심볼릭 링크를 허용하지 않는다.
+리눅스 커널 2.1.86 이후에, 이 새로운 시스템 콜(예전의
+.BR chown 과 
+같은 의미을 가지고 있는)은 같은 시스템 콜 수를 가지고 있으며, 
+.BR chown 에서는 
+새로운 시스템 콜 수를 가지게 되었다.
+.LP
+.BR fchown 의 
+원형은
+.BR _BSD_SOURCE 가 
+정의되어 있을 경우에만 이용할 수 있다.
+.SH 호환
+.B chown
+시스템 콜은 SVr4, SVID, POSIX, X/OPEN 에서 확실하다. 4.4BSD 버전은 슈퍼 
+사용자만이 사용할 수 있다.(즉, 일반적인 사용자는 파일을 바꿀 수 없다.)
+SVr4 문서는 EINVAL, EINTR, ENOLINK 그리고 EMULTIHOP 반환을 문서화
+했지만, ENOMEM은 아니다.  POSIX.1에서는 ENOMEM 또는 ELOOP 에러 조건을 
+문서화 하지 않았다.
+.PP
+.B fchown
+시스템 콜은 4.4BSD 그리고 SVr4 에서 확실하다.
+SVr4은 EINVAL, EIO, EINTR, 그리고 ENOLINK 에러 조건을 
+추가적으로 문서화 했다.
+.SH 제한
+\fBchown\fP()의 의미(semantic)은 UID 대응이 가능한 NFS 파일 시스템에서는 
+적용되지 않을 수도 있다.
+추가적으로, 파일 내용을 접근하는 모든 시스템 콜의 의미은 적용되지 
+않을 수 있다. 왜냐하면 \fBchown\fP()가 이미 열려진 파일에 접근 취소를
+일으킬 수 있기 때문이다.
+클라이언트 쪽 캐싱(caching)은 소유권이 사용자의 접근을 허용하도록 바뀔 수 
+있는 시간과 파일이 다른 클라이언트 쪽 사용자에 의해 접근될 수 있는 
+시간 사이에 연기될지도 모른다.
+.SH 관련 항목
+.BR chmod (2),
+.BR flock (2)
+.SH 역자
+정강훈	<skyeyes@soback.kornet.net>, 2000년 5월 26일

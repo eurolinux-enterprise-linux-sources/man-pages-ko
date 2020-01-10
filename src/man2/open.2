@@ -1,0 +1,298 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"                               1993 Michael Haardt, Ian Jackson.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Wed Jul 21 22:42:16 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Aug 21 18:18:14 1994: Michael Haardt's NFS diffs were
+.\"          applied by hand (faith@cs.unc.edu).
+.\" Modified Sat Apr 13 16:25:28 1996 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Mon May 13 00:53:52 1996: added symbolic constants
+.\"          as sent by Thomas Koenig
+.\" Modified Fri Dec 20 16:06:45 1996 by Michael Haardt: More NFS details
+.\" Modified Fri Feb 19 15:08:34 1999 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified 981128 by Joseph S. Myers <jsm28@hermes.cam.ac.uk>
+.\" Modified Thu Jun  3 19:29:06 1999 by Michael Haardt: NFS lock optimisation
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH OPEN 2 "June 3, 1999" "Linux" "System calls"
+.SH 이름
+open, creat \- 파일이나 장치를 열고 생성한다.
+.SH 사용법
+.nf
+.B #include <sys/types.h>
+.B #include <sys/stat.h>
+.B #include <fcntl.h>
+.sp
+.BI "int open(const char *" pathname ", int " flags );
+.BI "int open(const char *" pathname ", int " flags ", mode_t " mode );
+.BI "int creat(const char *" pathname ", mode_t " mode );
+.fi
+.SH 설명
+.B open()
+시스템 호출은 파일 디스크립터에서 경로명 전환에 사용된다. 호출이 성공하면, 
+반환되는 파일 디스크립터는 프로세스를 위해 열리지 않는다. 이 호출은 모든 다른 
+프로세스가 공유하지 않는 새로운 파일을 생성한다.
+
+.I flags
+는 파일을 read-only, write-only, read/write로 여는 요청을 하는 
+.BR O_RDONLY ", " O_WRONLY " or " O_RDWR
+중 하나이다.
+
+.I flags
+는 또한 다음중 하나이상을 가진
+.RI bitwise- or 'd
+일런지 모른다:
+.TP
+.B O_CREAT
+파일이 없으면 생성될것이다.
+.TP
+.B O_EXCL
+When used with
+.BR O_CREAT 
+를 사용할 때, 파일이 이미 존재한다면 에러나 파일을 여는데 실패할 것이다. 
+.B O_EXCL
+는 NFS 파일 시스템을 깬다. 잠금파일을 사용하는 automic파일 잠금을 실행하기위한 솔루션은 
+같은 파일 시스템에 특정파일을 생성하기 위함이다.
+.TP
+.B O_NOCTTY
+.I 경로명
+이 터미널 장치를 언급한다면 
+.BR tty (4)
+를 본다. 
+.TP
+.B O_TRUNC
+파일이 이미 존재한다면 그것은 생략될 것이다.
+.TP
+.B O_APPEND
+파일이 추가모드에 열려있다. 각각
+.BR 기록
+되기 전에 파일포인터는 
+.BR lseek 
+가 있는 것처럼 파일의 끝에 위치한다.
+.B O_APPEND
+는 적어도 하나 이상의 프로세스가 파일에 데이타를 추가한다면 NFS파일 시스템상에 
+변질(correpted)된 파일을 이끈다. 이것은 NFS가 파일에 추가를 지원하지 않기때문이다. 
+그래서 클라이언트 커널은 그것을 시뮬레이트한다. 
+.TP
+.BR O_NONBLOCK " or " O_NDELAY
+파일은 비블록 모드로 열린다. 
+.TP
+.B O_SYNC
+파일은 입출력 동기화를 위해 열린다. 파일 디스크립터 결과 모든
+.BR write s
+는 데이타가 물리적으로 하드웨어로 기록될 때까지 호출 프로세스를 블록화 할 것이다.
+.I 아래의 RESTRICTIONS를 본다.
+.TP
+.B O_NOFOLLOW
+경로명이 심볼릭 링크라면, 파일열기는 실패한다. 이것은 리눅스 버전 2.1.126에 추가된 
+freeBSD확장이다. 경로명의 초기 구성인 심볼릭 링크는 계속 따를것이다. glibc2.0.100의 
+헤더와 후에 이 플래그의 정의를 포함한다; 커널 2.1.126이전에서 사용한다면 무시할 것이다.
+.TP
+.B O_DIRECTORY
+\fI경로명\fR이 디렉토리가 아니라면, 파일열기는 실패할 것이다. 이 플래그는 리눅스의 
+특징이고, \fBopendir\fR(3)가 FIFO나 테입장치에 호출된다면 서비스의 거부문제를 피하기 위해 
+리눅스 커널 버전 2.1.126에 추가되었다. 그러나 \fBopendir\fR는 외부에서 사용될 수 없다.
+.TP
+.B O_LARGEFILE
+대용량 파일 시스템을 지원하는 32비트 시스템은 31비트로는 열수 없는 크기의 파일을 사용할 수 있다.
+리눅스 커널은 이것을 아직은 지원하지 못하지만, glibc 2.1에서 테스팅되었다.
+.PP
+몇몇 이러한 옵션 플래그는 파일이 열린후 사용하는
+.B fcntl
+가 바뀔 수 있다.
+
+.I 모드
+는 새로운 파일이 생성되면 사용권한을 지정한다. 대개 프로세스의 
+.BR umask
+로 수정한다: 생성된 파일의 권한은 
+.BR "(mode & ~umask)" 
+이다.
+.PP
+다음의 심볼릭 상수는 
+.IR 모드 
+를 위해 제공된다:
+.TP
+.B S_IRWXU
+00700 사용자(파일 소유자)는 읽기, 쓰기, 실행권한이 있다.
+.TP
+.B S_IRUSR (S_IREAD)
+00400 사용자는 읽기 권한이 있다.
+.TP
+.B S_IWUSR (S_IWRITE)
+00200 사용자는 쓰기 권한이 있다.
+.TP
+.B S_IXUSR (S_IEXEC)
+00100 사용자는 실행 권한이 있다.
+.TP
+.B S_IRWXG
+00070 그룹은 읽기, 쓰기, 실행 권한이 있다.
+.TP
+.B S_IRGRP
+00040 그룹은 읽기 권한이 있다.
+.TP
+.B S_IWGRP
+00020 그룹은 쓰기 권한이 있다.
+.TP
+.B S_IXGRP
+00010 그룹은 실행 권한이 있다.
+.TP
+.B S_IRWXO
+00007 기타사용자는 읽기, 쓰기, 실행 권한이 있다.
+.TP
+.B S_IROTH
+00004 기타사용자는 읽기 권한이 있다.
+.TP
+.B S_IWOTH
+00002 기타사용자는 쓰기 권한이 있다.
+.TP
+.B S_IXOTH
+00001 기타사용자는 실행 권한이 있다.
+.I 모드
+는 항상 
+.B O_CREAT
+가 
+.IR 플래그 
+일때 지정되어야만하고, 그밖에는 무시한다.
+
+.B 생성
+은
+.BR O_CREAT|O_WRONLY|O_TRUNC 
+와 일치하는 
+.I 플래그
+를 가진 
+.B 파일열기
+와 일치한다.
+.SH 반환값
+.BR 열기와 생성 
+은 에러가 나면 새로운 파일 디스크립터를 반환하거나 \-1을 반환한다. 이런경우 
+.I errno
+는 적절히 설정된다.
+Note that
+.B 열기
+는 장치파일을 열순 있지만, 
+.B 생성
+은 장치파일을 생성 할 수 없는 것을 주지한다. 대신 
+.BR mknod (2)
+을 사용한다.
+.LP
+UID 맵핑이 가능한 NFS 파일 시스템에서 \fB열기\fP는 파일 디스크립터를 반환하지만, 
+\fBread\fP(2)는 거부된다. 이것은 클라이언트가 권한검사에 의해 \fB열기\fP를 실행하지만
+UID 맵핑은 서버에 의해 실행할 수 있기 때문이다.
+
+
+.SH 에러
+.TP
+.B EEXIST
+.I 경로명
+이 이미 존재하고, 
+.BR O_CREAT " and " O_EXCL
+가 사용된다.
+.TP
+.B EISDIR
+.I 경로명
+이 디렉토리를 참조하고, 접근은 복잡한 기록을 요구했다.
+.TP
+.B EACCES
+요청한 파일 접근은 거부되거나 
+.IR 경로명
+의 디렉토리중 하나가 실행권한을 찾을 수 없거나 파일이 아직 존재하지 않고 부모디렉토리 접근이 거
+부됐다.
+.TP
+.B ENAMETOOLONG
+.IR 경로명이 너무길다.
+.TP
+.B ENOENT
+A directory component in
+.I 경로명
+의 디렉토리가 없거나 심볼릭 링크가 깨졌다.
+.TP
+.B ENOTDIR
+A component used as a directory in
+.I 경로명
+에 디렉토리로써 사용되는 것이 없다. 사실 디렉토리나 \fBO_DIRECTORY\fR가 지정되었고 
+.I 경로명
+이 디렉토리가 아니다.
+.TP
+.B ENXIO
+O_NONBLOCK | O_WRONLY가 설정되고, 지정한 파일이 FIFO이고 어떠한 프로세스도 읽기위해 열린 파일이 없다.
+또는, 파일이 장치파일이고 일치하는 장치가 없다.
+.TP
+.B ENODEV
+.I 경로명
+이 장치파일을 참조하고, 일치하는 장치가 없다.
+.TP
+.B EROFS
+.I 경로명
+이 read-only 파일시스템의 파일을 참조하고 쓰기접근이 요청됐다.
+.TP
+.B ETXTBSY
+.I 경로명
+이 현재 실행중인 실행이미지파일을 참조하고 쓰기권한 접근이 요청되었다.
+.TP
+.B EFAULT
+.IR 경로명이 당신이 접근 할 수 있는 주소공간 밖을 가리킨다.
+.TP
+.B ELOOP
+심볼릭링크가 너무 많다.
+.IR 경로명
+이나 \fBO_NOFOLLOW\fR가 지정되었지만 
+.I 경로명
+이 심볼릭 링크이다.
+.TP
+.B ENOSPC
+.I 경로명
+이 생성되었지만 장치가 
+.I 경로명
+이 포함하는 장치가 새로운 파일을 위한 공간이 없다.
+.TP
+.B ENOMEM
+커널 메모리가 부족하다.
+.TP
+.B EMFILE
+프로세스가 이미 파일열기의 최대값에 찼다.
+.TP
+.B ENFILE
+파일열기의 총합제한에 도달했다.
+.SH 호환
+SVr4, SVID, POSIX, X/OPEN, BSD 4.3
+.SH 제한
+POSIX은 \fBO_SYNC\fR, \fBO_DSYNC\fR 와 \fBO_RSYNC\fR에 일치하는 입출력 동기화의 세가지 다른 변수를 제공한다. 
+현재(2.1.130) 이런것들은 리눅스에서 모두 같은 뜻이다.
+.SH 관련 항목
+.BR read (2),
+.BR write (2),
+.BR fcntl (2),
+.BR close (2),
+.BR link (2),
+.BR mknod (2),
+.BR mount (2),
+.BR stat (2),
+.BR umask (2),
+.BR unlink (2),
+.BR socket (2),
+.BR fopen (3),
+.BR fifo (4)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29

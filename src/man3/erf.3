@@ -1,0 +1,51 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 19:44:26 1993 by Rik Faith (faith@cs.unc.edu)
+.TH ERF 3  "1993년 6월 25일" "BSD" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+erf, erfc \- 에러 함수와 보수 에러 함수들
+.SH 사용법
+.nf
+.B #include <math.h>
+.sp
+.BI "double erf(double " x );
+.sp
+.BI "double erfc (double " x );
+.fi
+.SH 설명
+\fBerf()\fP 함수는 \fIx\fP의 에러 함수를 반환한다.; 다음 처럼 정의되어 있다.
+.TP
+erf(x) = 2/sqrt(pi)* integral from 0 to x of exp(-t*t) dt
+.PP
+\fBerfc()\fP 함수는 
+\fIx\fP의 보수 에러 함수를 반환한다. 즉 1.0 - erf(x) 이다.
+.SH 호환
+SVID 3, BSD 4.3
+.SH 관련 항목
+.BR exp (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 5월 24일

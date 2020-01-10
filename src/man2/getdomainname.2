@@ -1,0 +1,80 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.TH GETDOMAINNAME 2 "1993년 7월 22일" "리눅스 0.99.11" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+getdomainname, setdomainname \- 도메인 이름을 알아내거나 설정한다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.BI "int getdomainname(char *" name ", size_t " len );
+.br
+.BI "int setdomainname(const char *" name ", size_t " len );
+.SH 설명
+이 함수는 현재 프로세서(processor)의 도메인 이름을 알아내거나 바꿀 때 사용된다.
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되며, 
+.IR errno 는
+적당한 값으로 설정된다.
+.SH 에러
+.TP
+.B EINVAL
+.BR getdomainname 에서,
+.IR name 이 
+.BR NULL 을 
+가리키거나 
+.IR name 이 
+.IR len 보다 
+길다.
+.TP
+.B EPERM
+.BR setdomainname 에서, 
+호출한 프로세스의 권한이 슈퍼 유저가 아니다.
+.TP
+.B EINVAL
+.BR setdomainname 에서,
+.IR len 가 
+너무 길다.
+.SH 호환
+POSIX는 이 시스템 콜들을 기술하지 않는다.
+.SH 버그
+.B getdomainname 은 
+다른 플랫폼에서의 구현과 호환되지 않는다. 왜냐하면 이 구현들은 
+.I name 이 
+len 보다 더 길어도, 항상 
+.I len
+바이트를 리턴하기 때문이다.
+그러나, 리눅스에서는 이런 경우
+.BR EINVAL 를 
+리턴한다. (DLL 4.4.1 라이브러리에서 처럼).
+.SH 주의
+리눅스에서
+.BR getdomainname "는 " uname (2)을 
+호출하여 라이브러리 차원에서 수행된다.
+.SH 관련 항목
+.BR gethostname (2),
+.BR sethostname (2),
+.BR uname (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 5월 2일

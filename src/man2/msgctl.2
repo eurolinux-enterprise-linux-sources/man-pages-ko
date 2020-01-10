@@ -1,0 +1,163 @@
+.\" Copyright 1993 Giorgio Ciucci (giorgio@crcc.it)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Tue Oct 22 08:11:14 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.TH MSGCTL 2 "1993년 11월 1일" "Linux 0.99.13" "리눅스 프로그래머 매뉴얼" 
+.SH 이름
+msgctl \- 메세지 작동을 제어한다.
+.SH 사용법
+.nf
+.B
+# include <sys/types.h>
+.B
+# include <sys/ipc.h>
+.B
+# include <sys/msg.h>
+.fi
+.sp
+.BI "int msgctl ( int " msqid ,
+.BI "int  " cmd ,
+.BI "struct msqid_ds *" buf " )"
+.SH 설명
+이 함수는 식별자
+.IR msqid 인
+메세지 큐를
+.I cmd
+에 의해 지정된 작동으로 제어한다.
+.I cmd
+의 유효값은 다음과 같다:
+.TP 12
+.B IPC_STAT
+메세지 큐 데이터 구조를
+.IR buf 에
+의해 지정된 구조체로 복사한다.
+사용자는 메세지 큐에 읽기 우선권을 가지고 있어야 한다.
+.TP
+.B IPC_SET
+.IR buf 가 
+가리키고 있는 
+.B msqid_ds
+구조체의 일부 멤버 값을 메세지 큐 데이터 구조체에 쓰고
+.B msg_ctime
+멤버도 갱신한다.
+사용자가 제공하고
+.IR buf 가 
+가리키고 있는 
+.B "struct msqid_ds"
+에서 고려되어야 할 멤버는 다음과 같다:
+.nf
+.sp
+.ft B
+	msg_perm.uid
+	msg_perm.gid
+	msg_perm.mode	\fR/* 하위 9-bits */\fP
+	msg_qbytes
+.fi
+.ft R
+.sp
+호출 프로세스의 유효(effective) user\-ID는 슈퍼 유저나, 생성자 또는
+메세지 큐의 소유자 중 하나여야 한다.
+슈퍼 유저만이 시스템 파라미터인 
+.BR MSGMNB 값보다 
+크게
+.BR msg_qbytes 를 
+올릴 수 있다.
+
+.TP
+.B IPC_RMID
+즉시 메세지 큐를 제거하며 해당 데이터 구조체는 기다리고 있는
+모든 읽기 쓰기 프로세스를 깨운다.(에러를 반환하며, 
+.BR errno 는 
+.BR EIDRM 으로
+설정된다.)
+호출 프로세스의 유효 사용자 ID는 슈퍼 유자나 생성자 또는 메세지 큐의
+소유자 중 하나여야 한다.
+.SH 반환값
+성공시, 반환값 
+.BR 0 이며, 
+그렇지 않으면 에러를 가리키는 
+.B errno
+과 함께 
+.B \-1
+이 반환된다.
+
+.SH 에러
+실패가 반환될때, 
+.BR errno 는 
+다음 값 중 하나로 설정된다.
+.TP 11
+.B EACCES
+.I cmd
+인자는 
+.BR IPC_STAT 와 
+같지만 호출 프로세스는 메세지 큐 
+.IR msqid 에
+대한 읽기 접근 허가권을 가지고 있지 않다.
+.TP
+.B EFAULT
+.I cmd
+인자는 
+.BR IPC_SET 나 
+.B IPC_STAT
+값을 가지고 있지만 
+.IR buf 에 
+의해 지정된 주소로 접근할 수 없다.
+.TP
+.B EIDRM
+메세지 큐가 제거 되었다.
+.TP
+.B EINVAL
+유효 하지 않은 
+.IR cmd 나
+.IR msqid .
+.TP
+.B EPERM
+.I cmd
+인자는 
+.BR IPC_SET 나
+.B IPC_RMID
+값을 가지고 있지만 호출 프로세스의 유효 사용자 ID는 명령을
+실행할 충분한 권한을 가지고 있지 않다.
+이것은 또한 비 슈퍼-사용자 프로세스가 시스템 파라미터 
+.BR MSGMNB 에
+의해 지정된 값보다 크게
+.B msg_qbytes
+값을 증가시키려고 시도하였을 때이다.
+.SH 주의
+.BR IPC_INFO ,
+.BR MSG_STAT
+그리고
+.BR MSG_INFO 는 
+할당된 자원에 대한 정보를 제공하는 
+.BR ipcs (8)
+프로그램에 의해 사용된다.
+앞으로 이것은 proc 파일 시스템 인터페이스를 위해서 필요에 따라 수정되거나
+이동될 수도 있다.
+.SH 호환
+SVr4, SVID.  SVID는 EIDRM 에러 조건을 문서화 하지 않았다.
+.SH 관련 항목
+.BR ipc (5),
+.BR msgget (2),
+.BR msgsnd (2),
+.BR msgrcv (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 6월 19일

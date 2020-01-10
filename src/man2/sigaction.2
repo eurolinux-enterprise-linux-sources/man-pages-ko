@@ -1,0 +1,444 @@
+.\" Copyright (c) 1994,1995 Mike Battersby <mib@deakin.edu.au>
+.\" based on work by faith@cs.unc.edu
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified, aeb, 960424
+.\" Modified Fri Jan 31 17:31:20 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Thu Nov 26 02:12:45 1998 by aeb - add SIGCHLD stuff.
+.\" Modified Sat May  8 17:40:19 1999 by Matthew Wilcox - add POSIX.1b signals
+.\"
+.\"
+.\" 한국어 번역: ASPLINUX <man@asp-linux.co.kr> 2000년 7월 29일
+.\"
+.\" r1.7 2005-02-13 15:46:37 +12-31 윤현호
+.\" r1.6 2004-07-24 14:54:10 +71-43 xaos
+.\" r1.5 2004-07-24 12:50:34 +8-7 xaos
+.\" r1.4 2004-07-24 12:04:46 +11-12 xaos
+.\" r1.3 2004-07-24 11:49:46 +16-10 xaos
+.\" r1.2 2004-07-24 11:28:33 +4-4 xaos
+.\" r1.1 2004-06-16 01:34:05  xaos
+.\"
+.TH SIGACTION 2 "8 May 1999" "Linux 2.2" "Linux Programmer's Manual"
+.SH 이름
+sigaction, sigprocmask, sigpending, sigsuspend \- POSIX 시그널 처리 함수
+.SH 사용법
+.B #include <signal.h>
+.sp 2
+.BI "int sigaction(int " signum ", const struct sigaction *" act ","
+.BI "struct sigaction *" oldact );
+.sp
+.BI "int sigprocmask(int " how ", const sigset_t *" set ", "
+.BI "sigset_t *" oldset );
+.sp
+.BI "int sigpending(sigset_t *" set );
+.sp
+.BI "int sigsuspend(const sigset_t *" mask );
+.SH 설명
+.B sigaction
+시스템 호출은 특정 시그널이 수신되었을 때, 프로세스가 취할 액션을 변경하는데 사용된다.
+.PP
+.I signum
+는 시그널을 가리키며,
+.B SIGKILL
+과
+.BR SIGSTOP
+를 제외한 모든 시그널 값이 될 수 있다.
+.PP
+.I act
+가 null이 아닐 때,
+시그널
+.I signum
+에 대한 새로운 액션은 
+.IR act
+가 되며,
+.I oldact
+이 null이 아닐 때, 기존의 액션은 
+.IR oldact
+에 저장된다.
+.PP
+.B sigaction
+구조는 다음과 같이 정의된다.
+.sp
+.RS
+.nf
+struct sigaction {
+    void (*sa_handler)(int);
+    void (*sa_sigaction)(int, siginfo_t *, void *);
+    sigset_t sa_mask;
+    int sa_flags;
+    void (*sa_restorer)(void);
+}
+.fi
+.RE
+.PP
+.\" 아래문장 번역 자신없음. 확인부탁.
+아키텍쳐에 따라 공용체로 되어 있기도 하므로,
+.I sa_handler
+와
+.I sa_sigaction
+을 모두 지정하지 말라.
+.PP
+.I sa_restorer
+요소는 쓰이지 않으며, 사용되어서는 안된다.
+POSIX는  
+.I sa_restorer
+요소를 갖지 않는다.
+.PP
+.I sa_handler
+는 
+.I signum
+시그널이 오면 실행되는 액션을 명시하며,
+디폴트 액션을 취하라는
+.B SIG_DFL
+, 시그널을 무시하라는
+.B SIG_IGN 
+, 시그널을 처리하는 특정 함수에 대한 포인터 중의 하나가 될 수 있다.
+세번째의 경우 시그널 처리 함수는 시그널 번호만을 유일한 인수로 갖는다.
+.PP
+.I sa_sigaction 
+또한
+.I signum
+시그널과 연결된 액션을 명시한다. 처리 함수는 시그널 번호를 첫번째 인수로,
+.I siginfo_t
+에 대한 포인터를 두번째 인수로,
+그리고 void형 포인터로 캐스트된
+.I ucontext_t
+에 대한 포인터를 세번째 인수로 갖는다.
+.PP
+.I sa_mask
+는 시그널 핸들러의 실행 동안 블록화되어야 하는 시그널의 마스크를 제공한다.
+또한, 
+.B SA_NODEFER
+또는
+.B SA_NOMASK
+이 사용되지 않으면, 핸들러를 시동시켰던 그 시그널도 블록화된다.
+.PP
+.I sa_flags
+는 시그널 처리 프로세스의 행위를 변경시키는 일련의 플래그들을 명시한다. 이는 bitwise 혹은
+플래그는 아래 플래그 들의 0개 이상의 OR 비트 연산으로 만들어진다.
+.RS
+.TP
+.B SA_NOCLDSTOP
+.I signum
+가
+.BR SIGCHLD
+이면 자식 프로세스가 중지되어도 통지를 받지 않는다.
+(즉, 자식 프로세스들이
+.BR SIGSTOP ", " SIGTSTP ", " SIGTTIN
+,
+.BR SIGTTOU
+중 하나를 수신할 때)
+.TP
+.BR SA_ONESHOT " 또는 " SA_RESETHAND
+.\" 아래문장 번역 자신없음. 확인부탁.
+시그널 처리기가 호출되어 한번 실행된 후, 시그널 액션을 원래의 디폴트 액션으로 되돌려 놓는다.
+(이는 
+.BR signal (2)
+호출에 대한 기본 행위이다.)
+.TP
+.B SA_RESTART
+일부 시스템 호출들이 시그널을 통해 재시작할 수 있도록 함으로서
+BSD 시그널과의 호환성을 제공한다.
+.TP
+.BR SA_NOMASK " or " SA_NODEFER
+어떤 시그널 처리기의 동작동안 그 시그널 자신을 막지 않는다.
+.TP
+.B SA_SIGINFO
+시그널 처리기가 한 개가 아닌 3개의 인수를 취한다. 이 경우,
+.IR sa_handler 
+대신에 
+.I sa_sigaction
+이 설정되어야 한다.
+(sa_sigaction 필드는 리눅스 2.1.86에서 추가되었다.)
+.RE
+.PP
+.I sa_sigaction
+의
+.I siginfo_t 
+변수는 다음의 요소들을 갖는 구조체(struct)이다.
+.sp
+.RS
+.nf
+.ta 4 13 24
+siginfo_t {
+	int	si_signo;	/* 시그널 넘버 */
+	int	si_errno;	/* errno 값 */
+	int	si_code;	/* 시그널 코드 */
+	pid_t	si_pid;	/* 프로세스 ID 보내기 */
+	uid_t	si_uid;	/* 프로세스를 전송하는 실제 사용자 ID */
+	int	si_status;	/* Exit 값 또는 시그널 */
+	clock_t	si_utime;	/* 소모된 사용자 시간 */
+	clock_t	si_stime;	/* 소모된 시스템 시간 */
+	sigval_t	si_value;	/* 시그널 값 */
+	int	si_int;	/* POSIX.1b 시그널 */
+	void *	si_ptr;	/* POSIX.1b 시그널 */
+	void *	si_addr;	/* 실패를 초래한 메모리 위치 */
+	int	si_band;	/* 밴드 이벤트 */
+	int	si_fd;	/* 파일 기술자 */
+}
+.fi
+.RE
+
+.IR si_signo ", " si_errno " 그리고 " si_code
+는 모든 시그널에 대해 정의되었다.
+.BR kill (2),
+POSIX.1b 시그널과 SIGCHLD은
+.IR si_pid " 과 " si_uid
+을 채운다.
+.BR SIGCHLD
+은 또한
+.IR si_status ", " si_utime ", " si_stime
+을 채운다.
+.IR si_int " 그리고 " si_ptr
+는 POSIX.1b 시그널의 송신자에 의해 명시된다.
+좀더 자세한 사항을 보려면,
+.\" 
+.BR sigqueue (2)
+을 참조하라.
+SIGILL, SIGFPE, SIGSEGV 그리고 SIGBUS은
+.I si_addr
+를 오류의 주소로 채운다.
+SIGPOLL 은
+.IR si_band "와" si_fd
+를 채운다.
+.I si_code
+는 왜 시그널이 보내졌는지에 대해 지시한다. 이는 bitmask가 아닌 값이다.
+나올 수 있는 모든 시그널 값은 이 테이블에 나열되어 있다.
+.TS
+tab(:) allbox;
+c s
+l l.
+\fIsi_code\fR
+Value:Signal origin
+SI_USER:kill, sigsend or raise
+SI_KERNEL:The kernel
+SI_QUEUE:sigqueue
+SI_TIMER:timer expired
+SI_MESGQ:mesq state changed
+SI_ASYNCIO:AIO completed
+SI_SIGIO:queued SIGIO
+.TE
+.TS
+tab(:) allbox;
+c s
+l l.
+SIGILL
+ILL_ILLOPC:illegal opcode
+ILL_ILLOPN:illegal operand
+ILL_ILLADR:illegal addressing mode
+ILL_ILLTRP:illegal trap
+ILL_PRVOPC:privileged opcode
+ILL_PRVREG:privileged register
+ILL_COPROC:coprocessor error
+ILL_BADSTK:internal stack error
+.TE
+.TS
+tab(:) allbox;
+c s
+l l.
+SIGFPE
+FPE_INTDIV:integer divide by zero
+FPE_INTOVF:integer overflow
+FPE_FLTDIV:floating point divide by zero
+FPE_FLTOVF:floating point overflow
+FPE_FLTUND:floating point underflow
+FPE_FLTRES:floating point inexact result
+FPE_FLTINV:floating point invalid operation
+FPE_FLTSUB:subscript out of range
+.TE
+.TS
+tab(:) allbox;
+c s
+l l.
+SIGSEGV
+SEGV_MAPERR:address not mapped to object
+SEGV_ACCERR:invalid permissions for mapped object
+.TE
+.TS
+tab(:) allbox;
+c s
+l l.
+SIGBUS
+BUS_ADRALN:invalid address alignment
+BUS_ADRERR:non-existant physical address
+BUS_OBJERR:object specific hardware error
+.TE
+.TS
+tab(:) allbox;
+c s
+l l.
+SIGTRAP
+TRAP_BRKPT:process breakpoint
+TRAP_TRACE:process trace trap
+.TE
+.TS
+tab(:) allbox;
+c s
+l l.
+SIGCHLD
+CLD_EXITED:child has exited
+CLD_KILLED:child was killed
+CLD_DUMPED:child terminated abnormally
+CLD_TRAPPED:traced child has trapped
+CLD_STOPPED:child has stopped
+CLD_CONTINUED:stopped child has continued
+.TE
+.TS
+tab(:) allbox;
+c s
+l l.
+SIGPOLL
+POLL_IN:data input available
+POLL_OUT:output buffers available
+POLL_MSG:input message available
+POLL_ERR:i/o error
+POLL_PRI:high priority input available
+POLL_HUP:device disconnected
+.TE
+.PP
+.B sigprocmask
+호출은 현재 블록화된 시그널들을 변경시키는데 사용된다. 호출은 지정된
+.I how
+값에 따라 다르게 동작한다.
+.RS
+.TP
+.B SIG_BLOCK
+.I set 
+인수가 지정한 시그널 집합이 블록시킬 시그널 집합에 더해진다.
+.TP
+.B SIG_UNBLOCK
+.I set 
+에 포함된 시그널들이 블록시킬 시그널들의 집합에서 삭제된다.
+블록하고 있지 않은 시그널을 삭제하려 해도 괜찮다.
+.TP
+.B SIG_SETMASK
+블록화할 시그널 집합을
+.IR set 
+으로 설정한다.
+.RE
+.PP
+.I oldset
+이 null이 아닐 때, 기존의 마스크 시그널 집합은
+.IR oldset 
+에 저장된다.
+.PP
+.B sigpending
+호출은 블록화에 막혀 기다리고 있는 시그널을 살펴볼 수 있도록 해준다. 
+기다리는 시그널들의 시그널 마스크는
+.IR set 
+내에 저장된다.
+.\" 위 마지막 문장 자신없음. 확인부탁.
+.PP
+.B sigsuspend
+호출은 프로세스가 막고 있는 시그널 마스크를
+지정한
+.I mask
+로 잠시 대체하고, 다음 시그널이 수신될 때까지 프로세스를 중지시킨다.
+.SH 반환값
+.BR sigaction 
+,
+.BR sigprocmask 
+,
+.B sigpending
+는 성공하면 0을 실패하면 -1을 리턴한다.
+.B sigsuspend
+항상 -1을 리턴한다.
+보통
+에러
+.B EINTR
+과 함께.
+
+.SH 에러
+.TP
+.B EINVAL
+지정한 시그널이 부적절하다. 혹은 받을 수 없는
+.BR SIGKILL " 또는 " SIGSTOP
+에 대한 액션을 변경하려고 했다.
+.TP
+.B EFAULT
+.IR act ", " oldact ", " set
+또는
+.I oldset
+이 프로세스의 메모리 영역이 아닌 곳을 가리키고 있다.
+.TP
+.B EINTR
+시스템 호출이 인터럽트되었다.
+.SH 주의
+sigprocmask 호출로 
+.BR SIGKILL " 또는 " SIGSTOP
+을 블록화할 수 없다. 이런 명령은 무시된다.
+.PP
+POSIX에 따르면, 프로세스가 
+\fIkill()\fP 또는 \fIraise()\fP 함수가 만들어 낸 것이 아닌
+GFPE, SIGILL, 혹은 SIGSEGV를 무시한 이후의 프로세스의 동작은 
+정의되지 않는다.
+정수를 0으로 나눈 결과 또한 정의되지 않는다.
+일부 아키텍쳐에선 0으로 나누기가 SIGFPE 시그널을 만들어 낼 것이다.
+(또한 가장 큰 음의 정수를 \-1로 나누어도 SIGFPE를 생성할 수 있다.)
+이 시그널을 무시하면 무한 루프를 초래할 수 있다.
+.PP
+POSIX 스펙은 오직 
+.BR SA_NOCLDSTOP
+만을 정의한다 .
+다른
+.I sa_flags
+의 사용은 이식이 불가능하다.
+.PP
+.B SA_RESETHAND
+플래그는 동일한 이름의 SVr4 플래그와 호환가능하다.
+.PP
+.B SA_NODEFER
+플래그는 커널 1.3.9과 새로운 버전하에서 동일한 이름의 SVr4 플래그와 호환가능하다.
+.PP
+SVr4 호환성을 위한
+.BR SA_RESETHAND " 와 " SA_NODEFER 
+이름들은 오직 라이브러리 버전 3.0.9
+그리고 그 이후의 버전에서만 존재한다.
+.PP
+.BR SA_SIGINFO
+플래그는 POSIX.1b에 의해서만 명시된다. 이에 대한 지원은 리눅스 2.2에 추가되었다.
+.PP
+.B sigaction
+현재 시그널 처리기에 쿼리를 하기 위해 널 두번째 인수로 호출될 수 있다. 이를 널 두번째 그리고
+세번째 인수들로 이를 호출함으로서 현재 머신에 대한 주어진 시그널이 타당한가를 체크하는데
+사용될 수 있다.
+.PP
+시그널 체계 조작에 대한 자세한 정보를 얻으려면,
+.BR sigsetops (3)
+을 참조하라.
+.SH 호환
+POSIX, SVr4.  SVr4 는 EINTR 조건에 대한 문서를 제공하지 않는다.
+.SH 관련 항목
+.BR kill (1),
+.BR kill (2),
+.BR killpg (2),
+.BR pause (2),
+.BR raise (3),
+.BR siginterrupt (3),
+.BR signal (2),
+.BR signal (7),
+.BR sigsetops (3),
+.BR sigvec (2)
+.SH 번역
+ASPLINUX <man@asp-linux.co.kr> 2000년 7월 29일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 13일

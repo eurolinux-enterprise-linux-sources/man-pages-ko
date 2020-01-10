@@ -1,0 +1,40 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sun Jul 25 11:06:22 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Mon Oct 21 17:47:19 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.TH ISSUE 5 "24 July 1993" "Linux" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+issue \- login하기 이전에 표시되는 메시지와 시스템 식별 파일
+.SH 설명
+\fB/etc/issue\fP 파일은 login 프롬프트 이전에 출력되어지며, 메시지 혹은 
+시스템 식별 정보가 있는 텍스트 파일이다. 만약
+.BR getty (1)
+가 지원되면, 이 파일은 여러개의 \fB@\fP\fIchar\fP 와  \fB\e\fP\fIchar\fP 
+가 연속하여 포함되어 있을지도 모른다.
+.SH 파일
+/etc/issue
+.SH 관련 항목
+.BR getty (1),
+.BR motd (5)
+.SH 역자
+배성훈 <plodder@kldp.org>, 2000년 5월 13일

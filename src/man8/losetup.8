@@ -1,0 +1,84 @@
+.TH LOSETUP 8 "1993년 11월 24일" "리눅스" "관리 명령"
+.SH 이름
+losetup \- 루프 장치를 설정, 제어한다.
+.SH 사용법
+.ad l
+.B losetup
+[
+.B \-e
+.I 암호화
+] [
+.B \-o
+.I 옵셋
+]
+.I 루프 장치
+.br
+.B losetup
+[
+.B \-d
+]
+.I 루프 장치
+.ad b
+.SH 설명
+.BR losetup 은
+루프 장치를 정규 파일 또는 블럭 장치와 연결, 루프 장치와 분리, 루프 장치의 상태
+파악을 하는데 사용된다. \fI루프 장치\fP 인자만 줄 경우에 해당하는 루프
+장치의 상태를 보여준다.
+.SH 옵션
+.IP \fB\-d\fP
+특정 루프 장치와 연결된 파일 또는 장치를 루프 장치와 분리한다.
+.IP "\fB\-e \fI암호화\fP"
+.RS
+데이터 암호화를 한다. 다음 키워드만을 인식한다.
+.IP \fBNONE\fP
+암호화하지 않는다. (초기값)
+.PD 0
+.IP \fBXOR\fP
+단순한 XOR 암호화를 한다.
+.IP \fBDES\fP
+DES 암호화를 사용한다. DES 암호화는 DES 패키지가 커널에 포함되었을 경우에만
+사용할 수 있다. DES 암호화는 사전 공격에 대해 암호(password)를  보호하기 위해 
+추가적인 시작값을 요구한다.
+.PD
+.RE
+.IP "\fB\-o \fI옵셋\fP"
+지정한 파일이나 장치로 옮겨질 데이터의 시작 \fI옵셋\fP 바이트
+.SH 파일
+.nf
+/dev/loop0,/dev/loop1,...   루프 장치 (주번호=7)
+.fi
+.SH 예제
+모듈로 사용한다면 다음 명령으로 먼저 모듈을 로드해야 한다.
+.IP
+# insmod loop.o
+.LP
+다음 명령들은 루프 장치를 사용하는 예제이다.
+.nf
+.IP
+dd if=/dev/zero of=/file bs=1k count=100
+losetup -e des /dev/loop0 /file
+Password:
+Init (up to 16 hex digits):
+mkfs -t ext2 /dev/loop0 100
+mount -t ext2 /dev/loop0 /mnt
+ ...
+umount /dev/loop0
+losetup -d /dev/loop0
+.fi
+.LP
+모듈로 사용한다면 다음 명령으로 모듈을 제거할 수 있다.
+.IP
+# rmmod loop
+.LP
+.fi
+.SH 제한
+DES 암호화는 매우 느리다. 반면에 XOR는 매우 취약하다.
+.SH 저자
+.nf
+최초 버전: Theodore Ts'o <tytso@athena.mit.edu>
+관리자: Werner Almesberger <almesber@bernina.ethz.ch>
+최초 DES: Eric Young <eay@psych.psy.uq.oz.au>
+모듈화와 28-5-94 갱신: Mitch DSouza <m.dsouza@mrc-apu.cam.ac.uk>
+.fi
+.SH 역자
+임종균 <hermes44@secsm.org>, 2000년 9월 6일

@@ -1,0 +1,97 @@
+.\"
+.\" Copyright (c) 1999,2000 WU-FTPD Development Group. 
+.\" All rights reserved.
+.\" 
+.\" Portions Copyright (c) 1980, 1985, 1988, 1989, 1990, 1991, 1993, 1994 
+.\" The Regents of the University of California.  Portions Copyright (c) 
+.\" 1993, 1994 Washington University in Saint Louis.  Portions Copyright 
+.\" (c) 1996, 1998 Berkeley Software Design, Inc.  Portions Copyright (c) 
+.\" 1998 Sendmail, Inc.  Portions Copyright (c) 1983, 1995, 1996, 1997 Eric 
+.\" P. Allman.  Portions Copyright (c) 1989 Massachusetts Institute of 
+.\" Technology.  Portions Copyright (c) 1997 Stan Barber.  Portions 
+.\" Copyright (C) 1991, 1992, 1993, 1994, 1995, 1996, 1997 Free Software 
+.\" Foundation, Inc.  Portions Copyright (c) 1997 Kent Landfield. 
+.\"
+.\" Use and distribution of this software and its source code are governed 
+.\" by the terms and conditions of the WU-FTPD Software License ("LICENSE"). 
+.\"
+.\"     $Id: ftpservers.5,v 1.1.1.1 2002/07/18 10:40:12 hhyoon Exp $
+.\"
+.TH ftpservers 5
+.SH 이름
+ftpservers \- ftpd 가상 호스트 설정을 정의하는 file
+
+.SH 설명
+
+ftpservers file은
+.BR ftpd(8) 
+server가 사용하던 가상호스트 설정 파일을 지정하는데 사용되어 진다.
+가상 호스트 지원을 가능하게 compile했을때, wu-ftpd는 각 virtual
+domain에 대한 설정 파일을 분리해서 사용이 가능하게 되어 있다.
+
+현재, 설정 파일들은 분리되어진 가상 domain 디렉토리에 위치해 있다.
+설정 파일에서 사용되어 지는 directory 경로와 IP address는 ftpservers
+file에 나열이 된다. 실제 설정 파일들은 해당 디렉토리 안에 아래의
+이름을 가진 파일들을 포함하고 있어야 한다:
+.PP
+
+    ftpaccess      - 가상 doamin 접근 파일
+    ftpusers       - 접근을 거부할 계정들을 설정
+    ftpgroups      - SITE GROUP and SITE GPASS 지원
+    ftphosts       - 가상 도메인에 접근 가능한 대역을 설정
+    ftpconversions - 가상 도메인에서 사용 가능한 전환 명령을을 최적화
+
+각 가상 domain directory에 모든 설정 파일들을 가지고 있을 필요는 없다.
+만약 주 도메인의 설정을 그대로 사용하려 한다면, ftpconversions
+file 같은 것들을 예를 든다면, 가상 도메인 directory에 구태여 이 파일을
+넣을 필요는 없다는 것이다. 이렇게 가상 도메인 directory에 포함되어
+있지 않은 설정파일들은 주 도메인의 설정 파일을 불러들이게 된다.
+ 
+.B 주의!!!: 
+가상 도메인 directory에 들어가는 파일들은 위의 list와 정확하게
+match되어져야 한다. 만약 이름에 오타가 있을 경우에는 해당 파일을
+찾지 못하게 되며 주 도메인 설정 파일로 대체를 하게 된다.
+
+.SH ftpservers file 형식
+
+각 entry에는 2개의 field가 존재한다.
+
+.B ipaddr/hostname   directory-containing-configuration-files
+
+예제:
+    10.196.145.10    /etc/ftpd/ftpaccess.somedomain/
+    10.196.145.200   /etc/ftpd/ftpaccess.someotherdomain/
+    some.domain      INTERNAL
+
+ftp client가 server로 접속을 할때, ftpd는 ftpservers file에서 발견한
+ftp client가 접속을 할 ip address를 매치시키려 한다.
+
+매치가 되는 것을 발견을 하면, 해당 도메인에 대한 디렉토리 경로와
+설정 파일들을 반환하게 된다. ftpd는 이 디렉토리에 들어 있는 설정
+파일들을 사용하게 된다.
+
+설정 파일에 match되는 것이 없거나, directory 경로가 정의가 잘못
+되어 있을 경우, 설정 파일의 기본 경로를 사용하게 된다.
+위의 예제중 INTERNAL의 사용은 주 도메인의 설정 파일을 사용하도록
+하게 한다.
+
+가상 도메인을 지정할때 실제 IP address와 hostname 모두 설정이
+가능하다. 다만 hostname으로 지정할 경우 DNS lookup이 필요하고
+또한 DNS 버그와도 관련이 되어 질수 있으므로 왠만하면 ip address로
+지정을 하는 것을 권장한다.
+
+    10.196.145.20     /etc/ftpd/config/faqs.org/
+    ftp.some.domain   /etc/ftpd/config/faqs.org/
+
+주석처리시에는 # 표시를 사용하며, 중복 주석 라인과 공백 라인은
+무시되어 진다.
+.P
+.SH 관련 항목
+.BR ftpd(8) ,
+.BR ftpaccess(5)
+.BR ftplog(5) ,
+.BR ftpconversions(5) ,
+.BR ftphosts(5)
+.SH 역자
+김정균 <admin@oops.org> 2000년 7월 23일
+

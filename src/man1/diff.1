@@ -1,0 +1,504 @@
+.\" Date: Fri, 11 Sep 1998 19:13:45 +0100
+.\" From: Edward Betts <edward@hairnet.demon.co.uk>
+.\"
+.\" Derived from the GNU diff info page.
+.\" May be distributed under the GPL.
+.\"
+.\" 한국어 번역: ASPLINUX <man@asp-linux.co.kr>    2000년 7월 29일
+.\" 수정 및 보충: 윤현호 <hhyoon@kldp.org> 2004-03-06
+.\"
+.\" r1.10 2004-11-25 17:55:55 +2-3 202.232.87.164
+.\" r1.9 2004-08-25 13:10:00 +7-7 xaos
+.\" r1.8 2004-08-25 13:05:16 +20-18 xaos
+.\" r1.7 2004-03-15 15:27:58 +9-2 윤현호
+.\" r1.6 2004-03-08 20:18:27 +13-13  검은해
+.\" r1.5 2004-03-08 08:36:24 +1-1    218.147.230.216
+.\" r1.4 2004-03-08 08:25:07 +4-3    검은해
+.\" r1.3 2004-03-07 23:19:27 +95-69  윤현호
+.\" r1.2 2004-03-07 09:48:57 +2-3    검은해
+.\" r1.1 2004-03-06 22:39:45         윤현호
+.\"
+.TH DIFF 1 "1993-09-22" "GNU Tools" "GNU Tools"
+.SH 이름
+diff \- 두 파일의 차이점을 비교한다.
+.SH 사용법
+.B diff
+[options] from-file to-file
+.SH 설명
+diff는두개의 파일을 비교하여 그 차이점을 출력한다. 가장 단순한 경우에
+.I diff
+는
+.I from-file
+과
+.IR to-file
+두 파일의 내용을 비교한다.
+파일명 대신에
+.B \-
+를 써 넣으면, 표준 입력을 파일대신 사용한다.
+특별한 경우로,
+.B "diff \- \-"
+는 표준입력 자기 자신을 비교한다.
+
+.I from-file
+이 디렉토리,
+.I to-file
+은 파일일 때
+.I diff
+는
+.I to-file
+과
+.I from-file
+디렉토리 안에 있는 
+.I to-file 
+과 같은 이름의 파일을 찾아 비교한다.
+반대의 경우도 마찬가지이다.
+이때,
+.B \-
+와는 비교할 수 없다.
+
+.I from-file
+과
+.I to-file
+이 모두 디렉토리라면,
+.I diff
+는 알파벳 순서로 두 디렉토리 안의
+상응하는 파일을 비교한다.
+이때
+.B \-r
+이나
+.B \-\-recursive
+옵션이 주어지지 않으면 재귀적으로(아래 디렉토리에 대해 다시 명령 적용) 동작하지 않는다.
+.I diff
+는 파일인 것처럼 디렉토리 내에 포함된
+내용 자체를 비교하지는 않는다.
+표준 입력은 이름이 없고, ``같은 이름을
+가진 파일''의 개념을 적용할
+수 없기 때문에 정확히 지정된
+파일 이름으로는 사용할 수 없다.
+
+.B diff
+옵션들은
+.BR \-
+로 시작된다. 그래서 보통
+.I from-file
+과
+.I to-file
+은
+.BR \-
+로 시작하지 않는다.
+하지만,
+.B \-\-
+을 인자로 사용했을 경우, 다른 인자들은
+.BR \-
+로 시작하더라도 파일 이름으로 취급된다.
+.SS 옵션
+아래는 GNU
+.I diff
+에서 쓰이는 모든 옵션들의 요약이다.
+대부분의 옵션은 같은 기능을 하는 두 개의
+이름을 갖는다. 하나는
+.BR \-
+가 앞에 오는 단일 문자이고, 다른 하나는
+.BR \-\-
+이 앞에 오는 긴 이름이다. 부가적인 인자를
+받지 않는 복수의 단일 문자
+옵션은 단일 명령 옵션에 결합될 수 있다.
+.B \-ac
+는
+.BR "\-a \-c"
+와 같다. 긴 이름의 옵션은 그 이름의
+특정 부분만으로 줄여 쓸 수 있다. 대괄호
+.RB ( [
+and
+.BR ] )
+는 옵션이 부가적인 인자를 가질 수도 있다는 것을 의미한다.
+.TP
+.BI \- lines
+문맥을
+.I lines
+줄 만큼 보여준다. (여기서
+.I lines
+는 정수이다.)
+이 옵션에서는 특별히 출력 형태를 지정하지 않는다.
+이 옵션은
+.B \-c
+혹은
+.BR \-u
+과 같이 사용하지 않으면 아무런 효과가 없다.
+이 옵션은 일반적으로 잘 쓰이지 않는 옵션이다.
+.I patch
+가 제대로 동작하기 위해서는 적어도
+두 줄 이상의 문맥이 필요하다.
+.TP
+.B \-a
+텍스트 형태의 파일이 아니더라도,
+텍스트 형태의 파일로 인식하고
+두 파일을 줄단위로 비교한다.
+.TP
+.B \-b
+공백 문자의 양의 차이는 무시한다.
+.TP
+.B \-B
+빈 줄의 추가나 삭제는 무시한다.
+.TP
+.B \-\-brief
+정확한 차이점을 비교하는 것이 아니라,
+단순히 두 파일이 다른가만 비교한다.
+.TP
+.B \-c
+context 출력 형식을 사용한다.
+.TP
+.BI "\-C " lines
+.br
+.ns
+.TP
+.BI \-\-context[= lines ]
+context 출력 형태를 사용해서
+.I lines
+줄을 보여준다. 만약
+.I lines
+가 지정되지 않으면, 세 줄을 보여준다.
+.I patch
+가 제대로 동작하기 위해서는 일반적으로
+최소한 두 줄의 문맥이 필요하다.
+.TP
+.BI \-\-changed\-group\-format= format
+if-then-else 형식에서 두 파일 사이에
+다른 줄을 포함하는 문단을 보여줄 때,
+.I format
+형식을 사용한다.
+.TP
+.B \-d
+아주 조그마한 변화라도 찾도록 검색
+알고리즘을 바꾼다.
+이 옵션은
+.I diff
+수행 속도를 아주 느리게 한다.
+.TP
+.BI "\-D " name
+선처리기 매크로
+.IR name
+을 이용해서, 합쳐진 if-then-else 형식
+출력을 만든다.
+.TP
+.B \-e
+.br
+.ns
+.TP
+.B \-\-ed
+적절한
+.I ed
+스크립트 출력을 만든다.
+.TP
+.BI \-\-exclude= pattern
+디렉토리를 비교할 때, 파일과 하위 디렉토리의
+basename이
+.IR pattern
+과 일치하면
+무시한다.
+.TP
+.BI \-\-exclude\-from= file
+디렉토리를 비교할 때, 파일과 하위 디렉토리의
+basename이
+.IR file
+에 있는 어떤 패턴과 일치하면 무시한다.
+.TP
+.B \-\-expand\-tabs
+입력 파일들의 탭 정렬을 유지하기 위해,
+출력에서 탭(tab)을 공백문자로 확장시킨다.
+.TP
+.B \-f
+.I ed
+스크립트와 비슷하게 출력한다. 하지만, 파일에
+나타난 순서대로 차이점을 나타낸다.
+.TP
+.BI "\-F " regexp
+context와 unified 형식에서, 차이가 있는
+각각의 문단에 대해
+.IR regexp
+와 일치하는 앞에 나오는 몇몇 줄의 내용을 보여준다.
+.TP
+.B \-\-forward\-ed
+.I ed
+스크립트와 비슷하게 출력한다. 하지만,
+파일에 나타난 순서대로 차이점을 나타낸다.
+.TP
+.B \-h
+현재 이 옵션은 쓰이지 않는다. 단지
+유닉스 호환성을 유지하기 사용된다.
+.TP
+.B \-H
+작은 차이점들이 많은 큰 파일을 빠르게 처리하기 위해 사용된다.
+.TP
+.BI \-\-horizon\-lines= lines
+일반 접두사(common prefix)의 마지막
+.I lines
+줄과
+일반 접미사(common suffix)의 처음
+.I lines
+줄을 제외하지 않는다.
+.TP
+.B \-i
+대소문자를 구분하지 않는다. 대문자와
+소문자를 같게 취급한다.
+.TP
+.BI "\-I " regexp
+.IR regexp
+에 맞는 줄의 삽입 혹은 삭제에 대한 변화를 무시한다.
+.TP
+.BI \-\-ifdef= name
+선처리기 매크로
+.IR name
+을 이용해서, 합쳐진 if-then-else 형식으로 출력한다.
+.TP
+.B \-\-ignore\-all\-space
+행을 비교할 때 공백 문자를 무시한다.
+.TP
+.B \-\-ignore\-blank\-lines
+빈 줄의 추가나 삭제는 무시한다.
+.TP
+.B \-\-ignore\-case
+대소문자를 구분하지 않는다. 대문자와
+소문자를 같이 취급한다.
+.TP
+.BI \-\-ignore\-matching\-lines= regexp
+.IR regexp
+에 맞는 줄의 삽입 혹은 삭제에 대한 변화를 무시한다.
+.TP
+.B \-\-ignore\-space\-change
+공백 문자의 차이는 무시한다.
+.TP
+.B \-\-initial\-tab
+일반 형태나 context 형태의 출력에서 각 줄의
+텍스트 앞에 공백 문자 대신 탭을 출력한다.
+줄의 탭의 정렬이 자연스러워지게 된다.
+.TP
+.B \-l
+한 페이지씩 보기 위해
+.I pr
+을 통해 출력을 한다.
+.TP
+.BI "\-L " label
+.br
+.ns
+.TP
+.BI \-\-label= label
+context 형식과 unified 형식 헤더에서
+파일 이름 대신 지정된 라벨을 사용한다.
+.TP
+.B \-\-left\-column
+두행 출력(side by side) 형식에서 공통적으로
+나오는 라인은 왼쪽 행에만 출력한다.
+.TP
+.BI \-\-line\-format= format
+if-then-else 형식에서
+모든 입력 줄을 출력하는데
+.I format
+을 사용한다.
+.TP
+.B \-\-minimal
+약간의 차이라도 찾을 수 있도록 검색
+알고리즘을 바꾼다. 이것은
+.I diff
+처리 속도를 느리게, 때론 아주 느리게 만든다.
+.TP
+.B \-n
+RCS 형식으로 출력한다.
+각 명령이 줄의 수를 지정한다는 것만 제외하고는
+.B \-f
+와 비슷하다.
+.TP
+.B \-N
+.br
+.ns
+.TP
+.B \-\-new\-file
+디렉토리 비교에서, 어떤 파일이 한 디렉토리에만 있다면
+다른 디렉토리에는 비어었는 파일이 있는 것처럼 비교한다.
+.TP
+.BI \-\-new\-group\-format= format
+if-then-else 형식에서, 두번째 파일에서 나온 줄의
+그룹을 출력할 때
+.I format
+을 사용한다.
+.TP
+.BI \-\-new\-line\-format= format
+if-then-else 형식에서, 두번째 파일에서 나온 줄을
+출력할 때
+.I format
+을 사용한다.
+.TP
+.BI \-\-old\-group\-format= format
+if-then-else 형식에서, 첫번째 파일에서 나온 줄의
+그룹을 출력할 때
+.I format
+을 사용한다.
+.TP
+.BI \-\-old\-line\-format= format
+if-then-else 형식에서, 첫번째 파일에서 나온 줄을
+출력할 때
+.I format
+을 사용한다.
+.TP
+.B \-p
+차이가 있는 부분이 어느 C 함수 안에 있는지 보여준다.
+.TP
+.B \-P
+디렉토리를 비교할 때, 두 개의 디렉토리 중 두번째 디렉토리에만 파일이 존재한다면, 첫번째
+디렉토리에는 사실 파일이 없지만 비어있는 파일이 있는 것처럼 비교한다.
+.TP
+.B \-\-paginate
+페이지 단위로 출력하기 위해
+.I pr
+을 통해 출력한다.
+.TP
+.B \-q
+두 파일의 자세한 차이점이 비교하는 것이 아니라,
+단순히 두 파일이 다른지만 알려준다.
+.TP
+.B \-r
+두 디렉토리를 비교할 때, 모든 하위 디렉토리는 재귀적으로(recursively) 비교한다.
+.TP
+.B \-\-rcs
+RCS 형식으로 출력한다.
+각 명령이 줄의 수를 지정한다는 것만 제외하고는
+.B \-f
+와 비슷하다.
+.TP
+.B \-\-recursive
+두 디렉토리를 비교할 때, 모든 하위 디렉토리는 재귀적으로(recursively) 비교한다.
+.TP
+.B \-\-report\-identical\-files
+.br
+.ns
+.TP
+.B \-s
+비교하는 두 파일이 같을 때만 출력한다.
+.TP
+.BI "\-S " file
+디렉토리를 비교할 때,
+.IR file
+에서부터 비교를 시작한다.
+이 옵션은 보통 이전 비교에서 중간에 멈췄을 경우,
+다시 시작할 때 사용하기에 적절하다.
+.TP
+.B \-\-sdiff\-merge\-assist
+.IR sdiff
+를 위해 추가적인 정보를 출력한다.
+.I sdiff
+가
+.IR diff
+를 실행할 때 이 옵션을 이용한다.
+이 옵션은 직접 사용자가 이용하는 옵션은 아니다.
+.TP
+.B \-\-show\-c\-function
+차이가 있는 부분이 어느 C 함수 안에 있는지 보여준다.
+.TP
+.BI \-\-show\-function\-line= regexp
+context 형식과 unified 형식 출력에서,
+각각의 차이가 있는 단락에 대해
+.IR regexp
+과 일치하는 앞의 몇 줄을 보여준다.
+.TP
+.B \-\-side\-by\-side
+side-by-side (두 열) 형식으로 출력한다.
+.TP
+.BI \-\-starting\-file= file
+디렉토리를 비교할 때,
+.IR file
+에서부터 비교를 시작한다.
+이 옵션은 보통 이전 비교에서 중간에 멈췄을 경우,
+다시 시작할 때 사용하기에 적절하다.
+.TP
+.B \-\-suppress\-common\-lines
+side-by-side 형식 출력에서 같은 내용의 줄은
+출력하지 않는다.
+.TP
+.B \-t
+입력 파일의 탭 정렬을 유지하기 위해, 출력할 때
+탭을 공백 문자(space)로 변환해서 출력한다.
+.TP
+.B \-T
+일반 형태나 context 형태의 출력에서 각 줄의
+텍스트 앞에 공백 문자 대신 탭을 출력한다.
+일반적으로 보이게 하기 위해 각 줄에서 탭들을 정렬한다.
+.TP
+.B \-\-text
+텍스트 파일이 아닌 파일이더라도, 모든 파일을
+텍스트 파일로 다루고, 줄 단위로 비교한다.
+.TP
+.B \-u
+unified 출력 형식을 사용한다.
+.TP
+.BI \-\-unchanged\-group\-format= format
+if-then-else 형식에서, 두 파일에 공통으로 들어있는
+줄의 그룹을 출력하는데
+.I format
+을 사용한다.
+.TP
+.BI \-\-unchanged\-line\-format= format
+if-then-else 형식에서, 두 파일에 공통으로 들어있는
+줄을 출력할 때
+.I format
+을 사용한다.
+.TP
+.B \-\-unidirectional\-new\-file
+디렉토리를 비교할때, 두개의 디렉토리중 두번째 디렉토리에만 파일이 존재한다면, 첫번째
+디렉토리에는 사실 파일이 없지만 빈 파일이 있는 것처럼 처리한다.
+.TP
+.BI "\-U " lines
+.br
+.ns
+.TP
+.BI \-\-unified[= lines ]
+unified 출력 형태를 사용해서, 문맥의
+.I lines
+줄을 보여준다. 만약
+.I lines
+가 지정되지 않으면, 세 줄을 보여준다.
+.I patch
+가 제대로 동작하기 위해서는 일반적으로
+최소한 두 줄 이상의 문맥이 필요하다.
+.TP
+.B \-v
+.br
+.ns
+.TP
+.B \-\-version
+.IR diff
+의 버전 정보를 출력한다.
+.TP
+.B \-w
+각 줄을 비교할 때, 공백은 무시한다.
+.TP
+.BI "\-W " columns
+.br
+.ns
+.TP
+.BI \-\-width= columns
+side-by-side 출력 형식에서, 한 열을
+.I columns
+만큼의 넓이로 출력한다.
+.TP
+.BI "\-x " pattern
+디렉토리들을 비교할 때,
+.IR pattern
+과 일치하는 basename을 갖는 파일과
+하위 디렉토리를 무시한다.
+.TP
+.BI "\-X " file
+디렉토리들을 비교할 때,
+.IR file
+에 포함된 어떠한 형태와 일치하는 basename을 갖는
+파일과 하위 디렉토리를 무시한다.
+.TP
+.B \-y
+side-by-side 출력 형식을 사용한다.
+.SH 관련 항목
+cmp(1), comm(1), diff3(1), ed(1), patch(1), pr(1), sdiff(1).
+.SH 진단
+종료시 0은 차이점이 없는 것이고, 1은 차이점이 있는 것, 2는 문제가 발생한 것을 의미한다.
+.SH 번역
+ASPLINUX <man@asp-linux.co.kr>, 2000년 7월 29일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org), 2004년 3월 8일

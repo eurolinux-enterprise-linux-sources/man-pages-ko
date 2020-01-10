@@ -1,0 +1,70 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"                               1993 Michael Haardt, Ian Jackson.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Wed Jul 21 23:02:38 1993 by Rik Faith <faith@cs.unc.edu>
+.\"
+.TH _EXIT 2 "1993년 7월 21일" 리눅스 "리눅스 프로그래머 매뉴얼"
+.SH 이름
+_exit \- 현재 프로세스를 종료시킨다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.BI "void _exit(int " status );
+.SH 설명
+.BR _exit 는
+호출한 프로세스를 즉시 종료시킨다. 이 프로세스의 모든 오픈 파일 디스크립터가
+닫힌다; 이 프로세스의 모든 자식 프로세스 부모는 1번 프로세스 init으로 
+바뀌고, 이 프로세스의 부모에게 
+.B SIGCHLD 
+시그널이 전해진다.
+
+.IR status 는
+프로세스의 종료 상태값으로 부모 프로세스에게 반환된다. 이는 
+.B wait
+계열의 함수를 호출하여 알아낼 수 있다.
+.SH 반환값
+.BR _exit 는
+결코 리턴하지 않는다.
+.SH 호환
+SVr4, SVID, POSIX, X/OPEN, BSD 4.3
+.SH 주의
+.BR _exit 는
+ANSI C
+.BR atexit 함수로
+등록한 어떤 함수도 호출하지 않고, 표준 입출력 버퍼를 비우지 않는다.
+이런 것들을 하기 위해서는 
+.BR exit (3)을
+사용하라.
+.BR exit (3).
+.SH 관련 항목
+.BR fork (2),
+.BR execve (2),
+.BR waitpid (2),
+.BR wait4 (2),
+.BR kill (2),
+.BR wait (2),
+.BR exit (3)
+.SH 역자
+임종균 <hermes44@secsm.org>, 2000년 4월 14일

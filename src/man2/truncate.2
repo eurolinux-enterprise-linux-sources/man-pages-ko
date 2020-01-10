@@ -1,0 +1,136 @@
+.\" Copyright (c) 1983, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     @(#)truncate.2	6.9 (Berkeley) 3/10/91
+.\"
+.\" Modified Sat Jul 24 12:46:33 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Tue Oct 22 22:36:33 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Mon Dec 21 13:37:05 1998 by Andries Brouwer (aeb@cwi.nl)
+.\"
+.TH TRUNCATE 2 "1998년 12월 21일" "" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+truncate, ftruncate \- 지정된 길이로 파일을 자른다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.BI "int truncate(const char *" path ", off_t " length );
+.br
+.BI "int ftruncate(int " fd ", off_t " length );
+.SH 설명
+.BR Truncate 는 
+.IR path 로 
+지정된 파일이나 
+.IR fd 로 
+참조되는 파일을 
+.I length
+바이트 크기로 자른다.
+만일 파일이 이 크기보다 크다면, 나머지 데이터는 잃는다.
+만일 파일이 이 크기보다 작다면, 파일이 변화없이 그대로 일지 
+확장될 지는 알 수 없다.
+후자의 경우 확장된 부분은 0으로 채워진다.
+.BR ftruncate 에서
+파일은 쓰기 위해 열려져 있어야 한다.
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되며, 
+.IR errno 는 
+적당한 값으로 설정된다.
+.SH 에러
+.BR truncate :
+.TP
+.B ENOTDIR
+경로 접두사 요소가 디렉토리가 아니다.
+.TP
+.B EINVAL
+경로 이름에 high-order 비트가 설정된 문자가 포함되있다 (올바른 ASCII 문자가 아니다).
+.TP
+.B ENAMETOOLONG
+경로 이름 요소가 255자를 넘었거나, 전체 경로 이름이 1023자를 넘었다.
+.TP
+.B ENOENT
+지정된 파일이 존재하지 않는다.
+.TP
+.B EACCES
+경로 접두사 요소에 대한 탐색 허가가 거부되었다.
+.TP
+.B EACCES
+지정된 파일을 사용자가 쓸 수 없다.
+.TP
+.B ELOOP
+경로를 찾아갈 때, 너무 많은 심볼릭 링크가 존재한다.
+.TP
+.B EISDIR
+지정된 파일이 디렉토리이다.
+.TP
+.B EROFS
+지정된 파일이 읽기 전용 파일 시스템에 있다.
+.TP
+.B ETXTBSY
+파일이 실행되고 있는 순수 절차 파일(공유된 텍스트)이다.
+.TP
+.B EIO
+inode 갱신 중에 I/O에러가 발생했다.
+.TP
+.B EFAULT
+.IR Path 가 
+프로세스에 할당된 영역 밖을 가리키고 있다.
+.PP
+.BR ftruncate :
+.TP
+.B EBADF
+.IR fd 가 
+유효한 기술자가 아니다.
+.TP
+.B EINVAL
+.IR fd 가 
+파일이 아니라, 소켓을 가리키고 있다.
+.TP
+.B EINVAL
+.IR fd 가 
+쓰기 위해 열려있지 않다.
+.SH 호환
+4.4BSD, SVr4 (이 시스템 콜은 BSD 4.2에서 처음으로 나타났다).
+SVr4는 
+.B truncate
+에러 조건인 EINTR, EMFILE, EMULTIHP, ENAMETOOLONG, ENFILE,
+ENOLINK, ENOTDIR을 추가적으로 기술한다. SVr4는 
+.B ftruncate 를 
+위한 EAGAIN 그리고 EINTR 에러 조건을 추가적으로 기술한다.
+POSIX에는 
+.IR ftruncate 는 
+있지만 
+.IR truncate 는 
+없다.
+.SH 버그
+이 시스템 콜은 파일에서 바이트의 영역을 버릴 수 있도록 일반화되어야 한다.
+.SH 관련 항목
+.BR open (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 5월 13일

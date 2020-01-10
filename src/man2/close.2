@@ -1,0 +1,83 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"                               1993 Michael Haardt, Ian Jackson.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Wed Jul 21 22:40:25 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Sat Feb 18 15:27:48 1995 by Michael Haardt
+.\" Modified Sun Apr 14 11:40:50 1996 by Andries Brouwer <aeb@cwi.nl>:
+.\"   corrected description of effect on locks (thanks to
+.\"   Tigran Aivazian <tigran@sco.com>).
+.\" Modified Fri Jan 31 16:21:46 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH CLOSE 2 "1996년 4월 14일" "" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+close \- 파일 기술자를 닫는다.
+.SH 사용법
+.nf
+.B #include <unistd.h>
+.sp
+.BI "int close(int " fd );
+.fi
+.SH 설명
+.B close
+는 파일 기술자를 닫으며, 그래서 더이상 어떤 파일에 의해 참조되지 않으며
+다시 사용될수 있다.
+프로세스와 관련되고 프로세스 소유의 파일에 잡혀져 있는 어떤 잠금들은
+제거된다(잠금을 포함하여 사용된 파일 기술자와 관계없이).
+.PP
+만일
+.I fd
+가 특별한 파일 기술자의 마지막 복사본이라면 그것과 관련된 자원들은 해제된다;
+만일 파일 기술자가 
+.BR unlink (2)를
+사용하여 제거된 파일에 대한 마지막 참조라면 이 파일은 제거된다.
+.SH 반환값
+.BR close
+는 성공시 0을 반환하며, 에러시 \-1을 반환한다.
+.SH 에러
+.TP
+.B EBADF
+.I fd
+가 열려진 유효한 파일 기술자가 아니다.
+.SH 호환
+SVr4, SVID, POSIX, X/OPEN, BSD 4.3.  SVr4는 추가적으로 ENOLINK 에러 조건을
+문서화 하였다.
+.SH 주의
+보통은 close의 반환값을 체크하지 않지만, 이것은 심각한 프로그래밍 에러이다.
+성능을 증가시키기 위해 ``write-behind''와 같은 기술들을 사용하는 파일 시스템 
+수행들은 비록 데이터가 아직 쓰여지지 않았음에도 불구하고 성공적으로
+.BR write (2)를
+이끈다.
+에러 상태들은 쓰기 작동후에 보고 되지만, 그것들은 파일을 닫을때 보고 되는걸 
+보장한다.
+파일을 닫을때 반환값을 체크하지 않는 것은 데이터 손실을 묵인하는 것이다.
+이것은 특히 NFS와 디스크 쿼터에서 관찰된다.
+.SH 관련 항목
+.BR open (2),
+.BR fcntl (2),
+.BR shutdown (2),
+.BR unlink (2),
+.BR fclose (3)
+.SH 역자 
+정강훈 <skyeyes@soback.kornet.net>, 2000년 7월 2일

@@ -1,0 +1,60 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\" Modified Mon Mar 29 22:41:16 1993, David Metcalfe
+.\" Modified Sat Jul 24 21:35:16 1993, Rik Faith (faith@cs.unc.edu)
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH BSEARCH 3  "March 29, 1993" "GNU" "Linux Programmer's Manual"
+.SH 이름
+bsearch \- 정렬된 배열의 이진 탐색
+.SH 사용법
+.nf
+.B #include <stdlib.h>
+.sp
+.BI "void *bsearch(const void *" key ", const void *" base ", size_t " nmemb ,
+.RS
+.BI "size_t " size ", int (*" compar ")(const void *, const void *));
+.RE
+.fi
+.SH 설명
+\fBbsearch()\fP 함수는 \fInmemb\fP 오브젝트의 어레이를 찾는다,
+그것의 최초 구성은 \fIkey\fP로 지정된 오브젝트에 해당하는 구성으로, \fIbase\fP에
+의해 지정된다. 각 어레이 구성의 크기는 \fIsize\fP로 지정된다.
+.PP
+어레이의 내용은 \fIcompar\fP와 관련된 비교 기능을 이용하여 상방정렬 되어야한다.
+\fIcompar\fP 루틴은 \fIkey\fP를 지정하는 것과 어레이의 구성을 지정하는 
+두개의 변수를 가진다. 그리고 이것은\fIkey\fP오브젝트가 찾아지면 
+0보다 작거나 큰 정수를 반환해야 한다.
+.SH 반환값
+\fBbsearch()\fP 함수는 어레이에서 맞는 구성 요소를 잦아 그 포인터를 
+반환한다. 만약 맞는게 없다면 널을 반환한다. 키에 해당하는 구성요소가 여러 개 
+있다면, 반환되는 요소는 특별히 지정되지 않는다.
+.SH 호환
+SVID 3, BSD 4.3, ISO 9899
+.SH 관련 항목
+.BR qsort (3)

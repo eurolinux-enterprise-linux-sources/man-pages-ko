@@ -1,0 +1,152 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt, March 28, 1992
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified Fri Jul 23 21:18:14 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Jan 13, 1996 by Arnt Gulbrandsen <agulbra@troll.no>
+.\" Modified Jan 22, 1996 by aeb, following a remark by
+.\"          Tigran Aivazian <tigran@sco.com>
+.\" Modified Apr 14, 1996 by aeb, following a remark by
+.\"          Robert Bihlmeyer <robbe@orcus.ping.at>
+.\" Modified Tue Oct 22 17:34:42 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH GETRLIMIT 2 "1993년 7월 23일" "리눅스" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+getrlimit, getrusage, setrlimit \- 자원(resource)의 제한값과 사용값을 
+알아내거나 설정한다.
+.SH 사용법
+.B #include <sys/time.h>
+.br
+.B #include <sys/resource.h>
+.br
+.B #include <unistd.h>
+.sp
+.BI "int getrlimit (int " resource ", struct rlimit *" rlim );
+.br
+.BI "int getrusage (int " who ", struct rusage *" usage );
+.br
+.BI "int setrlimit (int " resource ", const struct rlimit *" rlim );
+.SH 설명
+.BR getrlimit 와
+.BR setrlimit 는 
+각각 자원의 제한값들을 알아내거나 설정한다.
+.IR resource 는 
+다음 중 하나여야 한다:
+.PP
+\fBRLIMIT_CPU\fP	/* 초 단위의 CPU 시간 */
+.br
+\fBRLIMIT_FSIZE\fP	/* 최대 파일 크기 */
+.br
+\fBRLIMIT_DATA\fP	/* 최대 데이타 크기 */
+.br
+\fBRLIMIT_STACK\fP	/* 최대 스택 크기 */
+.br
+\fBRLIMIT_CORE\fP	/* 최대 코어 파일 크기 */
+.br
+\fBRLIMIT_RSS\fP	/* 최대 거주 집합 크기 */
+.br
+\fBRLIMIT_NPROC\fP	/* 최대 프로세스 수 */
+.br
+\fBRLIMIT_NOFILE\fP	/* 최대 열 수 있는 파일의 수 */
+.br
+\fBRLIMIT_MEMLOCK\fP	/* 최대 잠긴 기억 장소 주소 공간 */
+.br
+\fBRLIMIT_AS\fP		/* 주소 공간(가상 메모리) 제한값 */
+.PP
+만일 
+.BR RLIM_INFINITY 로 
+설정되었다면 자원은 무제한이다.
+.BR RLIMIT_OFILE 는 
+.BR RLIMIT_NOFILE 에 
+대한 BSD 이름이다.
+.PP
+.B rlimit
+구조체는 다음과 같다:
+.PP
+.in +0.5i
+.nf
+struct rlimit
+{
+	rlim_t	rlim_cur;
+	rlim_t	rlim_max;
+};
+.fi
+.in -0.5i
+.PP
+.BR getrusage 는 
+현재 자원의 사용값을 반환한다.
+\fIwho\fP는
+.BR RUSAGE_SELF 나 
+.B RUSAGE_CHILDREN 중 
+하나이다.
+.PP 
+.in +0.5i
+.nf
+struct rusage
+{
+	struct timeval ru_utime;	/* 사용된 사용자 시간 */
+	struct timeval ru_stime;	/* 사용된 시스템 시간 */
+	long	ru_maxrss;		/* 최대 거주 집합 크기 */
+	long	ru_ixrss;			/* 총 공유 메모리 크기 */
+	long	ru_idrss;			/* 공유되지 않은 총 데이타 크기 */
+	long	ru_isrss;			/* 공유되지 않은 총 스택 크기 */
+	long	ru_minflt;		/* 페이지 반환(reclaims) */
+	long	ru_majflt;		/* 페이지 폴트 */
+	long	ru_nswap;			/* 스왑 */
+	long	ru_inblock;		/* 블럭 입력 연산 */
+	long	ru_oublock;		/* 블럭 출력 연산 */
+	long	ru_msgsnd;		/* 보낸 메세지 */
+	long	ru_msgrcv;		/* 받은 메세지 */
+	long	ru_nsignals;		/* 받은 시그널 */
+	long	ru_nvcsw;			/* 자발적인 문맥 교환 */
+	long	ru_nivcsw;		/* 비자발적인 문맥 교환 */
+};
+.fi
+.in -0.5i
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되며, 
+.IR errno 는 
+적당한 값으로 설정된다.
+.SH 에러
+.TP
+.B EFAULT
+.IR rlim 나
+.IR usage 가 
+접근할 수 없는 주소 공간을 가리키고 있다.
+.TP
+.B EINVAL
+.BR getrlimit "또는 " setrlimit 가 
+유효하지 않은 \fIresource\fP로 호출되었거나, \fBgetrusage\fP가 유효하지
+않은 \fIwho\fP로 호출되었다.
+.TP
+.B EPERM
+비-슈퍼 유저가 소프트 제한값과 하드 제한값을 현재의 하드 제한값보다 높은 값으로
+증가시키기 위해 \fBsetrlimit()\fP를 사용하였거나, 슈퍼 유저가 현재 커널 최대값보다 큰값으로 RLIMIT_NOFILE을 변경하려고 시도했다.
+.SH 호환
+SVr4, BSD 4.3
+.SH 관련 항목
+.BR ulimit (2),
+.BR quotactl (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 5월 12일

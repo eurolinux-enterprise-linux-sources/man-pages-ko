@@ -1,0 +1,464 @@
+.\" Copyright (c) 1995 Jim Van Zandt <jrv@vanzandt.mv.com> and aeb
+.\" Sun Feb 26 11:46:23 MET 1995
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified, Sun Feb 26 15:04:20 1995, faith@cs.unc.edu
+.\" Modified, Thu Apr 20 22:08:17 1995, jrv@vanzandt.mv.com
+.\" Modified, Mon Sep 18 22:32:47 1995, hpa@storm.net (H. Peter Anvin)
+.\" "
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH CONSOLE_IOCTLS 4 "1995년 11월 18일" "리눅스" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+console ioctl \- 콘솔 터미널과 가상 터미널을 위해 입출력제어를 한다.
+.SH 설명
+\fBWARNING: 다음 정보를 사용하는것은 무의미 하다.
+
+\fBWARNING: 입출력제어에 관한 내용은 문서화 되지 않아 공지없이 바뀌기 쉽다.
+POSIX함수를 사용한다.
+
+.IP \fBKDGETLED\fP
+\fIargp\fP
+LEDs의 상태를 얻는다. \fIargp\fP는 long int를 가리킨다. \fIargp\fP의 
+저수준의 세개비트는 아래와 같은 LEDs의 상태로 설정된다:
+
+    LED_CAP       0x04   caps lock led
+    LEC_NUM       0x02   num lock led
+    LED_SCR       0x01   scroll lock led
+
+.IP \fBKDSETLED\fP
+LEDs설정. LEDs는 argp의 세 비트보다 낮게 설정된다. 그러나, 비트를 높게 설정
+한다면 LEDs는 표준으로 전환된다: caps lock,num lock, scroll lock 키보드기능의
+디스플레이 상태.
+.LP
+버전 1.1.54이전의 LEDs는 단지 일치하는 키보드 플래그의 상태를 반영한다.
+그리고 KDGTLED/KDSTLED는 또한 키보드 플래그를 바꾼다. 버전1.1.54부터 
+LEDs는 상황에 따라 디스클레이를 조절한다. 그러나 기본값에 의해 leds는
+키보드플래그를 디스플레이한다. 다음 두개의 입출력제어는 키보드플래그
+에 액세스하는데 사용된다.
+
+.IP \fBKDGKBLED\fP
+capsLock, NumLock,ScrollLock와 같은 키보드 플래그를 취한다.
+\fIargp\fP는 플래그상태를 설정하는 char를 가리킨다.
+저수준 지정 비트(mask 0x7)는 현재 플래그 상태를 취하고,
+나머지는 기본 플래그 상태를 취한다.
+
+.IP \fBKDSKBLED\fP
+CapsLock, NumLock, ScrollLock같은 키보드플래그를 설정한다.
+\fIargp\fP는 원하는 플래그 상태를 갖는다.
+저수준 지정 비트는 현재 플래그 상태를 취하고,
+나머지는 기본 플래그 상태를 취한다.
+
+.IP \fBKDGKBTYPE\fP
+키보드 타입을 취한다. 이것은 0x02로 정의되는 KB_101값을 반환한다.
+
+.IP \fBKDADDIO\fP
+유효한 입출력 포트를 추가한다. ioperm(arg,1,1)과 같다.
+
+.IP \fBKDDELIO\fP
+유효한 입출력 포트를 삭제한다. ioperm(arg,1,0)과 같다.
+
+.IP \fBKDENABIO\fP
+비디오보드로 입출력이 가능하다. ioperm(0x3b4, 0x3df-0x3b4+1,1)과 같다.
+
+.IP \fBKDDISABIO\fP
+비디오보드로 입출력이 불가능하다. ioperm(0x3b4, 0x3df-0x3b4+1,0)과 같다.
+
+.IP \fBKDSETMODE\fP
+텍스트/그래픽 모드를 설정한다. \fIargp\fP는 다음중 하나다:
+
+    KD_TEXT       0x00
+    KD_GRAPHICS   0x01
+
+.IP \fBKDGETMODE\fP
+텍스트/그래픽 모드를 취한다. \fIargp\fP는 위의 값중 하나를 설정하는 long
+을 가리킨다.
+
+.IP \fBKDMKTONE\fP
+특정 길이의 톤(tone)생성한다.
+\fIargp\fP의 낮은 16비트는 시간사이클의 기간을 열거하고,
+높은 16비트는 msec에 기간을 준다.
+기간이 0이면, 소리는 즉시 꺼진다. 제어력 즉시 반환된다.
+
+.IP \fBKIOCSOUND\fP
+사운드 생성을 시작하거나 멈춘다. \fIargp\fP의 낮은 16비트는 시간사이클의 기간
+을 열거한다.(즉, \fIargp\fP = 1193180/frequency)
+\fIargp\fP = 0은 소리를 끈다. 같은 경우로, 제어력은 즉시 반환된다.
+
+.IP \fBGIO_CMAP\fP
+커널로부터 현재 기본 컬러맵을 얻는다. \fIargp\fP는 48-바이트 배열을 가
+리킨다.(버전 1.3.3부터)
+
+.IP \fBPIO_CMAP\fP
+기본 텍스트모드 컬러맵을 바꾼다. \fIargp\fP는 16비트컬러를 위한 빨강,녹색,
+파랑색값을 포함하는 48-바이트 배열을 가리킨다: 0 is off, and 255 is full intensity.
+기본색은 검정, 암적색(dark red), 암녹색(dark green), 갈색, 암청색(dark blue),
+밝은 빨강, 밝은 녹색, 노랑, 밝은 파랑, 밝은 자주, 밝은 청록색, 흰색이다.
+
+.IP \fBGIO_FONT\fP
+확장된 256-문자 폰트를 취한다. \fIargp\fP는 8192바이트 배열을 가리킨다.
+현재 로드된 폰트가 512-문자 폰트이거나 콘솔이 텍스트 모드가 아니라면 
+\fBEINVAR\fP코드와 함께 작동하지 않는다.
+
+.IP \fBGIO_FONTX\fP
+화면폰트와 관련정보를 얻는다. \fIargp\fP는 consolefontdisc을 가리킨다.
+(\fBPIO_FONTX\fP 참조). 호출시 \fIcharcount\fP필드는 문자중 가장큰 수치
+로 설정되어야 한다. 반환시, \fIcharcount\fP와 \fIcharheight\fP는 
+현재 로드된 폰트를 위한 관련 데이타로 채워져야 한다. 그리고 
+\fIchardata\fP배열은 \fIcharcount\fP의 초기값이 지시하는 충분한
+공간이 있다면 폰트데이타를 포함한다. 그렇지 않으면 버퍼는 그대로 있고,
+\fIerrno\fP는 \fBENOMEM\fP를 설정한다.(버전 1.3.1부터)
+
+.IP \fBPIO_FONT\fP
+화면 폰트를 256-문자로 설정한다. EGA/VGA문자생성기로부터 폰트를 로드한다.
+\fIargp\fP는 문자마다 32바이트인 8192맵을 가리킨다. 단지 그런것들 중 첫
+\fIN\fP는 8x\fIN\fP폰트를 위해 사용된다(0 < \fIN\fP <= 32).
+이 호출은 또한 유니코드를 쓸모 없게 한다.
+
+.IP \fBPIO_FONTX\fP
+스크린 폰트와 관련정보를 설정한다. \fIargp\fP는 
+.nf
+ consolefontdesc {
+        u_short \fIcharcount\fP;      /* characters in font (256 or 512) */
+        u_short \fIcharheight\fP;     /* scan lines per character (1-32) */
+        char *\fIchardata\fP;         /* font data in expanded form */
+};
+.fi
+를 가리킨다.
+필요하다면, 화면크기는 적절하게 재조정될 것이고, \fBSIGWINCH\fP는 적절한 프로세
+스를 보낸다. 이 호출은 또한 유니코드를 쓸모 없게 한다.
+
+.IP \fBPIO_FONTRESET\fP
+폰트, 크기, 유니코드를 재설정한다.
+\fIargp\fP는 사용되지 않지만, 리눅스의 차후버전의 호환을 위해
+\fBNULL\fP는 설정되어야 한다.
+
+.IP \fBGIO_SCRNMAP\fP
+커널로부터 화면 맵핑을 얻는다. \fIargp\fP는 E_TABSZ의 범위를 가리킨다.
+그것은 각 문자 디스플레에 사용되는 폰트 위치와 함께 로드된다. 이 호출
+은 로드된 폰트가 256문자 이상이면 쓸모없는 정보를 반환할 것이다.
+
+.IP \fBPIO_SCRNMAP\fP
+콘솔 화면 심볼의 맵바이트인 커널의 ``user definable``을 로드한다.
+\fIargp\fP는 size E_TABSZ의 공간에 포인트한다.
+
+.IP \fBPIO_UNISCRNMAP\fP
+유니코드의 맵바이트인 커널의 ``user definable``을 로드한다. ?
+
+.IP \fBGIO_UNIMAP\fP
+커널로부터 Unicode-to-font를 구한다.
+\fIargp\fP는
+
+.nf
+struct unimapdesc {
+        u_short \fIentry_ct\fP;
+        struct unipair *\fIentries\fP;
+};
+.fi
+
+where \fIentries\fP points to an array of
+
+.nf
+struct unipair {
+        u_short \fIunicode\fP;
+        u_short \fIfontpos\fP;
+};
+.fi
+를 가리킨다.
+(Since 1.1.92.)
+
+.IP \fBPIO_UNIMAPCLR\fP
+hash 알고리즘을 참조해 테이블을 소거한다.
+\fIargp\fP는
+
+.nf 
+struct unimapinit {
+        u_short \fIadvised_hashsize\fP;  /* 0 if no opinion */
+        u_short \fIadvised_hashstep\fP;  /* 0 if no opinion */
+        u_short \fIadvised_hashlevel\fP; /* 0 if no opinion */
+};
+.fi
+를 가리킨다.
+(버전1.1.92부터.)
+
+.IP \fBKDGKBMODE\fP
+현재 키보드 모드를 구한다. \FiARGP\Fp는 다음중 하나로 설정된 long을 포인트한다.
+
+    K_RAW         0x00   
+    K_XLATE       0x01   
+    K_MEDIUMRAW   0x02   
+    K_UNICODE     0x03
+
+.IP \fBKDSKBMODE\fP
+현재 키보드 모드를 설정한다.
+\fIargp\fP는 위의 값중 하나와 같은 long이다.
+
+.IP \fBKDGKBMETA\fP
+메타키 운용모드를 구한다. \fIargp\fP는 다음중 하나를 설정하는 long을 포인트한다.
+
+    K_METABIT     0x03   set high order bit 
+    K_ESCPREFIX   0x04   escape prefix
+
+.IP \fBKDSKBMETA\fP
+메타키 운용모드를 설정한다.
+\fIargp\fP는 위의 값중 하나와 같은 long이다.
+
+.IP \fBKDGKBSENT\fP
+함수키구문을 얻는다.
+\fIargp\fP는
+
+.nf
+struct kbsentry {
+    u_char \fIkb_func\fP;
+    u_char \fIkb_string\fP[512];
+};
+.fi
+를 가리킨다.
+\fIkb_string\fP는 \fIkb_func\fP함수키 활성코드와 일치하는 구문을 설정한다.
+
+.IP \fBKDSKBSENT\fP
+함수키 문자내용(entry)을 설정한다.
+\fIargp\fP는 구조체 kbsentry를 가리킨다.
+
+.IP \fBKDGETKEYCODE\fP
+커널 키코드 테이블 내용을 읽는다.(키코드로 코드를 스캔한다.
+\fIargp\fP는
+
+.nf
+struct kbkeycode { unsigned int \fIscancode\fP, \fIkeycode\fP; };
+.fi
+를 가리킨다.
+\fIkeycode\fP는 주어진 \fIscancode\fP와 일치하게 설정한다.
+(89 <= \fIscancode\fP <= 255 only.  
+For 1 <= \fIscancode\fP <= 88, \fIkeycode\fP==\fIscancode\fP.)
+(버전1.1.63부터.)
+
+.IP \fBKDSETKEYCODE\fP
+커널 키코드테이블 기재사항을 기록한다. \fIargp\fP는 구조체 키코드를 포인트한다.
+(버전1.1.63 부터.)
+
+.IP \fBKDSIGACCEPT\fP
+호출한 프로세스들은 적당한 키조합이 프레스에 의해 생성될때, 프로세스에 의해
+시그널 \fIargp\fP를 받아들인다. 
+(1 <= \fIargp\fP <= NSIG).  
+(See spawn_console() in linux/drivers/char/keyboard.c.)
+
+.IP \fBVT_OPENQRY\fP
+유효한 첫 콘솔을 반환한다.
+\fIargp\fP는 vt(1 <= \fI*argp\fP <= MAX_NR_CONSOLES)의 번호를 설정한 정수를 포인트한다.
+
+.IP \fBVT_GETMODE\fP
+활성화된 vt모드를 구한다. \fIargp\fP는
+
+.nf
+struct vt_mode {
+    char \fImode\fP;     /* vt mode */
+    char \fIwaitv\fP;    /* if set, hang on writes if not active */
+    short \fIrelsig\fP;  /* signal to raise on release req */
+    short \fIacqsig\fP;  /* signal to raise on acquisition */
+    short \fIfrsig\fP;   /* unused (set to 0) */
+};
+.fi
+를 포인트한다.
+...그것은 활성화된 vt의 모드를 설정한다.
+\fImode\fP는 다음 값중 하나를 설정한다.
+
+    VT_AUTO       자동 vt 스위칭
+    VT_PROCESS    프로세스 제어 스위칭
+    VT_ACKACQ     acknowledge switch 
+
+.IP \fBVT_SETMODE\fP
+활성화된 vt의 모드를 설정한다. \fIargp\fP는 구조체 vt_mode를 포인트한다.
+
+.IP \fBVT_GETSTATE\fP
+전역 vt상태 정보를 구한다. \fIargp\fP는
+
+.nf
+struct vt_stat {
+    ushort \fIv_active\fP;  /* active vt */
+    ushort \fIv_signal\fP;  /* signal to send */
+    ushort \fIv_state\fP;   /* vt bitmask */
+};
+.fi
+를 포인트한다.
+
+.IP \fBVT_RELDISP\fP
+디스플레이를 릴리즈한다.
+
+.IP \fBVT_ACTIVATE\fP
+vt \fIargp\fP를 전환한다(1 <= \fIargp\fP <= MAX_NR_CONSOLES).
+
+.IP \fBVT_WAITACTIVE\fP
+vt \fIargp\fP가 활성화될때까지 기다린다.
+
+.IP \fBVT_DISALLOCATE\fP
+vt \fIargp\fP와 일치하는 메모리를 Deallocate the memory associated with vt \fIargp\fP.
+(Since 1.1.54.)
+
+.IP \fBVT_RESIZE\fP
+화면크기의 커널이해(kernel's idea)를 설정한다.
+\fIargp\fP는
+.nf
+struct vt_sizes {
+    ushort \fIv_rows\fP;       /* # rows */
+    ushort \fIv_cols\fP;       /* # columns */
+    ushort \fIv_scrollsize\fP; /* no longer used */
+};
+.fi
+로 포인트한다.
+
+이것으로 비디오모드를 바꿀수 없다는것을 주지한다.
+resizecons(8) 참조한다.  (버전1.1.54부터.) 
+
+.IP \fBVT_RESIZEX\fP
+다양한 화면매개변수의 커널이해(kernel's idea)를 설정한다.
+\fIargp\fP
+
+.nf
+struct vt_consize {
+        ushort \fIv_rows\fP;          /* 열(줄)번호 */
+        ushort \fIv_cols\fP;          /* 행번호 */
+        ushort \fIv_vlin\fP;          /* 화면상의 픽셀열 번호 */
+        ushort \fIv_clin\fP;          /* 문자별 픽셀열 번호 */
+        ushort \fIv_vcol\fP;          /* 화면상의 픽셀행 번호 */
+        ushort \fIv_ccol\fP;          /* 문자별 픽셀행 번호 */
+};
+.fi
+를 포인트한다.
+
+모든 매개변수는 0으로 설정될런지 모른다. 그러나 복수의 매개변수가 설정된다면
+일관되어야만 한다. 이것으로 비디오모드를 바꿀수 없다는 것을 주지한다.
+resizecons(8)를 참조한다.  (버전1.3.3부터.)
+
+.PP
+다음의 입출력제어들은 \fIargp\fP에 의해 구조체포인트 첫번째 바이트에 의존한다.
+이것들은 오로지 수퍼유저나 현재 tty의 소유자만이 가능하다.
+.IP "\fBTIOCLINUX, subcode=0\fP"
+화면을 덤프한다. 버전 1.1.92에는 없는 옵션이다.
+
+.IP "\fBTIOCLINUX, subcode=1\fP"
+처리정보를 얻는다. 1.1.92에는 없다.
+
+.IP "\fBTIOCLINUX, subcode=3\fP"
+선택한 것을 붙인다.
+선택된 버퍼의 문자는 \fIfd\fP에 기록된다.
+
+.IP "\fBTIOCLINUX, subcode=4\fP"
+화면을 채운다.
+
+.IP "\fBTIOCLINUX, subcode=6\fP"
+\fIargp\fP는 커널변수 \fIshift_state\fP의 값을 설정하는 char을 포인트한다.
+(버전1.1.32부터.)
+
+.IP "\fBTIOCLINUX, subcode=7\fP"
+\fIargp\fP는 커널변수 \fIreport_mouse\fP의 값을 설정하는 char을 포인트한다.
+(버전1.1.33부터.)
+
+.IP "\fBTIOCLINUX, subcode=8\fP"
+화면 너비와 높이, 커서 위치, 그리고 모든 문자-속성쌍을 덤프한다.
+(커널 버전1.1.67 에서1.1.91까지만 쓸 수 있다.
+커널 1.1.92 이후 버전에서는 대신 /dev/vcsa*에서 읽을 수있다.)
+
+.IP "\fBTIOCLINUX, subcode=9\fP"
+화면 너비와 높이, 커서 위치, 그리고 모든 문자-속성쌍을 재저장한다.
+(커널 버전1.1.67 에서1.1.91까지만 쓸 수 있다.
+커널 1.1.92 이후 버전에서는 대신 /dev/vcsa*에서 읽을 수있다.)  
+
+.IP "\fBTIOCLINUX, subcode=10\fP"
+신세대모니터의 강력한 저장기능을 다룬다.
+VESA 화면공백모드는 \fIargp\fP[1]를 설정한다. 그것은 화면공백을 다룬다.
+
+    \fI0\fP: 화면공백은 불가능하다.
+
+    \fI1\fP: 현재 비디오아답터
+
+레지스터 설정이 저장된후 제어기는 수직동기화펄스 전환(turn off)을 프로그램한다.
+이것은 모니터를 "standby"모드로 한다. 모니터가 타이머 오프모드가 있다면 그것은
+결국 자신을 꺼버린다.
+
+    \fI2\fP: 현재 
+
+설정이 저장된후, 수직,수평 동기와 펄스는 꺼진다. 이것은 모니터를 "off"모드로 둔다. 모니터에 타이머 OFF모드가 없거나, 모니터를 즉시 끄고 싶다면 이 옵션을 선택한다.
+(\fICaution:\fP는 결국 모니터에 손상을 입힌다.)  
+
+(Since 1.1.76.)
+
+.SH 반환값
+에러시 -1을 반환하고, \fIerrno\fP는 설정된다.
+.SH 에러
+\fIerrno\fP는 아래의 값을 가진다:
+
+.TP
+.B EBADF
+파일 디스크립터는 유효치않다.
+.TP
+.B
+ENOTTY
+파일 디스크립터는 문자 장치와 일치하지 않거나, 요청을 거부했다.
+.TP
+.B EINVAL
+파일
+파일 디스크립터나 \fIargp\fP는 유효치 않다.
+.TP
+.B EPERM
+권한 위반.
+.SH 경고
+이 맨페이지(Man page)는 리눅스 콘솔 입출력에 관한 문서가 아니다.
+이 맨페이지는 소스를 보고싶어하는 사용자의 호기심에 대안으로 제공되는 것이다.
+입출력제어는 문서화되지 않았다. 따라서 경고없이 내용이 바뀔 수 있다는것을
+주지하기 바란다. 
+
+입출력제어는 커널과 잘알려진 프로그램(fdisk, hdparm, setserisl,tunelp,
+loadkeys, selection, setfont, etc..) 사이의 통신을 위해 자주 소개되고,
+입출력제어는 프로그램의 요구에 따라 변화할 것이다.
+
+입출력제어를 사용하는 프로그램은 다른 버전의 유닉스에 포팅할 수 없다.
+그리고 이후 버전에서는 사라질 수도 있다.
+
+POSIX함수들을 사용한다.
+
+.SH 관련 항목
+.BR kbd_mode (1),
+.BR loadkeys (1),
+.BR dumpkeys (1),
+.BR mknod (1),
+.BR setleds (1),
+.BR setmetamode (1),
+.BR ioperm (2),
+.BR termios (2),
+.BR execve (2),
+.BR fcntl (2),
+.BR console (4),
+.BR console_codes (4),
+.BR mt (4),
+.BR sd (4),
+.BR tty (4),
+.BR ttys (4),
+.BR vcs (4),
+.BR vcsa (4),
+.BR charsets (7),
+.BR mapscrn (8),
+.BR setfont (8),
+.BR resizecons (8),
+.IR /usr/include/linux/kd.h ,
+.I /usr/include/linux/vt.h

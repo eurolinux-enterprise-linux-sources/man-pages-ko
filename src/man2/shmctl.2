@@ -1,0 +1,182 @@
+.\" Copyright (c) 1993 Luigi P. Bai (lpb@softint.com) July 28, 1993
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Wed Jul 28 11:03:24 1993, Rik Faith <faith@cs.unc.edu>
+.\" Modified Sun Nov 28 16:43:30 1993, Rik Faith <faith@cs.unc.edu>
+.\"          with material from Giorgio Ciucci <giorgio@crcc.it>
+.\" Portions Copyright 1993 Giorgio Ciucci <giorgio@crcc.it>
+.\" Modified Fri Jan 31 17:24:31 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH SHMCTL 2 "November 28, 1993" "Linux 0.99.11" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+shmctl \- 공유 메모리를 제어한다.
+.SH 사용법
+.ad l
+.B #include <sys/ipc.h>
+.sp
+.B #include <sys/shm.h>
+.sp
+.BI "int shmctl(int " shmid ", int " cmd ", struct shmid_ds *" buf );
+.ad b
+.SH 설명
+\fBshmctl()\fP
+는 사용자가 공유 메모리 세그먼트에 관한 정보를 얻거나 공유 메모리 세그먼트의 
+소유자, 그룹, 허가권들을 설정하거나 세그먼트를 파괴하는걸 허용한다.
+\fIshmid\fP로 식별되는 세그먼트에 관한 정보는 \fIshmid_ds\fP 구조체로 리턴된다:
+.PP
+.in +0.5i
+.nf
+struct shmid_ds {
+	struct	ipc_perm shm_perm;	/* 퍼미션 */
+	int	shm_segsz;		/* 세그먼트의 크기(bytes) */
+	time_t	shm_atime;		/* 마지막 접근 시간 */
+	time_t	shm_dtime;		/* 마지막 제거 시간 */
+	time_t	shm_ctime;		/* 마지막 변경 시간 */
+	unsigned short	shm_cpid;	/* 생성자의 pid */
+	unsigned short	shm_lpid;	/* 마지막으로 작동한 프로세스의 pid */
+	short	shm_nattch;		/* 현재 접근한 프로세스의 수 */
+	/* 다음은 개별적이다 */
+	unsigned short   shm_npages;  /* 세그먼트의 크기(pages) */
+	unsigned long   *shm_pages;   
+	struct shm_desc *attaches;    /* 접근을 위한 기술자들 */
+};
+.fi
+.in -0.5i
+.PP
+\fIshm_perm\fP 멤버의 필드들은 설정될수 있다:
+.PP
+.in +0.5i
+.nf
+struct ipc_perm
+{
+  key_t  key;
+  \fBushort uid\fP;   /* \fBowner\fP의 euid 와 egid */
+  \fBushort gid\fP;
+  ushort cuid;  /* 생성자의 euid 와 egid */
+  ushort cgid;
+  \fBushort mode\fP;  /* 접근 모드의 하위 9 bits */
+  ushort seq;   /* 연속 수(sequence number) */
+};
+.fi
+.PP
+다음 \fIcmds\fP가 이용될수 있다:
+.br
+.TP 12
+.B IPC_STAT
+공유 메모리 세그먼트에 관한 정보를 버퍼 \fIbuf\fP에 복사하기 위해 사용된다. 
+사용자는 공유 메모리 세그먼트에 \fBread\fP접근을 해야 한다. 
+.TP
+.B IPC_SET
+\fIshm_perms\fP필드의  
+\fIuid\fP, 
+\fIgid\fP,
+or \fImode\fP 
+멤버들에 대한 사용자 변경을 적용하기 위해 사용된다.
+\fImode\fP의 하위 9비트들만이 사용된다. 
+.I shm_ctime
+멤버 또한 갱신된다.
+사용자는 소유자, 생성자, 또는 슈퍼 유저이어야 한다.
+.TP
+.B IPC_RMID
+파괴될 세그먼트를 표시하기 위해 사용된다. 실제로는 마지막 분리후에 파괴된다.
+(즉, 관련된 
+.I shmid_ds
+구조체의 
+.I shm_nattch
+멤버가  0일때)
+사용자는 소유자, 생성자 또는 슈퍼 유저이어야 한다.
+.PP
+사용자는 세그먼트가 결국 파괴 되었다는것을 보장해야 한다:
+그렇지 않으면 폴트가 난 페이지들은 메모리나 스왑에 남아 있을 것이다. 
+.PP
+게다가, \fBsuper-user\fP는 다음 \fIcmds\fP와 관련된 공유 메모리 세그먼트의 
+스왑핑을 금지하거나 허용할수 있다: (Linux only)
+.br
+.TP 12
+.B SHM_LOCK
+공유 메모리 세그먼트의 스와핑을 막는다.
+사용자가 있어야 하는 페이지들을 잠금후에 요구한다면 위반이다.
+.TP
+.B SHM_UNLOCK
+공유 메모리 세그먼트에 대한 스와핑을 허용한다.
+.PP
+.BR IPC_INFO ,
+.BR SHM_STAT
+그리고 
+.B SHM_INFO
+는 할당된 자원들에 관한 정보를 제공하는 
+.BR ipcs (8)
+의 의해 사용된다.
+미래에, 이것들은 proc 파일 시스템 인터페이스를 위해서 필요할때 수정되거나 이동될수 있다.
+.PP
+.SH "SYSTEM CALLS"
+.TP
+.B fork()
+.B fork()
+후에 자식 프로세스는 연결된 공유 메모리 세그먼트들을 상속한다.
+.TP
+.B exec()
+.B exec()
+후에 연결된 모든 공유 메모리 세그먼트들은 분리된다.(파괴되는것이 아니다.)
+.TP
+.B exit()
+.B exit()
+시에 연결된 모든 공유 메모리 세그먼트들은 분리된다.(파괴되는것이 아니다.)
+.PP
+.SH 반환값
+성공시 0이 리턴되며, 에러시 \-1이 리턴된다.
+.SH 에러
+에러시, 
+.B errno
+는 다음중 하나로 설정된다.
+.TP 12
+.B EACCES
+\fBIPC_STAT\fP가 요청되고 \fIshm_perm.modes\fP가 
+.IR msqid 
+에 대한 읽기 접근이 허용되지 않을 경우 리턴된다.
+.TP
+.B EFAULT
+.I cmd
+인자가 
+.B IPC_SET
+나 
+.B IPC_STAT
+값을 가지고 있지만 
+.I buf
+에 지정된 주소는 접근할수 없다.
+.TP
+.B EINVAL
+\fIshmid\fP가 유효 식별자가 아니거나 \fIcmd\fP가 유효한 명령어가 아니라면 리턴된다.
+.TP
+.B EIDRM
+\fIshmid\fP가 제거된 식별자를 가리키고 있다면 리턴된다.
+.TP
+.B EPERM
+\fBIPC_SET\fP나 \fBIPC_RMID\fP가 시도됐고 사용자가 생성자나 소유자 또는 슈퍼유저가 아니고, 사용자가 그룹이나 그외에 대한 허가권을 가지고 있지 않다면 리턴된다.
+.SH 호환
+SVr4, SVID.  SVr4는 추가적으로 EINVAL, ENOENT, ENOSPC, ENOMEM, EEXIST 에러 
+조건들을 문서화했다.  SVr4나 SVID 모두 EIDRM 에러 조건은 문서화 하지 않았다.
+.SH 관련 항목
+.BR shmget (2),
+.BR shmop (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 5월 18일

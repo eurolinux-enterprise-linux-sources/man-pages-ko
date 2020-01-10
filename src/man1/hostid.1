@@ -1,0 +1,22 @@
+.TH hostid 1
+.SH NAME
+hostid \- 호스트 ID를 지정하거나 보여준다.
+.SH SYNTAX
+.B hostid
+[\-v] [\|\fIdecimal-id\fR\|]
+.SH DESCRIPTION
+.\".NXR "hostid command"
+.B hostid
+명령은 현재 호스트 ID 번호를 16진수로 보여준다.
+이때 \-v 옵션이 주어지면, 이번호를 10진수와 16진수 두개로 보여준다.
+이것은 그 호스트의 고유번호이며, 다른 호스트들과 구별할 때, 
+인터넷 주소를 부여할 때 사용된다.
+
+이 값은 시스템 관리자가 명령행인자를 사용해서 새롭게 지정할 수 있는데, 
+이 값은 /etc/hostid 파일에 저장되고 필요할 경우에 읽혀진다. 
+
+.SH AUTHOR
+Hostid is written by Mitch DSouza \- (m.dsouza@mrc-apu.cam.ac.uk)
+
+.SH SEE ALSO
+gethostid(2), sethostid(2)

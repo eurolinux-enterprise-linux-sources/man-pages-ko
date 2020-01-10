@@ -1,0 +1,77 @@
+.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Modified Sat Jul 24 17:45:39 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified 2000-02-13 by Nicol&#65533;s Lichtmaier <nick@debian.org>
+.\"
+.\"
+.\" 한국어 번역
+.\" 정강훈 <skyeyes@soback.kornet.net> 2001년 2월 25일
+.\"
+.\" r1.4 2005-02-11 15:14:55 +12-1 윤현호
+.\" r1.3 2004-07-10 20:56:36 +7-7 xaos
+.\" r1.2 2004-07-10 20:52:40 +7-12 xaos
+.\" r1.1 2004-07-03 14:47:09  147.46.208.54
+.\"
+.TH TOUPPER 3  "1993년 4월 4일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+toupper, tolower \- 문자를 대문자나 소문자로 바꾼다.
+.SH 사용법
+.nf
+.B #include <ctype.h>
+.sp
+.BI "int toupper (int " "c" ");"
+.nl
+.BI "int tolower (int " "c" ");"
+.fi
+.SH 설명
+.B toupper()
+는 가능하다면 문자
+.I c
+를 대문자로 바꾼다.
+.PP
+.B tolower()
+는 가능하다면 문자
+.I c
+를 소문자로 바꾼다.
+.PP
+.I c
+가 unsigned char 값이 아니거나 EOF 라면, 함수의 행동은 알 수 없다.
+.SH 반환값
+변환이 가능할 때엔 바뀐 문자, 그리고 변환이 불가능할 때에는 원래의 문자
+.I c
+가 반환된다.
+.SH 호환
+ANSI C, BSD 4.3
+.SH 버그
+대문자와 소문자를 구성하는 세부 사항은 현재 로케일에 의존한다.
+예를 들어, 기본
+.B """C"""
+로케일은 독일어 우물라우트를 알지 못한다. 그래서 우물라우트 문자들은 변환하지 못한다.
+.PP
+몇몇 비 영어권 로케일에는 대문자가 없는 소문자도 있다.; 독일어의 에스체트가 한 예이다.
+.SH 관련 항목
+.BR isalpha "(3), " setlocale "(3), " locale (7)
+.SH 번역
+정강훈 <skyeyes@soback.kornet.net> 2001년 2월 25일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 11일

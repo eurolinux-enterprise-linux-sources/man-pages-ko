@@ -1,0 +1,35 @@
+.TH PIDOF 8 "14 June 1996" "" "Linux System Administrator's Manual"
+.SH NAME
+pidof -- 현재 실행중인 풀그림의 프로세스 ID를 찾는다.
+.SH SYNOPSIS
+.B pidof
+.RB [ \-s ]
+.RB [ \-x ]
+.RB [ \-o
+.IR omitpid ]
+.RB [ \-o
+.IR omitpid.. ]
+.B program
+.RB [ program.. ]
+.SH DESCRIPTION
+.B Pidof
+명령은 \fBprogram\fP의 프로세스 ID를 찾는다. 
+이것은 그 찾은 ID를 표준 출력으로 보낸다.
+이 풀그림은 runlevel을 바꾸는 스크립트에서 전형적으로 사용된다.
+이 스크립트는 /etc/rc.d 경로 아에 있다.
+.SH OPTIONS
+.IP -s
+지정한 \fBprogram\fP의 \fIpid\fP가 여러개 있을 경우 하나만 보여준다.
+.IP -x
+스크립트와 함께 실행 중인 \fBprogram\fP이면 그 쉘의 id도 함께 보여준다.
+.IP -o \fIomitpid\fP
+Tells \fIpidof\fP to omit processes with that process id. The special
+pid \fB%PPID\fP can be used to name the parent process of the \fIpidof\fP
+program, in other words the calling shell or shell script.
+.SH NOTES
+\fIpidof\fP 풀그림은 \fP/sbin/killall5\fP 파일의 단순한 심블릭 링크 
+파일이다.
+.SH SEE ALSO
+shutdown(8), init(8), halt(8), reboot(8).
+.SH AUTHOR
+Miquel van Smoorenburg, miquels@cistron.nl

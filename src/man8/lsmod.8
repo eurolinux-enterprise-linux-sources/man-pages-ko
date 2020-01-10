@@ -1,0 +1,47 @@
+.\" Copyright (c) 1996 Free Software Foundation, Inc.
+.\" This program is distributed according to the Gnu General Public License.
+.\" See the file COPYING in the kernel source directory
+.\"
+.\"
+.\" 한국어 번역: 서본근 <scoby@hanmail.net> 2004년 8월 20일
+.\"
+.\" r1.3 2005-02-15 20:33:26 +6-8 윤현호
+.\" r1.2 2004-08-20 01:01:15 +1-0 143.248.226.142
+.\" r1.1 2004-08-20 00:56:22  143.248.226.142
+.\"
+.TH LSMOD 8 "February 4, 2002" Linux "Linux Module Support"
+.SH 이름
+lsmod \- 사용 중인 모듈의 목록을 보인다.
+.SH 사용법
+.B lsmod
+[-hV]
+.SH 설명
+.B lsmod
+는 모든 사용 중인 모듈에 대한 정보를 보여 준다.
+.PP
+정확히는 모듈의 이름, 크기, 다른 모듈에서의 참조 수 및
+참조하는 모듈의 목록을 보여준다. 이렇게 출력되는 정보는 /proc/modules 파일에서
+찾을 수 있는 정보와 동일한 내용이다.
+.PP
+만약 모듈이 
+.I can_unload
+루틴을 사용하여 스스로 제거될 수 있는 모듈이라면,
+다른 모듈에서의 참조 수는 실제 값과 상관없이 항상 -1이 출력된다.
+.SH 옵션
+.TP
+.BR \-h ", " \-\-help
+도움말을 보여주고 끝낸다.
+.TP
+.BR \-V ", " \-\-version
+실행 중인 \fBlsmod\fR의 버전을 보여주고 끝낸다.
+.SH 관련 항목
+insmod(8), modprobe(8), depmod(8), rmmod(8), ksyms(8)
+.SH 역사
+모듈에 대한 지원은 작자 불명이다.
+초기 리눅스 버전은 Bas Laarhoven <bas@vimec.nl>에 의해 작성되었으며,
+Version 0.99.14부터는 Jon Tombs <jon@gtex02.us.es>가 구현하였다.
+Bjorn Ekwall <bj0rn@blox.se>이 이를 확장하였고,
+Richard Henderson <rth@tamu.edu>에 의해 2.1.17으로 업데이트 되었다.
+1999년 3월에는 Bjorn Ekwall <bj0rn@blox.se>이 관리하였다.
+2004년 현재 Rusty Russell <rusty@rustcorp.com.au>과 
+Adam J. Richter <adam@yggdrasil.com>이 관리하고 있다.

@@ -1,0 +1,89 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     Lewine's _POSIX Programmer's Guide_ (O'Reilly & Associates, 1991)
+.\"     386BSD man pages
+.\"
+.\" Modified Sat Jul 24 19:22:14 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Mon May 27 21:37:47 1996 by Martin Schulze (joey@linux.de)
+.\"
+.TH GETPWENT 3  "1996년 5월 27일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+getpwent, setpwent, endpwent \- 패스워드 파일 엔트리를 가져온다.
+.SH 사용법
+.nf
+.B #include <pwd.h>
+.B #include <sys/types.h>
+.sp
+.B struct passwd *getpwent(void);
+.sp
+.B void setpwent(void);
+.sp
+.B void endpwent(void);
+.fi
+.SH 설명
+\fBgetpwent()\fP 함수는 \fI/etc/passwd\fP에서 뽑아낸 라인 필드들을 포함하는 
+구조체에 대한 포인터를 반환한다. 함수를 처음 호출하면 이 함수는 처음 엔트리를 
+반환한다;그후, 이 함수는 연속적인 엔트리를 반환한다.
+.PP
+\fBsetpwent()\fP 함수는 파일 포인터를 \fI/etc/passwd\fP 파일의 시작으로 
+되 돌린다.
+.PP
+\fBendpwent()\fP 함수는 \fI/etc/passwd\fP 파일을 감는다.
+.PP
+\fIpasswd\fP 구조체는 다음처럼 \fI<pwd.h>\fP에 정의되어 있다:
+.sp
+.RS
+.nf
+.ta 8n 16n 32n
+struct passwd {
+        char    *pw_name;		/* 유저 이름 */
+        char    *pw_passwd;		/* 유저 패스워드 */
+        uid_t   pw_uid;			/* 유저 id */
+        gid_t   pw_gid;			/* 그룹 id */
+        char    *pw_gecos;      	/* 실제 이름 */
+        char    *pw_dir;  		/* 홈 디렉토리 */
+        char    *pw_shell;      	/* shell 프로그램 */
+};
+.ta
+.fi
+.RE
+.SH 반환값
+\fBgetpwent()\fP 함수는 \fIpasswd\fP 구조체를 반환하거나, 만일 더이상 엔트리가 없거나 에러가 발생한다면 NULL을 반환한다.
+.SH 에러
+.TP
+.B ENOMEM
+패스워드 구조체를 할당할 메모리가 충분하지 않다.
+.SH 파일
+.TP
+.I /etc/passwd
+패스워드 데이터 베이스 파일 
+.SH 호환
+SVID 3, BSD 4.3
+.SH 관련 항목
+.BR fgetpwent "(3), " getpwnam "(3), " getpwuid "(3), " getpw (3),
+.BR putpwent (3),
+.BR passwd (5).
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 4월 30일 

@@ -1,0 +1,60 @@
+.\" Copyright 1993 David Metcalfe (david@prism.demon.co.uk)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" References consulted:
+.\"     Linux libc source code
+.\"     386BSD man pages
+.\" Modified Sat Jul 24 18:50:48 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Interchanged `needle' and `haystack'; added history, aeb, 980113.
+.TH MEMMEM 3  "1998년 2월 13일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH NAME
+memmem \- substring의 위치를 알아낸다.
+.SH SYNOPSIS
+.nf
+.B #include <string.h>
+.sp
+.BI "void *memmem(const void *" haystack ", size_t " haystacklen ,
+.RS
+.BI "const void *" needle ", size_t " needlelen  );
+.fi
+.SH DESCRIPTION
+\fBmemmem()\fP 함수는 길이가 \fIhaystacklen\fP인 메모리 영역 \fIhaystack\fP에서
+길이가 \fIneedlelen\fP인 substring \fIneedle\fP의 처음 발생한 시작 위치를 찾는다.
+.SH "RETURN VALUE"
+\fBmemmem()\fP 함수는 substring의 시작 포이터를 반환하거나 substring이 발견되지
+않는다면 NULL을 반환한다.
+.SH "CONFORMING TO"
+이 함수는 GNU 확장이다.
+.SH BUGS
+이 함수는 Linux 라이브러리들 상위 버전과 libc 5.0.9 버전에서 문제가 있다.;
+`needle'와 `haystack'인자는 바뀌었으며 \fIneedle\fP가 처음 발생한 끝에 대한 포인터가
+반환된다. libc 5.0.9가 여전히 넓게 사용되기 때문에 사용하기에는 위험한 함수이다.
+.br
+예전것과 최신 libc는 만일 \fIneedle\fP가 비었다면, \fIhaystack\fP-1 (\fIhaystack\fP 대신에)가 반환된다.
+그리고 glibc (2.0.5)는 더 나쁘게 되었으며 `haystack'의 마지막 바이트에 대한 포인터를
+반환한다.
+희망적으로 이것은 고쳐질 것이다. \fImemmem\fP() 함수는 `needle'를 비어서 사용해서는
+안된다.
+.SH "SEE ALSO"
+.BR strstr (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 2월 20일

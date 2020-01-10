@@ -1,0 +1,97 @@
+.\"/* Copyright 1988,1990,1993 by Paul Vixie
+.\" * All rights reserved
+.\" *
+.\" * Distribute freely, except: don't remove my name from the source or
+.\" * documentation (don't take credit for my work), mark your changes (don't
+.\" * get me blamed for your possible bugs), don't alter or remove this
+.\" * notice.  May be sold if buildable source is provided to buyer.  No
+.\" * warrantee of any kind, express or implied, is included with this
+.\" * software; use at your own risk, responsibility for damages (if any) to
+.\" * anyone resulting from the use of this software rests entirely with the
+.\" * user.
+.\" *
+.\" * Send bug reports, bug fixes, enhancements, requests, flames, etc., and
+.\" * I'll try to keep a version up to date.  I can be reached as follows:
+.\" * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
+.\" */
+.\"
+.\" $Id: crontab.1,v 1.1.1.1 2002/07/18 10:40:11 hhyoon Exp $
+.\"
+.TH CRONTAB 1 "29 December 1993"
+.UC 4
+.SH 이름
+crontab \- 사용자의 개별 crontab 파일 관리
+.SH 사용법
+crontab [ -u 사용자ID ] 파일
+.br
+crontab [ -u 사용자ID ] { -l | -r | -e }
+.SH 설명
+.I crontab
+명령은 Vixie Cron 패키지에 있는 
+.IR cron (8)
+데몬을 사용해서 목록들을 설치(지정), 삭제, 또는 목록보기 등을 
+할 수 있는 풀그림이다. 
+각 사용자는 자신의 crontab 파일을 가질 수 있고, 
+이 파일들은 /var 디렉토리 안에 있게 된다. 
+하지만, 그 파일을 직접 편집할 수는 없다.
+.PP
+.I /etc/cron.allow
+파일이 있으면, 그 파일 안에 자신의 ID가 있어야 이 명령을 사용할 수 있으며, 
+.I allow 파일이 없고, 
+.I /etc/cron.deny
+파일이 있으면, 그 파일 안에 자신의 ID가 없어야 이 명령을 사용할 수 있다.
+이 두 파일이 없다면, site-dependent(?) 환경설정 인자에 따라, 
+시스템 관리자만 사용할 수 있거나, 아니면, 모든 사용자가 이 명령을 
+사용할 수 있다.
+.PP
+.I -u 
+옵션이 사용되면, 그 옵션의 인자로 지정된 사용자의 crontab 파일이 
+사용되며, 이 옵션을 사용하지 않으면, 자신의 
+.I crontab
+파일이 사용된다. 
+.IR su (8)
+명령이 사용될 경우에는 
+.I -u
+옵션 없이 이 명령을 사용하면, 
+.I crontab
+파일 선택에 혼돈이 있을 수 있다. 그러므로, 
+.IR su (8)
+명령을 사용하고 있을 때는, 항상 
+.I -u
+옵션을 사용하는 것이 안전하다.
+.PP
+이 명령의 가장 기본적인 사용방법은 
+crontab 파일로 쓰일 파일 이름을 명령행 인자로 사용해서, 
+그것을 설치(지정)하는 것이며, 이때, 
+파일 이름이 지정되지 않으면, 표준 입력이나, 파이프를 
+동한 이전 명령의 출력을 그 입력으로 한다. 
+.PP
+.I -l
+옵션은 현재 crontab 내용을 표준 출력으로 보여준다.
+.PP
+.I -r
+옵션은 현재 crontab 내용을 지운다.
+.PP
+.I -e
+옵션은 \s-1VISUAL\s+1 또는 \s-1EDITOR\s+1 환경 변수에 지정된 
+편집기로 현재 crontab 내용을 편집한다.
+편집을 해서, 저장하고 끝내면, 그 바뀐 crontab 내용이 자동으로 
+갱신된다.
+.SH "관련 항목"
+crontab(5), cron(8)
+.SH 파일
+.nf
+/etc/cron.allow
+/etc/cron.deny
+.fi
+.SH 표준
+.I crontab
+명령은 IEEE Std1003.2-1992 (``POSIX'') 기준과 일치한다. 
+이 새로은 문법은 
+옛날 SVR3 문법을 따르는 Vixie Cron 이전의 버전의 것과 차이가 있다.
+.SH 검사
+명령행 사용법이 틀릴 경우에는 그 사용법을 비교적 자세히 알려주는 메시지가 
+나타난다. 그것을 참조하도록.
+.SH 만든이
+.nf
+Paul Vixie <paul@vix.com>

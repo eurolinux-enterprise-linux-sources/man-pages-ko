@@ -1,0 +1,104 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"                               1993 Michael Haardt, Ian Jackson.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Sat Jul 24 00:39:47 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Fri Jan 31 16:49:53 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH RMDIR 2 "1993년 7월 24일" "리눅스 0.99.7" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+rmdir \- 디렉토리 삭제.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.BI "int rmdir(const char *" pathname );
+.SH 설명
+.B rmdir
+는 디렉토리(꼭 비어 있어야만한다.)를 삭제한다.
+.SH 반환값
+성공시, 0을 반환하고, 실패시, \-1을 반환하고, errno를 적절히 설정한다.
+.SH 에러
+.TP
+.B EPERM
+pathname을 포함한 파일 시스템이 디렉토리 삭제를 지원하지 않는다.
+.TP
+.B EFAULT
+.IR pathname " 접근 할수 있는 주소공간이 아니다."
+.TP
+.B EACCES
+pathname을 포함한 디렉토리의 쓰기 접근이 프로세스 유효 uid때문에 허락되지 않거나,
+pathname의 디렉토리중 하나가 실행 권한이 없다.
+.TP
+.B EPERM
+pathname을 포함하는 디렉토리가 ( S_ISVTX ) 스티키 비트를 가지고 있고, 프로세스의
+유효 uid가 삭제할 수 있는 파일의 uid가 아니거나 그런 파일을 포함하는 디렉토리이다.
+.TP
+.B ENAMETOOLONG
+.IR pathname " 이 너무 길다."
+.TP
+.B ENOENT
+pathname의 디렉토리가 없거나 링크가 깨졌다.
+.TP
+.B ENOTDIR
+.IR pathname ,
+이나
+.IR pathname 
+의 디렉토리가 사실 디렉토리가 아니다.
+.TP
+.B ENOTEMPTY
+.I pathname
+이 
+.BR . " and " .. " ."
+을 포함하지 않는다.
+.TP
+.B EBUSY
+.I pathname
+이 현재 작업중인 디렉토리이거나 몇몇 프로세스의 root디렉토리이다.
+.TP
+.B ENOMEM
+커널메모리가 부족하다.
+.TP
+.B EROFS
+.I pathname
+이 read-only filesystem상의 파일이다.
+.TP
+.B ELOOP
+.IR pathname 
+의 링크가 너무 많다.
+.SH 호환
+SVr4, SVID, POSIX, BSD 4.3
+.SH 버그
+NFS프로토콜의 부적적한 표현은 현재 쓰고 있는 디렉토리의 기대하지 않은
+소실을 야기 할 수 있다.
+.SH 관련 항목
+.BR rename (2),
+.BR mkdir (2),
+.BR chdir (2),
+.BR unlink (2),
+.BR rmdir (1),
+.BR rm (1)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29

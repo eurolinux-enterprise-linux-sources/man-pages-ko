@@ -1,0 +1,107 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1992 Drew Eckhardt (drew@cs.colorado.edu), March 28, 1992
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified by Michael Haardt <michael@moria.de>
+.\" Modified Sat Jul 24 13:03:05 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified 10 June 1995 by Andries Brouwer <aeb@cwi.nl>
+.\"
+.TH UTIME 2 "1995년 6월 10일" "리눅스" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+utime, utimes \- inode에 대한 접근/수정 시간을 변경한다.
+
+.SH 사용법
+.B #include <sys/types.h>
+.br
+.B #include <utime.h>
+.sp
+.BI "int utime(const char *" filename ", struct utimbuf *" buf );
+.sp 2
+.B #include <sys/time.h>
+.sp
+.BI "int utimes(char *" filename ", struct timeval *" tvp );
+.SH 설명
+.BR utime 은 
+.IR filename 으로 
+지정된 inode의 접근 시간과 수정 시간을
+.IR buf 의 
+.IR actime 과 
+.IR modtime 
+필드값으로 각각 변경한다.
+.IR buf 가 
+.BR NULL 이면, 
+파일의 접근 시간과 수정 시간은 현재 시간으로 설정된다.
+.I utimbuf 
+구조체는 다음과 같다:
+
+.RS
+.nf
+struct utimbuf {
+        time_t actime;  /* 접근 시간 */
+        time_t modtime; /* 변경 시간 */
+};
+.fi
+.RE
+
+리눅스 DLL 4.4.1 라이브러리에서, 
+.BR utimes 는 
+단지 
+.BR utime 의 
+래퍼(wrapper)이다: 
+.IR tvp[0].tv_sec 은 
+.IR actime 이고,
+.IR tvp[1].tv_sec 은 
+.IR modtime 이다.
+timeval 구조체는 다음과 같다:
+.RS
+.nf
+struct timeval {
+        long    tv_sec;         /* 초 */
+        long    tv_usec;        /* 마이크로초 */
+};
+.fi
+.RE
+.SH 반환값
+성공시, 0이 리턴된다. 에러시, \-1이 리턴되며, 
+.IR errno 는 
+적당한 값으로 설정된다.
+.SH 에러
+다른 에러들도 일어날 수 있다.
+.TP
+.B EACCES
+파일을 쓰기위한 허가권이 거부됐다.
+.TP
+.B ENOENT
+.IR filename 이 
+존재하지 않는다.
+.SH 호환
+.BR utime :
+SVr4, SVID, POSIX.  
+SVr4 문서에서 추가된 에러 상태들은 EFAULT, EINTR, ELOOP, EMULTIHOP, ENAMETOOLONG, ENOLINK, ENOTDIR, ENOLINK, ENOTDIR, EPERM, EROFS이다.
+.br
+.BR utimes :
+BSD 4.3
+.SH 관련 항목
+.BR stat (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 4월 30일

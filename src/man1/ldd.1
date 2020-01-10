@@ -1,0 +1,78 @@
+.\" Copyright 1995-2000 David Engel (david@ods.com)
+.\" Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
+.\" Copyright 2000 Ben Collins (bcollins@debian.org)
+.\"    Redone for GLibc 2.2
+.\" Copyright 2000 Jakub Jelinek (jakub@redhat.com)
+.\"    Corrected.
+.\" Most of this was copied from the README file.
+.\" Do not restrict distribution.
+.\" May be distributed under the GNU General Public License
+.TH LDD 1 "30 October 2000"
+.SH 이름
+ldd \- 공유 라이브러리의 의존성을 출력한다.
+.SH 문법
+.B ldd
+.RB [OPTION]...
+FILE...
+.SH 설명
+.B ldd
+명령행에서 주어진 각 프로그램이나 공유 라이브러리가 필요로 하는
+공유 라이브러리를 출력한다.
+.SH 옵션
+.TP
+.B \-V\ \-\-version
+.BR ldd 의
+버전 번호를 출력한다.
+.TP
+.B \-v\ \-\-verbose
+심볼 버전 정보 등과 같은 모든 정보를 출력한다.
+.TP
+.B \-d\ \-\-data\-relocs
+재배치를 하고, 빠진 객체를 보고한다. (ELF 형식에서만 동작한다.)
+.TP
+.B \-r\ \-\-function\-relocs
+데이터와 함수에 대해 재배치를 하고, 빠진 객체나 함수에 대해 보고한다.
+(ELF 형식에서만 동작한다.)
+.TP
+.B \-\-help
+사용법을 출력한다.
+.SH 주의
+.BR ldd 의
+표준 버전은 glibc2에 따라온다. Libc5에는 오래된 버전이 따라오며,
+아직도 몇몇 시스템에는 존재한다.
+libc5 버전에서는 긴 옵션이 지원되지 않는다. 반면에 glibc2 버전에서는
+.B \-V
+옵션이 지원되지 않고, 
+.BR \-\-version
+옵션만 지원된다.
+.LP
+이 프로그램의 libc5 버전은 명령행에서 주어진 라이브러리에 '/'가
+포함되어 있는 경우 이를 라이브러리의 이름으로 사용한다.
+그렇지 않은 경우에는 표준 위치에 있는 라이브러리들을 검색한다.
+현재 디렉토리에 있는 공유 라이브러리에 대해 이를 실행할 경우에는
+이름 앞에 './'을 붙여야 한다.
+.\" The libc5 version of this program will use the name of a library given
+.\" on the command line as-is when it contains a '/'; otherwise it
+.\" searches for the library in the standard locations. To run it
+.\" on a shared library in the current directory, prefix the name with "./".
+.SH 버그
+.BR ldd 는
+a.out 공유 라이브러리와는 동작하지 않는다.
+.PP
+.BR ldd 는
+.B ldd
+지원이
+컴파일러 릴리즈에 포함되기 전에 만들어진 아주 오래된
+a.out 프로그램과는 동작하지 않는다.
+만약 이런 프로그램들에
+.BR ldd 를
+사용한다면, 프로그램은 \fIargc\fP = 0 값을 가지고 실행하려고 시도할
+것이며, 그 결과는 예측할 수 없다.
+.SH 저자
+David Engel.
+.\" Roland McGrath and Ulrich Drepper.
+.SH 관련 항목
+.BR ldconfig (8),
+.BR ld.so (8)
+.SH 역자
+윤현호 <hhyoon@kldp.org>, 2002년 7월 29일

@@ -1,0 +1,71 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\" 
+.\" Modified Sat Jul 24 17:17:50 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Thu Oct 19 21:25:21 MET 1995 by Martin Schulze <joey@infodrom.north.de>
+.\" Modified Mon Oct 21 17:47:19 EDT 1996 by Eric S. Raymond
+.\" <esr@thyrsus.com>xk
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH TTYTYPE 5 "1993년 7월 24일" "리눅스" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+ttytype \- 기본 터미널타입을 맵핑하기위한 터미널 장치
+.SH 설명
+.I /etc/ttytype
+파일은 tty행을 가진 termcap/terminfo 터미널 타입명과 일치한다.
+각 행은 터미널 타입뒤에 공백이 오고, 마지막으로 
+tty명(
+.IR /dev/ ")
+없는 장치명)으로 되어있다.
+
+이런 점은 사용자의 현재 tty를 위한 기본 터미널명의 환경변수 TERM을 설정하는
+.BR tset (1)
+프로그램에 의해 사용된다.
+
+이런 도구는 유닉스 미니컴퓨터에서 프로그램에 의하지 않고 배선에 의한
+character-cell 터미널 기능을 지원하는 전통적인 시간-공유 환경을 위해 
+디자인되었다.
+
+.SH 예제
+전형적으로
+.I /etc/ttytype
+는:
+.RS
+.sp
+con80x25 tty1
+.br
+vt320 ttys0
+이다.
+.sp
+.RE
+.SH 파일
+.TP
+.I /etc/ttytype
+tty 정의 파일.
+.SH 관련 항목
+.BR getty "(1), " terminfo "(5), " termcap "(5)"
+
+
+
+
+

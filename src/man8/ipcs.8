@@ -1,0 +1,53 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH IPCS 8 "9 October 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH 이름
+ipcs \- ipc 설비(facilities) 정보를 보여준다.
+.SH 사용법
+.B ipcs [ \-asmq ] [ \-tclup ]
+.br
+.BI "ipcs [ \-smq ] \-i " id
+.br
+.B ipcs \-h
+.SH 설명
+.B ipcs
+명령은 읽기 접근이 가능한 호출하는 프로세스를 위해, 
+ipc 설비(facilities) 정보를 보여준다.
+
+.B \-i
+옵션은 특정 \fIid\fR에 대한 정보를 알려고 할 때 사용된다.
+
+리소스는 다음과 같이 지정될 수 있다:
+.TP
+.B \-m
+공유 메모리 세그먼트
+.TP
+.B \-q
+메시지 큐
+.TP
+.B \-s
+semaphore 배열
+.TP
+.B \-a
+모든 리소스 (초기값)
+.PP
+보여지는 형식은 다음과 같은 양식을 취할 수 있다:
+.TP
+.B \-t
+time
+.TP
+.B \-p
+pid
+.TP
+.B \-c
+creator
+.TP
+.B \-l
+limits
+.TP
+.B \-u
+summary
+.SH 관련 항목
+.BR ipcrm (8)
+.SH 만든이
+krishna balasubramanian (balasub@cis.ohio-state.edu)

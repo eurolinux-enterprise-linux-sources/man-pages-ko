@@ -1,0 +1,103 @@
+.\" Copyright (c) 1983, 1990, 1993
+.\"	The Regents of the University of California.  All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"	@(#)logger.1	8.1 (Berkeley) 6/6/93
+.\"
+.Dd June 6, 1993
+.Dt LOGGER 1
+.Os BSD 4.3
+.Sh NAME
+.Nm logger
+.Nd system log 기록
+.Sh SYNOPSIS
+.Nm logger
+.Op Fl is
+.Op Fl f Ar file
+.Op Fl p Ar pri
+.Op Fl t Ar tag
+.Op Ar message ...
+.Sh DESCRIPTION
+.Nm Logger
+명령은 
+시스템 기록 모듈인 
+.Xr syslog  3
+함수를 쉘 명령으로 구현한 것이다.
+.Pp
+Options:
+.Pp
+.Bl -tag -width "message"
+.It Fl i
+매 줄마다 \fBlogger\fR의 프로세스 ID를 기록한다.
+.It Fl s
+system log와 같이 메시지를 표준 오류 장치에 기록한다.
+.It Fl f Ar file 
+기록 파일 지정
+.It Fl p Ar pri 
+우선권이 있는 메시지를 지정한다.
+\fIpri\fR에는 숫자형식으로 오거나,
+``facility.level'' 식으로도 올 수 있다.
+예를 들어, ``\-p local3.info'' 옵션은 
+.Ar local3
+focility에서 
+.Ar info Ns rmational
+수준으로 메시지가 기록된다.
+초기값은 ``user.notice.''
+.It Fl t Ar tag 
+.Ar tag
+를 매 줄마다 기록
+.It Ar message
+\fImessage\fR를 기록한다. 만약 이것이 지정되지 않고, 
+.Fl f
+옵션을 사용하지 않으면, 표준 입력에서 기록할 내용을 입력받는다.
+.El
+.Pp
+The
+.Nm logger
+풀그림은 오류 없이 끝나면 0, 오류가 있으면, 0보다 큰 수를 리턴한다.
+.Sh EXAMPLES
+.Bd -literal -offset indent -compact
+logger System rebooted
+
+logger \-p local0.notice \-t HOSTIDM \-f /dev/idmc
+.Ed
+.Sh SEE ALSO
+.Xr syslog 3 ,
+.Xr syslogd 8
+.Sh STANDARDS
+.Nm logger
+명령은 
+.St -p1003.2
+시스템과 호환되고자 한다.
+
+
+
+
+

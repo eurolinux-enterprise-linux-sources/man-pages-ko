@@ -1,0 +1,22 @@
+.TH RUNLEVEL 8 "18 Januari 1995" "" "Linux System Administrator's Manual"
+.SH NAME
+runlevel -- 현재와 이전 시스템 runlevel을 찾는다.
+.SH SYNOPSIS
+.B runlevel
+.SH DESCRIPTION
+.B Runlevel
+명령은 이전 시스템 runlevel과 현재 시스템 runlevel을 표준 출력으로 
+공백 문자로 나누워 보여준다. 만약 이전 시스템 runlevel이 없으면, 
+\fIN\fP을 표시한다.
+.PP
+.B Runlevel
+명령은 System-V의 \fPwho -r\fP 명령을 대신해서 \fIrc\fP 스크립트 
+안에서 사용될 수 있다. 또한, \fBinit\fP의 새로운 버전에서, 
+이 정보들은 \fBRUNLEVEL\fP과 \fBPREVLEVEL\fP 환경변수를 지정하는데, 
+사용되어 질 수 있다.
+.SH OPTIONS
+없음.
+.SH SEE ALSO
+init(8).
+.SH AUTHOR
+Miquel van Smoorenburg, miquels@cistron.nl

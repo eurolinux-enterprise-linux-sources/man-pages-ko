@@ -1,0 +1,52 @@
+.\" This man page is Copyright (C) 1999 Claus Fischer.
+.\" Permission is granted to distribute possibly modified copies
+.\" of this page provided the header is included verbatim,
+.\" and in case of nontrivial modification author and date
+.\" of the modification is added to the header.
+.\" 
+.\" 990620 - page created - aeb@cwi.nl
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH FIFO 4 "20 Jun 1999" "Linux Man Page" "리눅스 프로그래머 매뉴얼" 
+.SH 이름
+fifo \- 명명된 파이프로서, First-In, First-Out 특수 파일임.
+.SH 설명 
+FIFO 특수 파일은, 파일 시스템의 일부로서 액세스된다는
+점을 제외하고는 파이프와 유사하다. 
+FIFO는 읽기 혹은 쓰기 위한 다중 프로세스들에 의해 열려진다. 
+프로세스들이 데이터를 FIFO를 통해 교환할때, 커널은 모든 데이터를 파일 
+시스템에 작성하지 않고, 내부로 전달한다. 
+따라서 FIFO 특수 파일은 파일 시스템에 아무런 내용도 갖고 있지 않고, 프로세스들이 
+파일시스템에서 이름을 사용하여 파이프를 액세스할 수 있도록 파일 시스템 기재 
+사항은 단지 참조 포인트로서 서비스한다. 
+.PP
+커널은 최소 하나의 프로세스에 의해 열리는 개별 FIFO 특수 파일에 대한 하나의 파이프 
+객체를 관리한다. FIFO는 데이터가 패스되기 전에, 읽기와 쓰기의 두가지 목적으로 열려야 한다. 
+보통 다른 FIFO 블록을 연다.
+.PP
+프로세스는 FIFO를  블록킹이 아닌 모드에서 열수 있다. 이 경우, 
+비록 어느 누구도 쓰기 측면에서 열지는 않았지만, 
+오직 읽기를 위해 여는 것은 성공할 것이다.  이미 다른 쪽이 이미 열렸다면, 
+오직 쓰기만을 위해 여는 것은 ENXIO(그러한 장치나 주소 없음)과 함께 실패할 것이다. 
+.PP
+리눅스에서 읽기와 쓰기를 위해 FIFO를 여는 것은 블록킹 모드나, 블록킹이 아닌 모두에서
+가능하다. POSIX는 이를 정의되지 않은 형태로 남겨두었다. 
+
+아무도 읽지 못하는 동안, 이는 쓰기를 위해 FIFO를 여는데 사용될 수 있다. 
+자체 커뮤니케이션을 위해 연결에 두 끝을 사용하는 프로세스는 DEADLOCK을 피하는데 매우 주의해야 한다. 
+.SH 주의
+프로세스가 다른 측면에서 읽기를 위해 열리지 않는 FIFO를 작성하려고 할때, 프로세스는 
+SIGPIPE 시그널이 보내진다.
+
+FIFO 특수 파일들은 .BR mkfifo (3)에 의해 만들어질 수 있고, 특히 .IR "ls -l"에서 보인다. 
+ .
+.SH 관련 항목
+.BR mkfifo (3),
+.BR mkfifo (1),
+.BR pipe (2),
+.BR socketpair (2),
+.BR open (2),
+.BR signal (2),
+.BR sigaction (2)

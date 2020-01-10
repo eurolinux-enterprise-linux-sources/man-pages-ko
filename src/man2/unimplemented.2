@@ -1,0 +1,63 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1995 Michael Chastain (mec@shell.portal.com), 15 April 1995.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Updated, aeb, 980612
+.\"
+.TH UNIMPLEMENTED 2 "1998년 6월 12일" "Linux 2.0" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+afs_syscall, break, ftime, gtty, lock, mpx, phys, prof, profil,
+stty, ulimit \- 수행되지 않는 시스템 콜들
+.SH 사용법
+수행되지 않는 시스템 콜들.
+.SH 설명
+이 시스템 콜들은 리눅스 2.0 커널에서 수행되지 않는다.
+.SH 반환값
+이들 시스템 콜들은 항상 \-1을 반환하며
+.I errno
+는
+.BR ENOSYS 으로
+설정된다.
+.SH 주의
+.IR ftime (3),
+.IR profil (3)
+그리고
+.IR ulimit (3)는
+라이브러리 함수들로 수행된다.
+
+.IR ioperm (2),
+.IR iopl (2),
+.IR ptrace (2)
+그리고
+.IR vm86 (2)와 
+같은 시스템 콜들은 단지 몇몇 아키텍쳐에서만 존재한다.
+.IR ipc (2)
+와
+.IR {create,init,delete}_module (2)
+같은 몇몇 시스템 콜들은 단지 리눅스 커널에서 이 함수들을 지원하도록 
+컴파일되었을때만 존재한다.
+.SH 관련 항목
+.BR obsolete (2),
+.BR undocumented (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 7월 2일

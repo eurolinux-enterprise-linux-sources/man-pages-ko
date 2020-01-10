@@ -1,0 +1,155 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (C) 1996 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Fri Jan 31 16:38:25 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH MMAP 2 "1996년 4월 12일" "리눅스 1.3.86" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+mmap, munmap \- 파일이나 장치를 메모리로 대응시키거나 대응을 푼다.
+.SH 사용법
+.B #include <unistd.h>
+.br
+.B #include <sys/mman.h>
+.sp
+.B #ifdef _POSIX_MAPPED_FILES
+.sp
+.BI "void * mmap(void *" start ", size_t " length ", int " prot
+.BI ", int " flags ", int " fd ", off_t " offset );
+.sp
+.BI "int munmap(void *" start ", size_t " length );
+.sp
+.B #endif
+.SH 설명
+.B mmap
+함수는 
+.IR fd 로 
+지정된 파일(또는 다른 객체)에서 
+.IR offset 을 
+시작으로 
+.I length
+바이트만큼을 
+.I start 
+주소로 대응시키도록 한다.
+이 주소는 단지 그 주소로 했으면 좋겠다는 정도이며, 보통 0으로 지정한다.
+.BR mmap 는 
+지정된 영역이 대응된 실제 시작 위치를 반환한다. 
+.I prot
+인자는 원하는 메모리 보호 모드를 설정한다. 해당 비트는 다음과 같다. 
+.TP 1.1i
+.B PROT_EXEC
+페이지는 실행될 수 있다.
+.TP
+.B PROT_READ
+페이지는 읽을 수 있다.
+.TP
+.B PROT_WRITE
+페이지는 쓰여질 수 있다.
+.TP
+.B PROT_NONE
+페이지는 접근될 수 없다.
+.LP
+.I flags
+인자는 대응된 객체의 타입, 대응 옵션들, 대응된 페이지
+복사본에 대한 수정이 그 프로세스에만 보일 것인지 다른 참조하는 프로세스와 
+공유할 것인지를 설정한다.
+해당 비트들은 다음과 같다.
+.TP 1.1i
+.B MAP_FIXED
+지정된 주소 이외의 다른 주소를 선택하지 않는다.
+지정된 주소가 사용될 수 없다면, 
+.BR mmap 은 
+실패할 것이다.
+만일 MAP_FIXED가 지정되면,
+.IR start 는 
+페이지 크기의 배수이어야 한다. 이 옵션은 사용하지 않는 것이 좋다.
+.TP
+.B MAP_SHARED
+이 객체를 대응시키는 다른 모든 프로세스와 이 대응 영역을 공유한다.
+.TP
+.B MAP_PRIVATE
+개별적인 copy-on-write 대응을 만든다. (다른 프로세스와 대응 영역을 공유하지 않는다.)
+.LP
+MAP_SHARED나 MAP_PRIVATE 중 하나는 반드시 명시해야 한다. 
+.LP
+위 세 플래그는 POSIX.1b에 규정되어 있다.(공식적으로 POSIX.4)
+또한 리눅스에는 MAP_DENYWRITE, MAP_EXECUTABLE 그리고 MAP_ANON(YMOUS)도 
+있다.
+
+.B munmap
+시스템 콜은 지정된 주소 공간에 대한 대응을 푼다. 범위내의 주소에 
+대한 참조 계수를 늘려서 유효하지 않는 메모리 참조로 만든다.
+
+.SH 반환값
+성공시, 
+.BR mmap 은
+대응된 영역의 포인터를 반환한다.
+에러시, MAP_FAILED(\-1)이 리턴되며, 
+.IR errno 는 
+적당한 값으로 설정된다.
+성공시, 
+.BR munmap 은
+0을 리턴하며, 실패시 \-1이 리턴되며, 
+.IR errno 가 
+설정된다 (보통 EINVAL이 설정된다).
+.SH 에러
+.TP
+.B EBADF
+.IR fd 가 
+유효한 파일 기술자가 아니다 (그리고 MAP_ANONYMOUS가 설정되어
+있지 않다).
+.TP
+.B EACCES
+MAP_PRIVATE가 설정되었지만, 
+.IR fd 가 
+읽을 수 있도록 열려있지 않다. 또는 MAP_SHARED와 
+PROT_WRITE가 설정되었지만,
+.IR fd 가 
+쓸 수 있도록 열려있지 않다.
+.TP
+.B EINVAL
+.IR start 나 
+.IR length 나 
+.IR offset 가 
+적당하지 않다 (즉, 너무 크거나 PAGESIZE 경계로 정렬되어 있지 않다).
+.TP
+.B ETXTBUSY
+MAP_DENYWRITE가 설정되었으나
+.IR fd 로 
+지정된 객체가 쓰기 위해 열려있다.
+.TP
+.B EAGAIN
+파일이 잠겨있거나, 너무 많은 메모로가 잠겨있다.
+.TP
+.B ENOMEM
+사용할 수 있는 메모리가 없다.
+.SH 호환
+SVr4, POSIX.1b (formerly POSIX.4), 4.4BSD.  Svr4 문서에는 ENXIO와 
+ENODEV 에러 코드가 추가되있다.
+.SH 관련 항목
+.BR getpagesize (2),
+.BR msync (2),
+.BR shm_open (2),
+B.O. Gallmeister, POSIX.4, O'Reilly, 페이지. 128-129와 389-391.
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 5월 14일

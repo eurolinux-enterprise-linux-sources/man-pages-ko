@@ -1,0 +1,20 @@
+.ID $Id: atrun.8,v 1.1.1.1 2002/07/18 10:40:12 hhyoon Exp $
+.TH ATRUN 8 "1996년 11월" local "리눅스 프로그래머 매뉴얼"
+.SH 이름
+atrun \- 나중에 수행하려고 등록한 작업을 실행한다.
+.SH 사용법
+.B atrun
+.RB [ -l
+.IR load_avg ]
+.RB [ -d ]
+.SH 설명
+.BR atrun "는 " at(1) 으로
+큐에 넣은 작업들을 실행한다.
+이는 
+.I -s
+옵션으로 
+.BR ${exec_prefix}/sbin/atd 를 
+실행하도록 하는 쉘 스크립트이다.
+이전 버전과의 호환성을 위해 존재한다.
+.SH 역자
+임종균 <hermes44@secsm.org>, 2000년 4월 27일

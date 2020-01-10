@@ -1,0 +1,67 @@
+.\" Written by Ralf Baechle (ralf@waldorf-gmbh.de),
+.\" Copyright (c) 1994, 1995 Waldorf GMBH
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX    2000년 7월 26일
+.\"
+.TH CACHEFLUSH 2 "27 June 95" "Linux 2.0.32" "Linux Programmer's Manual"
+.SH 이름
+cacheflush \- 명령이나 데이타 캐쉬의 내용을 플러쉬 한다.
+.SH 사용법
+.nf
+.B #include <asm/cachectl.h>
+.sp
+.BI "int cacheflush(char *" addr ", int "nbytes ", int "cache ");"
+.fi
+.SH 설명
+.B cacheflush
+는 (addr+nbytes-1)까지 주소 범위에서 표시된 캐쉬의 내용을 플러쉬 한다.
+캐쉬는 다음 중 하나이다:
+.TP
+.B ICACHE
+명령 캐쉬를 플러쉬 한다.
+.TP
+.B DCACHE
+메모리에게 응답하고, 영향을 받은 유효한 캐쉬 라인을 무효화 시킨다.
+.TP
+.B BCACHE
+.B (ICACHE|DCACHE).
+와 같다.
+.PP
+.SH 반환값
+.B cacheflush
+는 성공하면 0을 에러시에는 -1을 반환한다. 에러가 발견되면 errno가 에러를 나타낸다.
+.SH 에러
+.TP
+.B EINVAL
+캐쉬 매개 변수가 ICACHE, DCACHE, BCACHE중 하나가 아니다.
+.TP
+.B EFAULT
+주소의 일부나 전체가 (addr+nbytes-1)까지의 범위에 맞지 않는다.
+.PP
+.SH 버그
+현재 결과가 addr와 nbyte 매개 변수를 무시한다. 그래서 항상 모든 캐쉬가 플러쉬된다. 
+.SH 주의
+이 시스템 호출은 MIPS 기반 시스템에서만 사용 가능하다. 이식이 가능하도록 의도된 프로그램에서는 사용하지 않아야 한다.
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29일

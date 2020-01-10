@@ -1,0 +1,92 @@
+.\" Copyright (C) 1999 Joseph Samuel Myers.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one.
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.TH PREAD 2 "1999년 1월 21일" "Linux 2.2.0-pre9" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+pread, pwrite \- 주어진 변위에서 파일 기술자에서 읽거나 파일 기술자에 쓴다.
+.SH 사용법
+.B #define _XOPEN_SOURCE 500
+.sp
+.B #include <unistd.h>
+.sp
+.BI "ssize_t pread(int " fd ", void *" buf ", size_t " count ", off_t " offset );
+.sp
+.BI "ssize_t pwrite(int " fd ", const void *" buf ", size_t " count ", off_t " offset );
+.fi
+.SH 설명
+.B pread()
+는 파일 기술자
+.I fd
+의 변위 
+.I offset
+(파일의 시작에서)
+에서 
+.I count
+바이트를 
+.IR buf 로
+시작하는 버퍼로 읽는다.
+.PP
+.B pwrite()
+는  
+.I buf
+로 시작하는 버퍼를 파일 기술자 
+.I fd
+의 변위
+.IR offset 에다가
+.I count
+바이트를 쓴다.
+파일 변위는 바뀌지 않는다.
+
+
+.PP
+The file referenced by
+.I fd
+가 가리키는 파일은 이동할수 있어야 한다.
+
+.SH 반환값
+성공시, 읽거나 쓴 바이트 수가 반환된다.(\fBpwrite\fR 의 경우 0은 어떤 것도 
+쓰여지지 않았다는 것을 가리키며 \fBpread\fR 의 경우는 파일의 끝을 가리킨다.)
+에러시 \-1이 반환되며 
+.I errno
+는 에러를 가리키도록 설정된다.
+.SH 에러
+.B pread
+는 실패할수 있고 
+.I errno
+를 \fBread\fR(2) 나 \fBlseek\fR(2) 가 가리키는 어떤 에러로 설정할수 있다.
+.B pwrite
+는 실패할수 있고
+.I errno
+를 \fBwrite\fR(2) 나 \fBlseek\fR(2)가 가리키는 어떤 에러로 설정할수 있다.
+.SH 호환
+Unix98
+.SH 역사
+\fBpread\fR 와 \fBpwrite\fR 시스템 콜들은 버전 2.1.60 에서 추가되었다; i386 
+시스템 콜 테이블의 엔트리는 2.1.69 에 추가되었다.
+libc 지원은(시스템 콜 없이 예전 커널의 에뮬레이션을 포함하여) glibc2.1에서 
+추가되었다.
+.SH 관련 항목
+.BR read (2),
+.BR write (2),
+.BR lseek (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 9월 19일

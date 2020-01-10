@@ -1,0 +1,82 @@
+.\" Copyright 1993 Giorgio Ciucci (giorgio@crcc.it)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.TH FTOK 3 "1993년 11월 1일" "리눅스 0.99.13" "리눅스 프로그래머 매뉴얼" 
+.SH 이름
+ftok \- 경로와 프로젝트 식별자를 시스템 V IPC 키 값으로 변환한다.
+.SH 사용법
+.nf
+.B
+# include <sys/types.h>
+.B
+# include <sys/ipc.h>
+.fi
+.sp
+.BI "key_t ftok ( char *" pathname ,
+.BI "char " proj " )"
+.SH 설명
+이 함수는 접근 가능하고 실제로 존재하는 파일의 경로와 
+프로젝트 식별자를
+.B key_t
+타입의 시스템 V IPC 키 값으로 변환한다.
+.SH 반환 값
+성공적인 경우에는 정상적으로 변환된
+.B key_t
+값을, 그렇지 않으면
+.B \-1
+을 반환하고
+.BR stat (2)
+시스템 콜에 관한 에러를 표시하기 위해
+.B errno
+값을 설정한다.
+.SH 버그
+변환 한
+.B key_t
+값은
+.IR pathname 의 
+i-node 번호와 디스크 파일이 위치한 파일 시스템의 
+부(minor) 장치 번호를 얻기 위해
+.IR pathname 에 
+부합하는 디스크 파일의 상태를 저장하고 있다. 따라서 이 값은 
+i-node 번호의 하위 16비트와, 부 장치 번호의 
+8비트 그리고
+.I proj
+값의 8비트를 조합해서 만든다. 그러므로 이 알고리즘은 유일한 키
+값을 보장할 수 없다. 실제로
+.IP \(bu
+같은 파일에 링크된 서로 다른 이름의 파일은 같은 키 값을 생성한다.
+.IP \(bu
+드문 경우이지만, i\-node 번호의 하위 16비트를 사용하기 
+때문에, 서로 다른 i-node를 가지는 파일이 서로 같은 
+키 값을 가지는 경우가 있다.
+.IP \(bu
+드문 경우이지만, 주(major) 장치 번호를 분간할 수 없기 때문에, 
+여러 개의 디스크 제어 장치를 가지는 시스템에서도 역시 이런
+충돌이 일어날 수 있다.
+.SH 관련 항목
+.BR ipc (5),
+.BR msgget (2),
+.BR semget (2),
+.BR shmget (2),
+.BR stat (2).
+.SH 역자
+정동현 <dhjung@serome.co.kr>, 2000년 4월 21일

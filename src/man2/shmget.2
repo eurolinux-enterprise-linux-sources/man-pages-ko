@@ -1,0 +1,284 @@
+.\" Copyright (c) 1993 Luigi P. Bai (lpb@softint.com) July 28, 1993
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\"
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\"
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Wed Jul 28 10:57:35 1993, Rik Faith <faith@cs.unc.edu>
+.\" Modified Sun Nov 28 16:43:30 1993, Rik Faith <faith@cs.unc.edu>
+.\"          with material from Giorgio Ciucci <giorgio@crcc.it>
+.\" Portions Copyright 1993 Giorgio Ciucci <giorgio@crcc.it>
+.\" Modified Tue Oct 22 22:03:17 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.\"
+.\" 한국어 번역: 정강훈 <skyeyes@soback.kornet.net> 2000년 5월 16일
+.\"
+.\" r1.2 2005-02-13 15:53:33 +13-5 윤현호
+.\" r1.1 2004-08-10 21:38:54  xaos
+.\"
+.TH SHMGET 2 "November 28, 1993" "Linux 0.99.11" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+shmget \- 공유 메모리 세그먼트를 할당한다.
+.SH 사용법
+.ad l
+.B #include <sys/ipc.h>
+.sp
+.B #include <sys/shm.h>
+.sp
+.BI "int shmget(key_t " key ", int " size ", int " shmflg );
+.ad b
+.SH 설명
+.B shmget()
+는
+.IR key
+인자값과 관련된 공유 메모리 세그먼트 식별자를 반환한다.
+만일,
+.I key
+가
+.B IPC_PRIVATE
+값을 가지고 있거나 또는
+.I key
+가
+.BR IPC_PRIVATE
+가 아니고,
+.IR key
+와 연계되어 있는 공유메모리 세그먼트가 없다면
+.BR PAGE_SIZE
+의 배수만큼의
+.I size
+를 가지고 있는 새로운 공유 메모리 세그먼트가 만들어진다.
+.B IPC_CREAT
+는
+.I shmflg
+에 명시되어 있다.
+(즉, 
+.IB shmflg & IPC_CREAT
+는 0이 아니다.)
+.PP
+.I shmflg
+의 구성은 다음과 같다:
+.TP 12
+.B IPC_CREAT
+새로운 세그먼트를 만든다. 만일 이 플래그가 사용되지 않는다면,
+.B shmget()
+는 \fIkey\fP와 관련된 세그먼트를 찾을 것이며,
+사용자가 그 세그먼트와 관련된 \fIshmid\fP 를 받을
+허가권이 있는지 알기 위해서 검사한다.
+그리고 세그먼트가 파괴되었다는 표시를 하지 않도록 보장한다.
+.TP
+.B IPC_EXCL
+세그먼트가 존재할경우 실패를 보장하기 위해 \fBIPC_CREAT\fP와 함께
+사용된다.
+.TP
+.B mode_flags (lowest 9 bits)
+소유자, 그룹, 그 외들을 보장하기 위해 허가권을 지정한다.
+현재, 실행 허가권은 시스템에 의해 사용되지 않는다.
+.PP
+새로운 세그먼트가 생성된다면,
+.I shmflg
+의 접근 허가권은
+세그먼트에 정의되어 있는
+.I shmid_ds
+의
+.I shm_perm
+멤버로 복사된다.
+\fIshmid_ds\fP 구조체:
+.PP
+.in +0.5i
+.nf
+struct shmid_ds {
+	struct	ipc_perm shm_perm;	/* 퍼미션 */
+	int	shm_segsz;		/* 세그먼트의 크기(bytes) */
+	time_t	shm_atime;		/* 마지막 접근 시간 */
+	time_t	shm_dtime;		/* 마지막 제거 시간 */
+	time_t	shm_ctime;		/* 마지막 변경 시간 */
+	unsigned short	shm_cpid;	/* 생성자의 pid */
+	unsigned short	shm_lpid;	/* 마지막으로 작동한 프로세스 pid */
+	short	shm_nattch;		/* 현재 접근한 프로세스의 수 */
+};
+.fi
+.in -0.5i
+.PP
+.in +0.5i
+.nf
+struct ipc_perm
+{
+  key_t  key;
+  ushort uid;   /* 소유자의 euid 와 egid */
+  ushort gid;
+  ushort cuid;  /* 생성자의 euid 와 egid */
+  ushort cgid;
+  ushort mode;  /* \fIshmflg\fP의 하위 9비트 */
+  ushort seq;   /* 연속 수(sequence number) */
+};
+.fi
+.PP
+게다가, 생성되는 동안 시스템 콜은 시스템 공유 메모리 세그먼트 데이터 구조
+.B shmid_ds
+를 다음과 같이 초기화한다.
+.IP
+.B shm_perm.cuid
+와
+.B shm_perm.uid
+는 호출 프로세스의 유효 user\-ID로 설정된다.
+.IP
+.B shm_perm.cgid
+와
+.B shm_perm.gid
+는 호출 프로세스의 유효 group\-ID로 설정된다.
+.IP
+.B shm_perm.mode
+의 하위 9비트들은
+.IR shmflg
+의 하위 9비트들로 설정된다.
+.IP
+.B shm_segsz
+는
+.IR size
+값으로 설정된다.
+.IP
+.BR shm_lpid ,
+.BR shm_nattch ,
+.B shm_atime
+그리고
+.B shm_dtime
+는
+.BR 0
+으로 설정된다.
+.IP
+.B shm_ctime
+는 현재 시간으로 설정된다.
+.PP
+만일 공유 메모리 세그먼트가 이미 존재한다면, 접근 허가권이 조사되며,
+파괴도도록 표시되어 있는지 알아보기 위해 검사한다.
+.PP
+.SH "SYSTEM CALLS"
+.TP
+.B fork()
+.B fork()
+후에 자식 프로세스는 연결된 공유 메모리 세그먼트들을 상속한다.
+.TP
+.B exec()
+.B exec()
+후에 연결된 모든 공유 메모리 세그먼트는 분리된다.(파괴되는것이 아니다)
+.TP
+.B exit()
+.B exit()
+시  연결된 모든 공유 메모리 세그먼트는 분리된다.(파괴되는것이 아니다)
+.PP
+.SH 반환값
+성공시 유효한 세그먼트 식별자
+.IR shmid
+가 반환되며, 에러시 \-1이 반환된다.
+.SH 에러
+실패시,
+.B errno
+는 다음중 하나로 설정된다:
+.TP 12
+.B EINVAL
+만일 \fBSHMMIN\fP > \fIsize\fP, 또는
+\fIsize\fP > \fBSHMMAX\fP, 또는 \fIsize\fP이 세그먼트의 크기보다 크다면 이
+에러가 반환된다.
+.TP
+.B EEXIST
+.B IPC_CREAT | IPC_EXCL
+이 지정되어 있고, 세그먼트가 존재하면 이 에러가 반환된다.
+.TP
+.B EIDRM
+세그먼트가 파괴나 제거되도록 표시되어 있다면 이 에러가 반환된다.
+.TP
+.B ENOSPC
+가능한 모든 공유 메모리 id
+.BR "" ( SHMMNI )
+를 가졌거나 요청된
+.I size
+의 세그먼트 할당이 시스템 전체 공유 메모리 제한값
+.BR "" ( SHMALL )
+을 초과할경우 반환된다.
+.TP
+.B ENOENT
+주어진 \fIkey\fP에 해당하는 세그먼트가 존재하지 않고,
+.B IPC_CREAT
+가 지정되지 않았다면 반환된다.
+.TP
+.B EACCES
+사용자가 공유 메모리 세그먼트에 대한 접근 허가권이 없을때 반환된다.
+.TP
+.B ENOMEM
+세그먼트를 위해 할당할 메모리가 없을때 반환된다.
+.SH 주의
+.B IPC_PRIVATE
+는 플레그 필드가 아니라
+.B key_t
+타입이다.
+이 특별한 값이
+.IR key
+에 사용된다면,
+시스템 콜은
+.I shmflg
+의 하위 9비트들외 모든것을 무시한다.
+그리고 새 공유 메모리 세그먼트를 생성(성공시)한다.
+.PP
+다음은
+.B shmget
+시스템 콜에 영향을 주는 공유 메모리 세그먼트 자원들의 제한값들이다:
+.TP 11
+.B SHMALL
+시스템 전체의 공유 메모리 세그먼트 최대 값: 정책 의존적이다.
+.TP
+.B SHMMAX
+공유 메모리 세그먼트의 최대 크기(바이트수): 수행 의존적이다.(현재 4M)
+.TP
+.B SHMMIN
+공유 메모리 세그먼트의 최소 크기(바이트수): 수행 의존적이다.(
+.B PAGE_SIZE
+가 유효한 최소 크기이지만, 현재는 1byte이다.)
+.TP
+.B SHMMNI
+시스템 전체의 공유 메모리 세그먼트 최대 수: 수행 의존적이다(현재 4096)
+.PP
+수행시 프로세스당 공유 메모리 세그먼트의 특별한 제한은 없다.
+.RB ( SHMSEG )
+.SH 버그
+.B IPC_PRIVATE
+를  사용하면 할당된 공유 메모리 세그먼트를 접근하는 다른 프로세스들을 저지하지
+않는다.
+.PP
+파일들 때문에, 프로세스를 위해 공유 메모리 세그먼트에 대한 배타적 접근을
+보장하기 위한 방법이 현재는 없다.
+.I shmflg
+비트에
+.B IPC_CREAT
+와
+.B IPC_EXCL
+의 지정만이 새 공유 메모리 세그먼트 생성을 보장(성공시)한다.
+이것은 세그먼트에 대한 배타적 접근을 나타내는 것은 아니다.
+.SH 호환
+SVr4, SVID.  SVr4 문서는 EEXIST 에러 조건을 추가적으로 기술했다.
+SVr4 와 SVID 문서들은 EIDRM 조건을 기술하지 않았다.
+.SH 관련 항목
+.BR ftok (3),
+.BR ipc (5),
+.BR shmctl (2),
+.BR shmat (2),
+.BR shmdt (2)
+.SH 번역
+정강훈 <skyeyes@soback.kornet.net> 2000년 5월 16일
+.br
+한글 Manpage 프로젝트 (http://man.kldp.org) 2005년 2월 13일

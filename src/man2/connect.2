@@ -1,0 +1,221 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Portions extracted from /usr/include/sys/socket.h, which does not have
+.\" any authorship information in it.  It is probably available under the GPL.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\"
+.\" Other portions are from the 6.9 (Berkeley) 3/10/91 man page:
+.\"
+.\" Copyright (c) 1983 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"     This product includes software developed by the University of
+.\"     California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\" Modified Fri Jan 31 16:22:26 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 1998,1999 by Andi Kleen
+.\" $Id: connect.2,v 1.1.1.1 2002/07/18 10:40:11 hhyoon Exp $
+.\"
+.TH CONNECT 2 "1998년 10월 3일" "Linux 2.2" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+connect \- 소켓 연결을 시작한다.
+.SH 사용법
+.B #include <sys/types.h>
+.br
+.B #include <sys/socket.h>
+.sp
+.BI "int connect(int " sockfd ", const struct sockaddr *" serv_addr ,
+.BI "socklen_t " addrlen ");"
+.SH 설명
+파일 기술자
+.I sockfd
+는 소켓을 가리켜야 한다.
+만일 소켓이 
+.B SOCK_DGRAM
+타입이라면 
+.I serv_addr
+주소는 기본적으로 보낸 데이터그램의 주소이며 받은 데이터그램의 유일한 
+주소이다.  만일 소켓이 
+.B SOCK_STREAM
+나
+.BR SOCK_SEQPACKET 이라면,
+함수는 다른 소켓에 대한 연결을 만든다.
+다른 소켓은 
+.IR serv_addr 에
+의해 명시되며, 이것은 소켓의 통신 공간에 있는 주소(
+.IR addrlen길이 )
+이다.
+각각의 통신 공간들은 자신의 방식대로 
+.I serv_addr
+인자를 해석한다.
+.PP
+일반적으로, 연결 지향 프로토콜 소켓들은 성공적으로 한번에
+.B connect
+한다; 비연결 지향 프로토콜 소켓들은 이것들의 관련사항을 바꾸기 위해
+여러번 
+.B connect
+를 사용 한다.
+비 연결 지향 소켓들은 
+.B sockaddr 
+의 
+.I sa_family
+멤버가 가지고 있는 주소를 
+.BR AF_UNSPEC 으로
+설정하고 연결하여 관련사항들을 없앤다.
+ 
+.SH 반환값
+만일 연결이나 바인딩이 성공한다면, 0이 반환된다.
+에러시, \-1이 반환되며 
+.I errno
+는 적당한 값으로 설정된다.
+.SH 에러
+다음것을은 단지 일반적 소켓 에러들이다. 여기에는 다른 도메인에 의존한 에러들이
+있을수 있다.
+.TP
+.B EBADF
+파일 기술자가 기술자 테이블에 있는 유효한 인덱스가 아니다.
+.TP
+.B EFAULT
+소켓 구조체 주소가 사용자의 주소공간외에 있다.
+.TP
+.B ENOTSOCK
+파일 기술자가 소켓과 관련되어 있지 않다.
+.TP
+.B EISCONN
+소켓이 이미 연결되어 있다.
+.TP
+.B ECONNREFUSED
+원격 주소에 대해 기다리고 있는 것이 하나도 없다.
+.TP
+.B ETIMEDOUT
+연결 시도중 타임아웃이 발생했다. 서버는 너무 busy 상태이어서 새 연결을 
+받아들일수 없다. IP 소켓에서 동기화가 서버에서 가능할경우 매우 오래 
+걸린다는점을 주의해라.
+.TP
+.B ENETUNREACH
+네트워크에 도달할수 없다.
+.TP
+.B EADDRINUSE
+로컬 주소가 이미 사용중이다.
+.TP
+.B EINPROGRESS
+소켓이 비-블럭킹이며 연결이 즉시 완성될수 없다. 
+쓰기를 위해 소켓을 선택하여 연결 완성을 위해서
+.BR select (2) 나
+.BR poll (2) 으로
+가능하다.
+.B select
+가 쓰기가능을 가리킨후,
+.B connect
+이 성공적
+.RB ( SO_ERROR
+는 0이다)으로 끝났는지 아닌지
+.RB ( SO_ERROR
+는 실패에 대한 이유를 설명하면서 여기에서 나열된 보통의 에러조건들중 하나이다.)
+를 결정하기 위해서
+.B SOL_SOCKET
+레벨의
+.B SO_ERROR
+옵션을 읽기위해 
+.BR getsockopt (2) 을
+사용해라.
+.TP
+.B EALREADY
+소켓이 비-블럭킹이고 전 연결 시도가 아직 완전하지 않다.
+.TP
+.B EAGAIN
+사용할수 있는 로컬 포트가 더이상 없거나 라우팅 캐싱에 엔트리가 충분하지 않다.
+.B PF_INET
+시 로컬 포트의 수를 중가시키기 위해서는 
+.BR ip (7)에 
+있는 
+.B net.ipv4.ip_local_port_range
+sysctl을 참고해라.
+.TP
+.B EAFNOSUPPORT
+전달된 주소가 
+.I sa_family
+필드에 있는 정확한 주소 가족을 가지고 있지 않다.
+.TP
+.B EACCES, EPERM
+사용자가 소켓 브로드캐스트 플래그를 가능하게 하지 않고 주소를 브러드캐스트
+주소에 연결할려고 시도 했거나 로컬 방화벽 규칙때문에 연결 요구가 실패했다.
+.SH 호환
+SVr4, 4.4BSD (
+.B connect
+함수는 BSD4.2에서 처음 나타났다.). SVr4는 추가적으로 일반적 에러 조건들
+.BR EADDRNOTAVAIL , 
+.BR EINVAL , 
+.BR EAFNOSUPPORT , 
+.BR EALREADY , 
+.BR EINTR , 
+.BR EPROTOTYPE , 
+그리고
+.BR ENOSR 를 
+문서화 했다.
+여기서 기술하지 않은 많은 추가적 에러 조건들돌 역시 문서화 되었다.
+.SH 주의
+.B connect
+의 세번쩨 인자는 실제로 int이다(그리고 이것은 BSD 4.*와 libc4, libc5가 가지고
+있다.) 몇몇 POSIX에서 혼란은  socklen_t 때문이다.
+표준은 아직 채택되지 않았지만 glibc2는 이미 그것을 따르고 있고 또한
+socklen_t도 가지고 있다. 
+.SH 버그
+.B AF_UNSPEC
+주로로 
+.B connect
+를 호출하여 소켓의 접속을 끝는것은 아직 수행되지 않는다.
+.SH 관련 항목
+.BR accept (2),
+.BR bind (2),
+.BR listen (2),
+.BR socket (2),
+.BR getsockname (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 7월 3일

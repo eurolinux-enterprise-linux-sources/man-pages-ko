@@ -1,0 +1,66 @@
+.\" Written by Michael Haardt, Fri Nov 25 14:51:42 MET 1994
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Added siglongjmp, Sun Mar  2 22:03:05 EST 1997, jrv@vanzandt.mv.com
+.\" Modifications, Sun Feb 26 14:39:45 1995, faith@cs.unc.edu
+.\" "
+.TH LONGJMP 3 "March 2, 1997" "" "Library functions"
+.SH 이름
+longjmp, siglongjmp \- 비-지역에서 스택 문맥(stack context)이 저장된곳으로 점프한다.
+.SH 사용법
+.ad l
+.B #include <setjmp.h>
+.sp
+.nf
+.BI "void longjmp(jmp_buf " env ", int " val );
+.BI "void siglongjmp(sigjmp_buf " env ", int " val );
+.fi
+.ad b
+.SH 설명
+\fBlongjmp()\fP와 \fBsetjmp()\fP는 프로그램의 하위-레벨 루틴에서 만나는 에러와
+인터럽트를 처리할때 유용한다.
+\fBlongjmp()\fP는 \fIenv\fP 인자에 대응하는 곳에  \fBsetjmp()\fP의 마지막 호출시 
+저장된 환경 변수를 복구한다.
+
+\fBlongjmp()\fP가 끝난 후, 프로그램 실행은 \fBsetjmp()\fP에 상응하는 호출이 
+\fIval\fP값으로 반환된 것처럼 계속한다.  \fBlongjmp()\fP는 반환되기 위해 0 으로 할수는
+없다.
+만일 longjmp가 두번째 인자에 0 을 가지고 호출되었다면, 대신에 1이 반환된다.
+.P
+\fBsiglongjmp()\fP는  \fIenv\fP 인자 타입을 제외하고는 \fBlongjmp()\fP와 
+비슷한다. 
+만일 \fBsigsetjmp()\fP가  0 이 아닌 \fIsavesigs\fP 플래그를 사용한  
+\fIenv\fP를 설정하고 호출되었다면,  
+\fBsiglongjmp()\fP는 봉쇄된 신호 집합들을 복구한다.
+.SH 반환값
+이 함수들은 결코 반환되지 않는다.
+.SH 호환
+POSIX
+.SH 주의
+POSIX는 \fBlongjmp\fP가 신호 문맥을 저장하는지에 대해 명확히 하지 않는다. 만일 여러분이 신호 마스크를 저장하고 복구하길 원한다면,  
+\fBsiglongjmp\fP를 사용해라.
+.P
+\fBlongjmp()\fP와 \fBsiglongjmp()\fP는 프로그램을 이해하고 유지하는데 어렵게 만든다. 선택할수 있는 것이 있다면, 그것을 사용해야 한다.
+.SH 관련 항목
+.BR setjmp "(3), " sigsetjmp (3)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 1월 10일

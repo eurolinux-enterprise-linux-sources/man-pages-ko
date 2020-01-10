@@ -1,0 +1,206 @@
+.\" Copyright (c) 1983, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     $Id: send.2,v 1.1.1.1 2002/07/18 10:40:12 hhyoon Exp $
+.\"
+.\" Modified Sat Jul 24 01:15:33 1993 by Rik Faith <faith@cs.unc.edu>
+.\" Modified Tue Oct 22 17:55:49 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified Oct 1998 by Andi Kleen
+.\" 
+.\"
+.\" 한국어 번역 : ASPLINUX    2000년 8월 1일
+.\"
+.TH SEND 2 "July 1999" "Linux Man Page" "Linux Programmer's Manual"
+.SH 이름
+send, sendto, sendmsg \- 소켓으로부터의 메시지를 보낸다.
+.SH 사용법
+.B #include <sys/types.h>
+.br
+.B #include <sys/socket.h>
+.sp
+.BI "int send(int " s ", const void *" msg ", size_t " len ","
+.BI "int " flags );
+.br
+.BI "int sendto(int " s ", const void *" msg ", size_t " len ","
+.BI "int " flags ", const struct sockaddr *" to ", socklen_t " tolen );
+.br
+.BI "int sendmsg(int " s ", const struct msghdr *" msg ","
+.BI "int " flags );
+.SH 설명
+.BR Send ,
+.BR sendto ,
+그리고
+.B sendmsg
+는 다른 소켓으로 메시지를 보내는데 사용된다.
+.B Send
+은 소켓이
+.I connected
+상태에 있을 때 사용된다. 반면 
+.B sendto
+와
+.B sendmsg
+언제든 사용할 수 있다.
+.PP
+목표의 주소는
+.I to
+가 그것의 크기를 정하는
+.I tolen
+과 함께 주어진다. 메시지의 길이는
+.IR len .
+으로 주어진다. 메시지가 너무 길어서 기초적인 프로토콜을 사용해 자동으로 넘어갈 수 없다면, 에러
+.B EMSGSIZE
+가 반환되고, 메시지는 전해지지 않는다.
+.PP
+.BR send .
+에는 전달을 실패할 징후는 없다. 국부적으로 지적되는 에러는 \-1의 반환값에 의해 지적된다.
+.PP
+메시지가 소켓의 send 버퍼에 맞지 않으면,
+.B send
+는 소켓이 non-blocking I/O mode에 있지 않는다면 일반적으로 막는다
+non-blocking mode에서 이런 경우엔,
+.B EAGAIN
+을 반환한다.
+.BR select (2)
+호출은 언제 다음 자료를 보낼지를 결정하는데 쓰인다.
+.PP
+.I flags
+매개 변수는 flagword이고, 아래 flag를 가질 수 있다:
+.\" XXX document MSG_PROXY
+.TP
+.B MSG_OOB
+.I out-of-band
+data를 이 개념을 지원하는 소켓으로 보낸다 (e.g.
+.BR SOCK_STREAM );
+기초 프로토콜은 반드시
+.I out-of-band
+data를 지원한다..
+.TP
+.B MSG_DONTROUTE
+패킷을 전송하는데 게이트웨이를 사용하지 않고, 직접 연결된 네트웍을 통해서 호스트로 보낸다. 이것은 diagnostic 혹은 routing program에 의해서만 사용된다. 이것은 오직 프로토콜군을 위해서만 정의된다; 패킷 소켓은 하지 않는다.
+.TP
+.B MSG_DONTWAIT
+non-blocking operation을 가능케 한다; operation이 막혔을 때
+.B EAGAIN 
+가 반환된다. (이것은 또한
+.B O_NONBLOCK
+을 
+.B F_SETFL
+.BR fcntl(2)
+와 함께 사용하는 것을 가능하게 할 수 있다.)
+.TP
+.B MSG_NOSIGNAL
+다른 한쪽 끝이 연결을 끊었을 때, 소켓으로부터 비롯된 스트림상의 에러에
+.B SIGPIPE 
+을 보내지 않도록 요구한다.
+.B EPIPE
+에러는 여전히 반환된다.
+.PP
+.I msghdr
+구조에 대한 설명을 보려면
+.BR recv (2)
+을 보라.
+.I msg_control 
+와
+.I msg_controllen 
+구성요소를 사용하는 제어 정보를 보낼 수 있다. 커널이 처리할 수 있는 최대 제어 버퍼의 길이는
+.B net.core.optmem_max 
+sysctl에 의해 소켓단위로 제한되어 있다. ;
+.BR socket (7).
+을 보라
+.SH 반환값
+보내진 문자의 수를 반환하거나 에러 발생시 \-1을 반환한다.
+.SH 에러
+이것은 소켓 레이어에 의해 발생되는 몇몇 표준적인 에러다. 추가적인 에러는 기초 프로토콜 모듈로부터 발생되거나 반환된다; 각각의 매뉴얼을 참조하라.
+.TP
+.B EBADF
+실제하지 않는 descriptor가 지정되었다.
+.TP
+.B ENOTSOCK
+독립변수
+.I s
+가 소켓이 아니다.
+.TP
+.B EFAULT
+실제하지 않는 사용자 공간 주소가 매개변수로 지정되었다.
+.TP
+.B EMSGSIZE
+소켓이 메시지를 자동으로 보내줄 것을 요청했지만, 보내진 메시지의 크기가 이것을 불가능하게 하였다.
+.TP
+.BR EAGAIN "혹은 " EWOULDBLOCK
+소켓이 non-blocking을 표시하였고, 요구된 operation이 깨졌다.
+.TP
+.B ENOBUFS
+네트웍 인터페이스를 위한 출력 큐가 가득 찼다.
+이것은 일반적으로 인터페이스가 전송을 멈추는 것으로 나타난다. 하지만 이것은 순간적인 정체로 인한 것이다.
+(이것은 리눅스에서는 일어날 수 없다. 장치 큐가 넘칠 때 패킷은 조용히 중단된다.)
+.TP
+.B EINTR
+신호가 발생했다.
+.TP
+.B ENOMEM
+사용 가능한 메모리가 없다.
+.TP
+.B EINVAL
+실제 사용되지 않는 독립변수가 통과했다. 
+.TP
+.B EPIPE
+소켓으로부터의 연결에서 로컬 앤드가 꺼졌다.
+.B MSG_NOSIGNAL 
+이 설정되어 있지 않을 경우, 프로세스 역시
+.B SIGPIPE 
+를 받는다.
+.SH 호환
+4.4BSD, SVr4, POSIX 1003.1g draft (이 함수는 4.2BSD에 있다).
+.SH 주의
+위에서 주어진 초기치는 Single Unix Specification을 따른다,
+glibc2와 마찬가지이다:
+.I flags
+독립변수는 BSD 4.*에서 `int'이다. 하지만, libc4와 libc5에선 `unsigned int'이다;
+.I len
+독립변수는 BSD 4.*과 libc4에서 `int'이다. 하지만 libc5에선 `size_t'이다;
+.I tolen
+독립변수는 BSD 4.*과 libc4, libc5에서 `int'이다.
+.BR accept (2).
+도 참조하라.
+.SH 관련 항목
+.BR fcntl (2),
+.BR recv (2),
+.BR select (2),
+.BR getsockopt (2),
+.BR sendfile (2),
+.BR socket (2),
+.BR write (2),
+.BR socket (7),
+.BR ip (7),
+.BR tcp (7),
+.BR udp (7)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 8월 1일

@@ -1,0 +1,616 @@
+.\" This file Copyright 1992,93 Michael K. Johnson (johnsonm@stolaf.edu)
+.\" Copyright 1995,1996 Miquel van Smoorenburg <miquels@cistron.nl>
+.\" It may be distributed under the GNU Public License, version 2, or
+.\" any higher version.  See section COPYING of the GNU Public license
+.\" for conditions under which this file may be redistributed.
+.TH MINICOM 1 "1996년 1월 18일" "사용자 설명서"
+.SH 이름
+minicom \- 간편한 시리얼 통신 풀그림
+.SH 사용법
+.B minicom
+.RI "[-somlz] [-c on|off] [-d 전화번호색인] [-a on|off]"
+.br
+.in 15
+.RI "[-t 터미날이름] [-p 장치이름] [" 환경설정파일 ]
+.SH 설명
+.B minicom
+풀그림은 TELIX 풀그림과 비슷하지만, 소스 코드와 함께 
+함께 공개된, 거의 모든 유닉스 시스템에서 실행되는 통신 풀그림이다.
+이 풀그림의 특징은, 전화 자동 걸기 기능과, 시리얼 장치에 대한 
+UUCP-스타일의 잠금 파일(lock file) 제공, 혼자말 기능, 갈무리, 
+다중 사용자를 위한 개별 환경 설정, 기타 여러 가지가 있다.
+.SH 명령행
+.TP 0.5i
+.B -s
+.BR 환경설정.
+이것은 시스템 관리자(root)만이 사용할 수 있는 옵션이다.
+이 옵션이 지정되면, \fBminicom\fR은 초기화 되지 \fI않고\fR,
+곧바로 환경설정 차림표가 나타난다.
+이 옵션은 시스템의 통신 환경이 바뀌거나, 처음으로 
+\fBminicom\fR을 실행시키고자 할 때, 사용된다. 
+대부분의 시스템에서는 그냥 컴파일 될 때의 초기값을 
+사용하는 것으로 충분할 것이다.
+.TP 0.5i
+.B -o
+초기화 하지 않음. 이 옵션은 minicom이 실행될 때, 초기화 
+함수 부분을 생략하게 한다. 이 옵션은 전화를 끊지 않고, 
+잠시 minicom을 종료했을 경우, 다시 그 상태 그대로를 복구 
+하고자 할 때 유용하게 사용된다. 하지만, 이 옵션은 
+lock 파일 검사 같은 것을 하지 않게 되어 제대로 동작 
+되지 않을 수도 있다.
+.TP 0.5i
+.B -m
+명령글쇠(command-key)를 Meta나 Alt 글쇠로 바꾼다.
+minicom의 명령글쇠에 대한 초기값은 Ctrl-A로 되어 있다. 
+이 옵션을 사용하면, 이 명령글쇠를 Meta나 Alt 글쇠로 
+바꿀 수 있다. 
+.TP 0.5i
+.B -M
+-m 옵션과 같으나, Meta나 Alt 글쇠와 함께 입력되는 글쇠의 
+8번째 비트에 지정한다.(128 + 문자 코드 값을 보냄)
+.TP 0.5i
+.B -z
+터미날 상황선을 사용. 이 옵션은 \fItermcap\fP이나, \fIterminfo\fP
+데이타베이스 안의 관계된 정보를 가지고 있는 터미날에서만 작동한다.
+.TP 0.5i
+.B -l
+.B 8비트문자 처리.
+이 옵션은 8비트권 문자에들 대해서 그대로 출력한다.
+이 옵션이 지정되어야 한글이 보여진다.
+.TP 0.5i
+.B -a
+.BR 속성.
+이 옵션은 'on' 또는 'off'의 인자를 갖는다.
+televideo 같은 몇몇 터미날에서는 시시콜콜한 속성 처리를 한다.
+이런 터미날을 사용한다면, 이 옵션의 값을 'off'로 정해주어야 
+한다. 초기값은 'on'이다.
+.TP 0.5i
+.B -t
+.BR 터미날
+형태를 지정해준다. 이옵션의 인자로 지정한 값이 TERM 환경 변수로 
+대치된다. 
+이것은 물론 \fItermcap\fR에 지정되어 있는 터미날 이름을 
+지정해 주어야 한다.
+.TP 0.5i
+.B -c
+.BR 색깔
+사용. 리눅스 콘솔과 같은 몇몇 터미날에서는 표준 ANSI 처리를 
+허용해서, 칼라를 사용할 수 있다. 이런 색깔 사용은 
+termcap에 의존적으로 이루워지기에 (TERM 환경변수의 터미날에서
+색깔 지원 여부에 따르기 때문에) 초기값은 'off'이다. 
+'-c on', '-m' 옵션 같은 경우는 MINICOM 환경변수로 지정해 
+두는 것도 괜찮은 방법이다.
+.TP 0.5i
+.B -d
+.BR 전화걸기
+인자로 주워지는 전화번호로 minicom이 시작하면서 바로 전화를 
+걸어준다. 여기서 사용되는 인자는 전화번호부의 색인번호나,
+전화번호부에 있는 이름이다.
+.TP 0.5i
+.B -p
+.BR P seudo
+터미날 사용.
+초기 환경 설정값으로 지정된 터미날 포트값을 무시하고, 
+지정한 터미날로 연결한다. 여기서 지정되는 값은 
+의사 터미날(pseudo tty, 터미날장치 이름)여야 하며, 
+그 파일 이름은 (/dev/)tty[p-z][0-f] 여야한다.
+.PP
+.RS 0.5i
+.B minicom
+이 시작될 때, 먼저 MINICOM 환경 변수를 찾는다. 
+그리고, 그 값은 minicom의 명령행 옵션으로 대치된다.
+그래서, 다음과 이 했다면,
+.PP
+.RS 0.5i
+.PD 0
+MINICOM='-m -c on'
+.PP
+export MINICOM
+.PP
+.PD 1
+.PP
+.RE
+또는 기타 쉘에서 환경변수를 지정하는 방법으로 지정했다면, 
+minicom은 <Alt> 글쇠를 명령글쇠로 칼라를 사용하는 것으로 
+환경을 지정한다. 이때, 만일 터미날 환경이 바뀌어 
+칼라를 사용하지 말아야 할경우에는 단지 명령행에서 
+'minicom -c off'이라고 입력해 주면 된다.
+.RE
+.TP 0.5i
+.B 환경설정파일
+.I 환경설정파일
+은 보다 재밌다. 보통, minicom은 "minirc.dfl" 라는 파일을 
+읽어 환경을 설정한다. 
+반면, 이 값이 부여되면, "minirc.\fI환경설정파일\fR\|"을 
+읽게 된다.
+그래서, 이 옵션은 여러가지 다양한 환경 설정을 사용할 수있게 해준다.
+다른 포트, 다른 사용자등.. 필요에 따라 적당한 환경 파일을 
+사용하면 된다. 보통 이 이름으로 tty1, tty64, sio2.. 이런식의 
+이름을 사용한다. 만일 사용자 자신의 환경 설정 파일을 만들었다면, 
+그것은 자신의 홈 디렉토리에 '.minirc.dfl' 파일로 저장될 것이다.
+.SH 사용하기
+minicom은 창중심으로 작동된다. 각종 기능들은 하위 창을 호출 하여
+사용하는데, 이런 팝업창(기능창, 하위창)을 열기 위해서는 
+명령글쇠와 나머지 한 글쇠를 누른다. 명령글쇠의 초기값은 Ctrl-A이다.
+이 글에서는 Ctrl-A 표기를 C-A로 표기한다. 
+또한 C-A O에서 이 명령글쇠를 사용자 바꿀 수 있고, 명령행 옵션으로
+Alt글쇠로 바꿀 수 있으나,
+여기서는 C-A로 통일 하겠다.
+C-A 다음에 오는 글쇠는 영문자 A-Z까지인데, 여기서는 대소문자 
+구분은 하지 않는다. minicom의 전체적인 기능을 보려면, 
+C-A Z로 도움말을 호출하면 된다. 
+.PP
+.PD 0
+팝업창에서의 커서를 옮겨가는 방법은: 
+.TP 0.75i
+.B 위로
+윗 화살표 또는 'k'
+.TP 0.75i
+.B 아래로
+아래 화살표 또는 'j'
+.TP 0.75i
+.B 왼쪽
+왼쪽 화살표 또는 'h'
+.TP 0.75i
+.B 오른쪽
+오른쪽 화살표 또는 'l'
+.TP 0.75i
+.B 선택, 적용
+Enter
+.TP 0.75i
+.B 취소
+ESC.
+.PD 1
+.PP
+화면은 두분으로 나뉘는데, 24줄은 터미날 에뮬레이터 화면이며, 
+여기서는 ANSI와 VT100 에뮬레이션을 한다. 마지막 한줄은 
+상황선이다. 만일 화면이 25줄이 되지 못해 마지막 상황선을 
+보여주지 못한다면, C-A 글쇠를 누를 때만 상황선이 나타난다.
+On terminals
+that have a special status line that will be used if the termcap
+information is complete \fIand\fP the \fB-k\fP flag has been given.
+.PP
+.PD 0
+minicom안에서 사용할 수 있는 명령을 알파벳 순으로 나열했다.
+.TP 0.5i
+.B C-A
+명령 글쇠로 다음에 나열되는 단일 문자는 이 명령 글쇠를 먼저 
+친다음 쳐야한다.
+.TP 0.5i
+.B A
+줄바꿈 문자의 처리를 전환한다. 
+이 명령은 일반적으로 터미날에서 계단현상(다음줄의 첫 내용이 
+다음줄 첫칸에 나타나지 않고, 윗줄의 끌나는 부분 바로 아랫칸에 
+나타나는 현상)이 나타날 때 사용한다. 
+구체적으로 말하면, 줄바꿈 문자가 on 상태가 되면, \\r\\n 문자로, 
+off 상태면, \\n 문자로 처리된다.
+.TP 0.5i
+.B B
+지나간 화면 보기. 사용글쇠는 위로 \fBu\fP, 아래로 \fBd\fP, 
+한 화면 위로 \fBb\fP, 한 화면 아래로 \fBf\fP, 이며, 화살표 글쇠가 
+있다면, 화살표 모양 그대로, PageUp, PageDown 글쇠도 그 의미 그대로 
+작동한다.
+.TP 0.5i
+.B C
+화면 지우기.
+.TP 0.5i
+.B D
+전화걸기. 또는 전화걸기 창을 연다.
+.TP 0.5i
+.B E
+자국방향 echo 켬/끔.
+.TP 0.5i
+.B F
+모뎀에 정지 신호를 보낸다.
+.TP 0.5i
+.B G
+혼자말을 실행한다.
+.TP 0.5i
+.B H
+전화끊기.
+.TP 0.5i
+.B I
+Toggle the type of escape sequence that the cursor keys send between
+normal and applications mode. (See also the comment about the status
+line below).
+.TP 0.5i
+.B J
+쉘 나드리를 한다.
+.TP 0.5i
+.B K
+화면을 지우고, kermit을 실행한 뒤, kermit을 종료하면 다시 minicom으로 돌아온다.
+.TP 0.5i
+.B L
+갈무리 기능 켬/끔.
+on 상태이면, 화면에 보여지는 모든 내용이 파일로 저장된다.
+.TP 0.5i
+.B M
+모뎀 초기화 명령을 보냄.
+.TP 0.5i
+.B O
+minicom 환경설정.
+.TP 0.5i
+.B P
+모뎀 상태 설정. 모뎀 속도, 패리티, 비트 등을 바꿀 수 있다.
+.TP 0.5i
+.B Q
+모뎀 재설정 없이(전화를 끊지 않고) minicom을 마친다.
+매크로가 바뀌었다 해도, 저장되지 않는다. 
+.TP 0.5i
+.B R
+파일 받기. (외부 프로토콜을 다양하게 선택할 수 있음)
+.TP 0.5i
+.B S
+파일 보내기
+.TP 0.5i
+.B T
+터미날 에뮬레이터 선택. ANSI와 VT100을 선택할 수 있다.
+대부분의 한글을 지원하는 호스트에 접속해서 한글을 
+제대로 보려면 ANSI로 지정해야 한다.
+.TP 0.5i
+.B W
+한 줄이 화면보다 길경우 자동으로 줄 바꿈을 하는 기능을 켬/끔.
+.TP 0.5i
+.B X
+모뎀을 재설정하고(전화를 끊고) minicom 마침. 
+매크로가 바뀌었다면, 저장되지 않는다.
+.TP 0.5i
+.B Z
+도움말 창을 보여줌.
+.PD 1
+.SH "전화걸기 창"
+C-A D 글쇠를 치면, 전화번호부가 나타난다.
+여기서 전화번호를 추가, 삭제, 편집 할 수 있다. 
+커서를 전화걸기 원하는 곳으로 옮겨놓고, "dial"을 선택하면, 
+전화를 걸 수 있다. 전화를 거는 동안 ESC 글쇠를 누르면, 
+전화 걸기를 취소한다. 다른 글쇠를 누르면, 전화걸기 창은 닫기지만, 
+전화걸기는 계속된다. 전화번호부는 ".dialdir" 파일로 홈 디렉토리에
+저장된다. 전화번호부에서의 커서 이동은 화살표 글쇠로도 할 수 있다. 
+또한 PageUp, PageDown 글쇠도 사용할 수 있으며, 
+이 글쇠가 없는 경우에는 Ctrl-B, Ctrl-F로 각각 위 아래로 이동할 
+수 있다. 사이띄우게로 전화를 걸 전화번호를 선택할 수 있는데, 
+이렇게 선택된 전화번호는 만일 통화중일 경우 선택된 전화번호 중에 
+번갈아가며, 전화를 걸어준다. 
+.PP
+"edit"는 말 그대로, 전화번호를 편집하는 것으로 간단히 설명하면,
+.PD 0
+.TP 1.0i
+.B A - Name
+전화번호의 이름.
+.TP 1.0i
+.B B - Number
+전화번호
+.TP 1.0i
+.B C - Dial string #
+접속을 위한 특별한 번호를 지정한다. 
+여기에는 3가지 종류가 있는데, 자세한 이야기는 \fB모뎀과 전화걸기\fR
+부분에서 다룬다.
+.TP 1.0i
+.B D - Local echo
+자국방향 echo 기능을 켤것인, 끌 것인지 지정.
+.TP 1.0i
+.B E - Script 
+전화 걸기가 성공했을 때, 실행할 혼자말을 지정한다.
+(자세한 이야기는 \fBrunscript\fR 맨페이지를 참조)
+.TP 1.0i
+.B F - Username
+runscript 풀그림의 "$LOGIN" 변수로 사용할 사용자 이름을 
+지정한다.
+.TP 1.0i
+.B G - Password
+"$PASS" 변수로 사용할 비밀번호.
+.TP 1.0i
+.B H - Terminal Emulation
+ANSI 또는 VT100 선택.
+.TP 1.0i
+.B I - Backspace key sends
+Backspace, Delete 코드값 지정.
+.TP 1.0i
+.B J - Line settings
+모뎀 상태를 지정한다. 속도, 패리티, 비트.
+초기값은 현재 모뎀 상태이다.
+이것은 모뎀이 여러개 있을 때 유용하게 쓰인다.
+.PD 1
+.PP
+.SH 환경설정
+C-A O를 치면, minicom의 환경설정을 할 수 있다. 
+여기서는 minicom의 거의 모든 환경을 사용자 별로 바꿀 수 있다.
+물론 시스템 관리자만 바꿀 수 있는 것도 있다.
+이런 것은 * 표로 표시해 두었다.
+.PP
+.PD 0
+.B "Filenames and paths"
+.PP
+.RS 0.25i
+여기 있는 항목들은 시스템의 초기값으로 지정되어 있다.
+.TP 0.5i
+.B A - upload
+자료 업로드 경로.
+.TP 0.5i
+.B B - download
+다운로드 경로.
+.TP 0.5i
+.B C - script
+혼자말 파일이 있는 경로
+.TP 0.5i
+.B D - Script program
+혼자말 파일을 실행시킬 풀그림. 
+초기값은 "runscript"이다. 물론, 자신이 사용하기 좋은 
+다른 것으로 바꾸어도 된다.(예, /bin/sh 또는 "expect")
+stdin, stdout은 모뎀에 연결되고, stderr는 화면에 연결될 
+수 있는 것이면 가능하다.
+.RS 0.5i
+혼자말을 실행시킬 풀그림은 절대 경로(/로 시작하는 경로)로 
+지정되어야 하며, 나머지는 상대 경로로(홈 디렉토리에 대한) 
+지정되어도 된다.
+.RE
+.TP 0.5i
+.B E - Kermit program
+kermit의 경로 지정. 이때 '%l'은 파일이름으로, '%b' baudrate로 
+대치된다.
+.RE
+.RE
+.PD 1
+.PP
+.B "File Transfer Protocols"
+.PD 0
+.PP
+.RS 0.25i
+여기서 정의되는 프로토콜을 C-A s/r 글쇠를 눌러 
+파일 업/다운로드를 할 때 사용된다.
+"Name"은 프로토콜을 지정할 때 보여지는 이름이며, 
+"Program"은 프로토콜의 경로와 파일 이름이며, 
+"Up/Down"은 그 프로토콜이 어디 쓰일 것인지,
+"Fullscr"은 그 프로토콜이 실행될 때 화면 전체를 
+사용할 것인지, 아니면, stderr로 minicom의 창을 
+사용할 것인지를 지정하며, 
+"IO-Red"는 minicom이 그 프로토콜의 표준 입출력을 
+모뎀 포트에서 분리할 것인지, 말것인지를 지정한다.
+옛날 sz, rz는 전체 화면이 아니며, IO-Red는 Yes이다.
+반면 curses 기반의 최신 rz는 stdin, stdout의 방향전환이 
+필요없으며, 전체 화면을 사용한다.
+모든 프로토콜은 그 사용자의 UID를 가지며, 
+UID=root로는 사용되지 않는다. '%l', '%b'는 kermit에서 
+사용하는 것과 같이 사용된다.
+.RE
+.PD 1
+.PP
+.B "Serial port setup"
+.RS 0.25i
+.PD 0
+.TP 0.5i
+.B *A - Serial device
+/dev/tty1 대부분의 경우.
+/dev/cua<n> 또는 /dev/modem 리눅스 경우.
+.TP 0.5i
+.B *B - Lock file location
+대부분의 시스템에서는 /usr/spool/uucp이다. 리눅스의 경우는 
+/var/lock 경로를 사용한다. 이 경로가 없다면, minicom에서는 
+잠금파일(lockfile)을 사용하지 못한다.
+.TP 0.5i
+.B *C - Callin program
+uugetty나 시리얼 포트에 뭔가가 있다면, 
+mode 응답신호를 dialin/dialout 모드로 바꾸기 위해 
+실행할 풀그림이 필요하다. 이때, dialin 모드를 
+전환할 풀그림을 여기서 지정한다. 
+.TP 0.5i
+.B *D - Callout program
+dialout 모드로 전환할 풀그림을 지정.
+.TP 0.5i
+.B E - Baud/Par/Bits
+minicom이 실행될 때의 모뎀 상태를 지정.
+.PD 1
+.PP  
+왼쪽 입력 부분이 비어 있다면, 그것은 사용하지 않음을 뜻한다.
+그래서, 잠금기능이나, dialin/out 기능들을 사용하지 않으려면, 
+그냥 비워두면 된다. 여기서 주의할 것은 
+callin, callout 풀그림들은 "root" ID로만 실행된다. 
+.RE
+.PP
+.B "Modem and Dialing"
+.PD 0
+.PP
+.RS 0.25i
+이 부분은 사용자 모뎀의 개별적인 환경설정을 하는 부분이다. 
+이 부분에 대해서는 자세하게 설명할 수가 없다. 
+왜냐하면, 사용자의 모뎀을 가장 잘 아는 사람은 사용자 
+자신이기 때문이다. 자세한 것은 각 모뎀의 설명서를 참조하기 
+바란다. 여기서 주의할 점은 제어 문자의 제어 코드(C에서 \\)는
+'^'로 표현된다. '^^'는 '^' 문자 자체를 뜻한다. 참고로 
+초기값으로 지정된 값은 일반 Hayes 호환 모뎀을 대상으로 
+지정된다.(만든이가 Hayes 모뎀을 하기에. :-))
+.PP
+.TP 0.5i
+.B M - Dial time
+전화 걸기 시간
+.TP 0.5i
+.B N - Delay before redial
+통화중일 때 다시 걸기 하기전에 기다리는 시간.
+.TP 0.5i
+.B O - Number of tries
+통화중일 다시 걸 최대 횟수.
+.TP 0.5i
+.B P - Autobaud detect
+이것이 on 되면, 접속 상태의 호스트쪽 속도로 자동으로 
+일치시킨다.
+.TP 0.5i
+.B Q - Drop DTR to hangup
+일반적으로 minicom에서의 전화끊기는 Hayes 모뎀에서 
+사용하는 끊기 과정을 (+++ATH0) 사용한다. 하지만, 
+사용하는 모뎀이 DTR 라인을 지원한다면, 이 DTR라인을 끊음으로 
+전화 끊기를 할 수 있다.
+.TP 0.5i
+.B R - Modem has DCD line
+모뎀과 시스템이 DCD 라인을 지원하다면, minicom에서 
+그것을 사용한다. 
+.PD 1
+.PP
+.RE
+.RS 0.5i
+.B 위에서 * 표로 나타나는 부분에 대해서는 비록 모든 사용자가 
+.B 필요에 따라 바꿀 수는 있지만, 저장되지는 않는다.
+.RE
+.PP
+.B "Screen and keyboard"
+.RS 0.25i
+.PD 0
+.TP 0.5i
+.B A - Command key is
+명령 글쇠 지정. 'ALT'나 'meta key'로 지정되면, 
+그 글쇠 자체로 명령글쇠 기능을 한다.
+.TP 0.5i
+.B B - Backspace key sends
+아직도 몇몇 VT100 터미날에서는 BS 대신 DEL 코드를 보내야 하는 
+것이 있다. 이런 경우에 지정해 준다. 
+(물론 대부분 초기값을 사용하면 될 것이다.)
+.TP 0.5i
+.B C - Status line is
+상황선을 보일 것인지 말것인지를 지정한다.
+몇몇 터미날에서는 이 상황선 자체가 스크롤 되는 경우가 
+발생하는데, 이때는 보이지 않게 해 두는 것이 좋다. 
+.TP 0.5i
+.B D - Alarm sound
+소리를 낼 것인지를 지정한다. 소리는 연결이 되었을 때, 
+자료 송/수신이 끝났을 때 난다.
+.TP 0.5i
+.B E - Foreground Color (menu)
+팝업 창들의 전경색 지정.
+.TP 0.5i
+.B F - Background Color (menu)
+팝업 창들의 배경색 지정.
+.TP 0.5i
+.B G - Foreground Color (term)
+터미날 창의 전경색 지정.
+.TP 0.5i
+.B H - Background Color (term)
+터미날 창의 배경색 지정.
+.TP 0.5i
+.B I - Foreground Color (stat)
+상황선의 전경색 지정.
+.TP 0.5i
+.B J - Background Color (stat)
+상황선의 배경색 지정.
+.TP 0.5i
+.B K - History buffer size
+지나간 화면을 저장할 버퍼의 크기
+.TP 0.5i
+.B L - Macros file
+매크로 정의되어 있는 파일의 경로와 파일 이름.
+이때의 경로는 절대경로를 지정한다.
+minicom에서는 F1-F10의 각각 256 문자의 매크로를 정의할 수 있다. 
+파일이름의 지정은 파일이름을 입력하고 Enter를 누르는 순간 
+그 매크로들이 지정된다. 그 지정한 파일을 만들 권한이 없으면, 
+오류 메시지를 보여주며, 다시 입력할 것을 요구한다. 
+그리고 바르게 입력되면 그파일이 있는지 확인하고, 있으면, 
+그 파일을 불러오고 없으면, 새로 만든다.
+.TP 0.5i
+.B M - Edit Macros
+매크로 정의 창을 만든다.
+참고로 매크로 정의부분에서는 한글입력이 되지 않는다. 
+.TP 0.5i
+.B N - Macros enabled
+매크로를 사용할 것인지를 지정한다. 
+No로 지정되면, VT100/VT220 기능 글쇠 코드값을 보낸다.
+.RE
+.PD 1
+.TP 0.25i
+.B "Edit Macros"
+이부분에서는 F1부터 F10 글쇠들에 대한 매크로를 정의할 수 있다. 
+이 창의 아래부분에는 각종 특별한 의미를 지니는 글쇠들의 
+표현 방법을 설명하고 있다. 제어 문자는 '^'로 표현하며, 
+'^^' 표시는 '^'문자 자체를 의미한다. '^~' 기호로 
+1초간의 지연(delay)을 둘 수도 있다. 이 매크로는 
+ftp, telnet의 로그인, 기타 여러가지 단순 작업에 유용하게 
+쓰일 것이다. 각 매크로의 지정은 Enter로 끝나며, 
+입력 상태에서는 왼쪽, 오른쪽 화살표와 Home, End, Delete, BackSpace
+편집 글쇠를 사용할 수 있다. 취소는 ESC 글쇠이다.
+.RE
+.PD 1
+.TP 0.25i
+.B "Save setup as dfl"
+초기 환경파일인 .dfl 파일로 저장한다.
+.TP 0.25i
+.B "Save setup as.."
+이것은 .minirc.????의 ????부분을 지정해서 저장하는 것이다. 
+이것은 minicom을 실행에서 'minicom ????' 이렇게 특정 환경으로 
+실행하고 할 때 사용된다. 이 저장 방법은 root만 사용할 수 있다.
+.TP 0.25i
+.B "Exit"
+각종 환경들을 저장 없이 마친다. ESC 글쇠와 같은 역활을 한다.
+.TP 0.25i
+.B "Exit from minicom"
+root만이 'minicom -s' 명령으로 실행했을 때 보이는 항목이다. 
+이것은 환경 설정만 하고 minicom을 마친다.
+.PD 1
+.SH "상황선"
+상황선은 다양한 정보를 보여주는데, 
+대부분 그 글자 그대로의 의미를 뜻한다. 
+APP, CUR 같은 설명이 필요한 부분도 있지만.
+VT100 커서 글쇠는 두가지 모드가 있을 수 있다. 
+하나는 application 모드이고, 다른 하나는 cursor 모드이다. 
+escape sequence 처리 방법에 따라 구분되는 것인데, 
+가령, minicom 실행중에 j 명령으로 쉘로 나가서, 
+vi를 실행시켰을 경우, ESC 글쇠가 제대로 동작하지 않을 경우가 
+있다. 이때, 커서 글쇠 모드를 바꾸어 준다. 
+구체적으로 말할 수 없는 것은 각각의 터미날 환경마다 
+다 다르기 때문에, 이렇게만 설명하겠다.
+.PD 1
+.SH "보안 문제"
+minicom을 실행할 때, 특정 사용자가 특정 환경을 사용하는 금지할 필요가 
+있는데, 이때, "minicom.users" 파일로 그 지정이 가능하다. 
+이 파일의 문법은 다음과 같다.
+.PP
+.RS 0.5i
+<사용자ID> <환경파일> [환경파일...]
+.RE
+.PP
+'miquels'라는 사용자는 초기값 환경 설정말 사용할 수 있게 하려면, 
+다음과 같이 입력한다.
+.PP
+.RS 0.5i
+miquels dfl
+.RE
+.PP
+또한 그 외의 환경 파일들도 사용할 수 있게 하려면, 
+환경 파일의 이름 뒤에 계속 덧 붙혀 주면 된다.
+한 사용자가 모든 환경 파일을 사용할 수 있게 하려면, 
+단지 그 사용자의 ID만 적어 주고 뒷부분은 생략한다.
+.PD 1
+.SH 기타
+minicom이 먹통이 되었을 경우에는 SIGTERM 시그날로 종료한다. 
+이것은 kill -15, 또는 그냥 "kill <minicompid>"로 종료시키는 것을
+의미한다. 이렇게 종료하는 것이 가장 안전하며, 이렇게 
+마칠때는 모든 것을 재설정하면서 끝낸다. 
+PP
+현재의 minicom은 갑자기 너무 많은 ESC 문자 처리(ESC [)를 해야할 
+경우에는 제대로 하지 못하는 경우가 발생하기도 한다.
+.PP
+이부분의 문제는 리눅스 시스템 자체의 ESC 문자 처리에 
+있기 때문에 해킹을 해 보던지, 그대로, 사용하다 시스템 차원에서 
+이문제가 해결 되기를 기다리는 것이 가장 좋은 방법인것 같다. :-)
+.SH 관련파일
+minicom에는 각종 환경 파일들이 있는데, 대게, 
+/var/lib/minicom, /usr/local/etc, /etc 경로 안에 
+있게 된다. 
+이 경로의 초기값은 컴파일 될 때 지정된다.
+그리고, \fIminicom -h\fP 명령으로 그 값을 확인 할 수 있다.
+또한 \fBrunscript\fP(1) 에서 사용할 수 있는 각종 데모 파일들을 
+그 경로 안에서 볼 수도 있을 것이다.
+.sp 1
+.nf
+minicom.users
+minirc.*
+$HOME/.minirc.*
+$HOME/.dialdir
+.fi
+.SH 버전
+이 문서는 minicom 버전 1.71을 대상으로 쓰여졌다.
+.SH 만든이
+Miquel van Smoorenburg (miquels@drinkel.ow.org, miquels@cistron.nl)가 
+만들었다. 
+.PP
+이 매뉴얼 페이지는 minicom의 README 파일의 내용을 
+그대로 인용했으나, Michael K. Johnson(johnsonm@stolaf.edu)에
+의해서 몇몇 부분이 바뀌었다.
+.PP
+한글부분 이야기는 제가(teodeul@chollian.dacom.co.kr) 추가했습니다.

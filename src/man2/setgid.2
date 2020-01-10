@@ -1,0 +1,80 @@
+.\" Copyright (C), 1994, Graeme W. Wilford. (Wilf.)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Fri Jul 29th 12:56:44 BST 1994  Wilf. <G.Wilford@ee.surrey.ac.uk> 
+.\" Modified Fri Jan 31 17:06:56 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.TH SETGID 2 "1994년 7월 29일" "리눅스 1.1.36" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+setgid \- 그룹 식별자(identity)를 설정한다.
+
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.BI "int setgid(gid_t " gid )
+.SH 설명
+.BR setgid 는 
+현재 프로세스의 유효 그룹 ID를 설정한다. 만일 호출한 프로세스가 슈퍼유저라면,
+실제 그룹 ID와 저장된(saved) 그룹 ID도 역시 설정된다.
+
+리눅스에서, 
+.BR setgid 는 
+_POSIX_SAVED_IDS 특징를 갖는 POSIX 버전에 맞게 구현된다.
+이는 (루트 이외) setgid 프로그램이 해당 그룹의 권한 모두를 버리고,
+특권없는 작업을 수행한 뒤, 안전한 방법으로 다시 원래의
+유효 그룹 ID로 돌아오도록한다.
+
+만일 사용자가 루트이거나 프로그램이 setgid 루트라면, 각별한 주의가
+필요하다.
+.B setgid
+함수는 호출한 프로세스의 유효 gid를 검사하여 만일 슈퍼유저라면 해당 
+그룹 ID의 모든 프로세스를 
+.IR gid 로 
+설정한다. 이후 프로그램은 다시 루트 권한을 얻는 것은 불가능하다.
+.PP
+그래서, 일시적으로 루트 권한을 버리고, 루트가 아닌 그룹의 권한을 갖고 
+수행된 후 다시 루트 권한을 회복하려하는 setgid-root 프로그램은 
+.BR setgid 를 
+사용할 수 없다.
+이렇게 하기 위해서는 (non-POSIX, BSD)
+.BR setegid 를 
+사용할 수 있다.
+
+.SH 반환값
+성공시, 0이 리턴된다. 에러이면, \-1이 리턴되며, 
+.IR errno 는 
+적당한 값으로 설정된다.
+.SH 에러
+.TP
+.B EPERM
+사용자가 슈퍼 유저가 아니며, 
+.IR uid 가 
+호출한 프로세스의 유효 또는 저장된 사용자 ID와 일치하지 않는다.
+
+.SH 호환
+SVr4, SVID.
+.SH 관련 항목
+.BR getgid (2),
+.BR setregid (2),
+.BR setegid (2)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 4월 30일

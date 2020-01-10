@@ -1,0 +1,162 @@
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.\" Changes from sct@dcs.ed.ac.uk added Sat Oct  9 09:54:00 1993.
+.\"
+.\" Korean manpage ChangeLog
+.\" original manpage from util-linux-2.11z package
+.\" 
+.\" r1.2 2004-03-30 11:39:26 +17-12      윤현호
+.\" r1.1 2004-03-11 13:15:31             WkPark 	
+.\"
+.TH RDEV 8 "1993년 11월 20일" "Linux 0.99" "Linux Programmer's Manual"
+.SH 이름
+rdev \- 이미지 root 장치, RAM 디스크 크기, 비디오 모드 등을 조사/설정한다.
+.SH 사용법
+.nf
+.BR "rdev [ \-rsvh ] [ \-o " offset " ] [ " image " [ " value " [ " offset " ] ] ]"
+.BR "rdev [ \-o " offset " ] [ " image " [ " root_device " [ " offset " ] ] ]"
+.BR "swapdev [ \-o " offset " ] [ " image " [ " swap_device " [ " offset " ] ] ]"
+.BR "ramsize [ \-o " offset " ] [ " image " [ " size " [ " offset " ] ] ]"
+.BR "vidmode [ \-o " offset " ] [ " image " [ " mode " [ " offset " ] ] ]"
+.BR "rootflags [ \-o " offset " ] [ " image " [ " flags " [ " offset " ] ] ]"
+.fi
+.SH 설명
+.\" " for emacs hilit19
+단독으로
+.B rdev
+명령을 내리면
+.I /etc/mtab
+파일에서 root 파일 시스템 부분을 찾아 그 정보를 보여준다.
+단독으로
+.BR swapdev ", " ramsize ", " vidmode ", " rootflags
+명령을 내리면 그 사용법을 보여주고 마친다.
+리눅스 커널을 위한 부트 이미지 안에는 root 장치, 비디오 모드,
+RAM 디스크 크기를 지정하는 여러 개의 2 바이트가 있다.
+초기값으로 이 바이트들은 아래와 같이
+커널 이미지 안의 504(십진수) 옵셋(offset)에서 시작한다.
+
+.nf
+.RS
+ 498 Root flags
+(500 and 502 Reserved)
+ 504 RAM 디스크 크기
+ 506 VGA 모드
+ 508 Root 장치
+(510 Boot Signature)
+.RE
+.fi
+.B rdev
+명령으로 이들 값을 바꿀 수가 있다.
+
+.I image
+인자는 리눅스 커널 이미지를 말하는데, 이것은 일반적으로
+다음중 하나다.
+
+.nf
+.RS
+/vmlinux
+/vmlinux.test
+/vmunix
+/vmunix.test
+/dev/fd0
+/dev/fd1
+.RE
+.fi
+
+.BR rdev " 나 " swapdev
+명령을 사용할 때,
+.IR root_device " 나 " swap_device
+인자 값으로 사용될 수 있는 장치는 일반적으로 다음과 같다:
+
+.nf
+.RS
+/dev/hda[1-8]
+/dev/hdb[1-8]
+/dev/sda[1-8]
+/dev/sdb[1-8]
+.RE
+.fi
+
+.B ramsize
+명령에서 사용되는
+.B size
+인자 값은 RAM 디스크의 KB 단위의 크기이다.
+
+.B rootflags
+명령에서 사용되는
+.B flags
+인자 값은 root파일 시스템을 마운트 할 때 추가적인 정보를
+담고있는 값이다. 일반적으로
+.B flags
+값이 0이 아니라면 이 값은 커널이 root 파일 시스템을 읽기 전용으로
+마운트하도록 한다.
+
+.B vidmode
+명령에서 사용되는
+.B mode
+인자 값은 다음과 같은 비디오 모드를 지정한다:
+
+.nf
+.RS
+-3 = Prompt
+-2 = Extended VGA
+-1 = Normal VGA
+ 0 = as if "0" was pressed at the prompt
+ 1 = as if "1" was pressed at the prompt
+ 2 = as if "2" was pressed at the prompt
+ n = as if "n" was pressed at the prompt
+.RE
+.fi
+
+.I value
+인자 값이 지정되지 않으면,
+.I image
+인자 값은 단지 현재 설정을 알기 위해 쓰인다.
+.SH 옵션
+.TP
+.B \-s
+.B rdev
+명령을
+.BR swapdev
+명령으로 사용한다.
+.TP
+.B \-r
+.B rdev
+명령을
+.BR ramsize
+명령으로 사용한다.
+.TP
+.B \-R
+.B rdev
+명령을
+.BR rootflags
+명령으로 사용한다.
+.TP
+.B \-v
+.B rdev
+명령을
+.BR vidmode
+명령으로 사용한다.
+.TP
+.B \-h
+도움말을 보여주고 마친다.
+.SH 버그
+리눅스 환경이 많이 바뀌었기 때문에
+이들 값을 지정하는 방법에는 두가지가 있다.
+.sp
+사용자 인터페이스가 직관적인 형태로 바뀌어가고 있는 상황에서
+한줄의 명령행으로 커널 이미지의 설정값들을 바꾸는 것도 바뀌어가야
+할 것이다.
+.sp
+LILO를 사용한다면, VGA 모드와 root 장치 설정을 하는데에 더이상
+\fBrdev\fR가 필요 없을 것이다. 하지만, RAM 디스크 크기를 지정하는데는
+아직도 이 명령이 필요하다. LILO에 대한 설명은 그 관련 문서를 읽어 보기
+바란다.
+.SH 저자
+.nf
+Werner Almesberger (almesber@nessie.cs.id.ethz.ch)가 처음 만들었으며,
+Peter MacDonald (pmacdona@sanjuan.UVic.CA)가 수정했고,
+Stephen Tweedie (sct@dcs.ed.ac.uk) rootflag 부분을 추가했다.
+.fi
+.SH 번역
+한글 Manpage 프로젝트 (http://man.kldp.org) 2004년 3월 30일

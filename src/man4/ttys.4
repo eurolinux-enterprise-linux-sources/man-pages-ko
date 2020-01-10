@@ -1,0 +1,50 @@
+.\" Copyright (c) 1993 Michael Haardt (michael@moria.de), Fri Apr  2 11:32:09 MET DST 1993
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified Sat Jul 24 17:03:24 1993 by Rik Faith (faith@cs.unc.edu)
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH TTYS 4 "19 December 1992" "Linux" "Linux Programmer's Manual"
+.SH 이름
+ttys \- 시리얼 터미날 라인들
+.SH 설명
+\fBttyS[0-3]\fP은 시리얼 문자 터미널 행들에 대한 문자 디바이스이다. 
+.LP
+문자 디바이스들은 일반적으로 다음에 의해 만들어진다.
+.RS
+.sp
+mknod -m 660 /dev/ttyS0 c 4 64 # base address 0x03f8
+.br
+mknod -m 660 /dev/ttyS1 c 4 65 # base address 0x02f8
+.br
+mknod -m 660 /dev/ttyS2 c 4 66 # base address 0x03e8
+.br
+mknod -m 660 /dev/ttyS3 c 4 67 # base address 0x02e8
+.br
+chown root:tty /dev/ttyS[0-3]
+.sp
+.RE
+.SH 파일
+/dev/ttyS[0-3]
+.SH 관련 항목
+.BR mknod "(1), " chown "(1), " getty "(1), " tty (4)

@@ -1,0 +1,38 @@
+.\" Copyright (c) 1995 Peter Tobias <tobias@et-inf.fho-emden.de>
+.\" This file may be distributed under the GNU General Public License.
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH HOSTS.EQUIV 5 "29 Jan 1995" "Linux" "Linux Programmer's Manual"
+.SH 이름
+/etc/hosts.equiv \- "신뢰 할 수 있다"고 인정된 호스트와 유저들의 리스트
+\fBr\fP 명령어로 시스템에 접근할 수 있다.
+.SH 설명
+\fBhosts.equiv\fP 파일은 fBr\fP-명령어(e.g. \fBrlogin\fP, \fBrsh\fP
+or \fBrcp\fP)를 패스워드 없이 유저나 호스트가 사용하게 허가하거나 혹은 거부한다. 
+.PP
+이 파일은 아래와 같은 형식을 가지고 있다:
+.TP
+\fI[ + | - ]\fP \fI[hostname]\fP \fI[username]\fP
+.PP
+\fIhostname\fP은 로컬 호스트와 논리적으로 동등한 호스트의 이름이다. 
+그 호스트에 접속한 사용자는 패스워드 없이 로컬 호스트에 있는 동명의 사용자 계정에 접근 할 수 있다.
+\fIhostname\fP 앞에 (+) 표시가 올 수도 있다.
++표시 하나만 있으면 시스템에 어떤 호스트라도 접근할 수 있다는 뜻이다.
+\fIhostname\fP 앞에 (-) 표시를 붙임으로써 호스트에 접근하는 걸 거부할 수 있다. 
+그 호스트에서 접속하는 사용자들은 항상 비밀번호를 입력해야만 한다. 
+보안을 위해 짧은 호스트 이름 대신, 항상 호스트 이름의 FQDN을 사용하라
+.PP
+\fIusername\fP 등록은 특별한 사용자가 패스워드 없이 루트를 제외한 다른 사용자들의 계정에 접근할 수 있도록 한다. 그것은 사용자가 동명의 계정에만 제한되지 않는 것을 뜻한다. \fIusername\fP 앞에 (+)표시를 붙일 수 있다. (-)표시를 붙임으로써
+특정 사용자의 접근을 거부 할 수도 있다.
+.PP
+Netgroup은 @ 표시를 함으로써 표시할 수 있다.
+.PP
+(+)표시를 할 때는 극히 주의하라.Be extremely careful when using the plus (+) sign. 단순한 실수로 (+)표시 하나만 할 수도 있다.(+)표시 하나만 하는 것은 모든 것을 할 수 있다는 뜻이다.
+.PP
+.SH 파일
+/etc/hosts.equiv
+.SH 주의
+오너가 루트를 가지고 있고, 다른 사용자들에게는 쓰기를 허용하지 않았을 때, 어떤 시스템에선 운영자 많이 이 파일에 접근할 수 있다. 몇몇 예외적인 시스템은 파일에 누구도 접근하지 못하게 하는 경우도 있다
+.SH 관련 항목
+.BR rhosts "(5), " rshd "(8), " rlogind (8)

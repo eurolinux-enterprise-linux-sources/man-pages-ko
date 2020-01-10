@@ -1,0 +1,49 @@
+.\" Copyright (c) 1994 Peter Tobias <tobias@server.et-inf.fho-emden.de>
+.\" This file may be distributed under the GNU General Public License.
+.TH ISSUE.NET 5 "22 May 1994" "Linux" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+issue.net \- 텔넷 세션을 위한 시스템 식별 파일
+.SH 설명
+\fB/etc/issue.net\fP 파일은 텔넷 세션의 login 프롬프트 이전에 출력되어지며,
+메시지 혹은 시스템 식별 정보가 있는 텍스트 파일이다.
+이 파일은 여러개의
+.BI "%" char
+가 연속하여 포함되어 있을지도 모른다. 다음은 
+.BR telnetd 
+에서 지원하는 
+.BI "%" char
+이다:
+.TP
+.B %t
+- 현재 tty를 보여준다.
+.TP
+.B %h
+- 시스템 노드명(FQDN)을 보여준다.
+.TP
+.B %D
+- NIS 도메인명을 보여준다.
+.TP
+.B %d
+- 현재 시간과 날짜를 보여준다.
+.TP
+.B %s
+- 운영체제의 이름을 보여준다.
+.TP
+.B %m
+- 기계(하드웨어) 유형을 보여준다.
+.TP
+.B %r
+- 운영체제 릴리즈를 보여준다.
+.TP
+.B %v
+- 운영체제 버전을 보여준다.
+.TP
+.B %%
+- '%' 문자를 표시한다.
+.PP
+.SH 파일
+/etc/issue.net
+.SH 관련 항목
+.BR telnetd (8)
+.SH 역자
+배성훈 <plodder@kldp.org>, 2000년 5월 13일

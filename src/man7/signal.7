@@ -1,0 +1,140 @@
+'\" t
+.\" Copyright (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\" Modified Sat Jul 24 17:34:08 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Jan  7 01:41:27 1996 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Sun Apr 14 12:02:29 1996 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Sat Nov 13 16:28:23 1999 by Andries Brouwer (aeb@cwi.nl)
+.\"
+.TH SIGNAL 7  "1996년 4월 14일" "리눅스 1.3.88" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+signal \- 존재하는 시그널의 목록
+.SH 설명
+리눅스는 아래 나열된 시그널을 지원한다. 몇몇 개의 시그널 번호는 
+아키텍쳐 의존적이다. 먼저 POSIX.1에서 설명하는 시그널이다.
+.sp
+.PP
+.TS
+l c c l
+____
+lB c c l.
+시그널	번호	행동	설명
+SIGHUP	\01	A	제어 터미널이 멈추거나 제어 프로세스가 죽음
+SIGINT	\02	A	키보드로부터의 인터럽트(interrupt) 시그널
+SIGQUIT	\03	C	키보드로부터의 종료(quit) 시그널
+SIGILL	\04	C	잘못된 명령어(Illegal Instruction)
+SIGABRT	\06	C	\fIabort\fP(3)로부터의 중단(abort) 시그널
+SIGFPE	\08	C	부동 소수점 예외(exception)
+SIGKILL	\09	AEF	kill 시그널
+SIGSEGV	11	C	잘못된 메모리 참조
+SIGPIPE	13	A	깨진 파이프: 수신자가 없는 파이프에 쓰기
+SIGALRM	14	A	\fIalarm\fP(2)으로부터의 타이머 시그널
+SIGTERM	15	A	종료(termination) 시그널
+SIGUSR1	30,10,16	A	사용자 정의 시그널 1
+SIGUSR2	31,12,17	A	사용자 정의 시그널 2
+SIGCHLD	20,17,18	B	자식 프로세스가 중단 또는 종료
+SIGCONT	19,18,25		중단되었다면 재개(continue)
+SIGSTOP	17,19,23	DEF	프로세스 중단
+SIGTSTP	18,20,24	D	터미널에서의 중단 시그널
+SIGTTIN	21,21,26	D	백그라운드 프로세스에 대한 터미널 입력
+SIGTTOU	22,22,27	D	백그라운드 프로세스에 대한 터미널 출력
+.TE
+
+다음은 POSIX.1의 시그널은 아니지만 SUSv2에서 설명하고 있는 것이다.
+.sp
+.PP
+.TS
+l c c l
+____
+lB c c l.
+시그널	번호	행동	설명
+SIGBUS	10,7,10	C	버스 에러 (잘못된 메모리 접근)
+SIGPOLL		A	폴링(poll) 이벤트 (Sys V). SIGIO와 같다.
+SIGPROF	27,27,29	A	프로파일링(profiling) 타이머 시그널
+SIGSYS	12,\-,12	C	루틴에 잘못된 인자 (SVID)
+SIGTRAP	5	C	trace/breakpoint 트랩
+SIGURG	16,23,21	B	소켓에 대한 긴급(urgent) 상황 (4.2 BSD)
+SIGVTALRM	26,26,28		가상 알람 클럭 (4.2 BSD)
+SIGXCPU	24,24,30	C	CPU 시간 제한 초과 (4.2 BSD)
+SIGXFSZ	25,25,31	C	파일 크기 제한 초과 (4.2 BSD)
+.TE
+
+(SIGSYS, SIGXCPU, SIGXFSZ와 몇몇 아키텍쳐에서는 SIGBUS의 기본 행동은 SUSv2에서 
+C(종료와 코어 덤프)로 나와있지만 현재 리눅스(2.3.27)에서 까지는 A(종료)이다)
+
+다음은 여러 가지 다른 시그널.
+.sp
+.PP
+.TS
+l c c l
+____
+lB c c l.
+시그널	번호	행동	설명
+SIGIOT	6	C	IOT 트랩. SIGABRT와 같다.
+SIGEMT	7,\-,7	
+SIGSTKFLT	\-,16,\-		보조프로세서의 스택 오류
+SIGIO	23,29,22	A	현재 I/O가 가능 (4.2 BSD)
+SIGCLD	\-,\-,18		SIGCHLD와 같다.
+SIGPWR	29,30,19	A	전원 문제 (System V)
+SIGINFO	29,\-,\-		SIGPWR와 같다.
+SIGLOST	\-,\-,\-	A	파일 락(lock) 손실
+SIGWINCH	28,28,20	B	윈도우 크기 변경 시그널 (4.3 BSD, Sun)
+SIGUNUSED	\-,31,\-	A	사용되지 않는 시그널 (SIGSYS가될 것이다)
+.TE
+
+(여기서 \-는 시그널이 없음을 나타낸다; 세 가지 값이 있다. 첫번째 것은
+대개 alpha와 sparc에서, 중간의 것은 i386, ppc와 sh에서, 마지막 것은
+mips에서 유효한 값이다. 29번 시그널은 alpha에서는
+.BR SIGINFO " / " SIGPWR 이지만
+sparc에서는
+.BR SIGLOST 이다.)
+.PP
+"행동" 컬럼의 문자는 다음과 같은 의미이다:
+.IP A
+기본 행동이 프로세스를 종료하는 것이다.
+.IP B
+기본 행동이 시그널을 무시하는 것이다.
+.IP C
+기본 행동이 프로세스를 종료하고 코어를 덤프한다.
+.IP D
+기본 행동이 프로세스를 멈추는 것이다.
+.IP E
+핸들러를 둘 수 없는 시그널이다.
+.IP F
+무시할 수 없는 시그널이다.
+.SH 호환
+POSIX.1
+.SH 버그
+.BR SIGIO 와
+.BR SIGLOST 는
+같은 값을 갖는다.
+후자는 커널 소스에서 주석 처리되었지만, 몇몇 소프트웨어의 
+프로세스는 여전히 29번 시그널을 
+.BR SIGLOST 로
+생각한다.
+.SH 관련 항목
+.BR kill (1),
+.BR kill (2),
+.BR setitimer (2)
+.SH 역자
+임종균 <hermes44@secsm.org>, 2000년 4월 21일

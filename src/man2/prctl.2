@@ -1,0 +1,77 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (C) 1998 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Thu Nov 11 04:19:42 MET 1999, aeb: added PR_GET_PDEATHSIG
+.\"
+.\"
+.\" 한국어 번역 : ASPLINUX    2000년 7월 26일
+.\"
+.TH PRCTL 2 "3 February 1998" "Linux 2.3.15" "Linux Programmer's Manual"
+.SH 이름
+prctl \- 프로세스상에서의 실행
+.SH 사용법
+.B #include <sys/prctl.h>
+.sp
+.BI "int prctl(int " option ", unsigned long " arg2 ", unsigned long " arg3
+.BI ", unsigned long " arg4 ", unsigned long " arg5 );
+.SH 설명
+.B prctl
+는 무엇을 해야 하는지를(<\fIlinux/prctl.h\fP>에서 정해진 값을 가진) 뜻하는 첫번째 독립변수와 이것에 따른 의미를 가지는 매개 변수를 통해 호출된다. 
+첫번째 독립변수는:
+.TP
+.B PR_SET_PDEATHSIG
+(리눅스 2.1.57 이후)
+현재 프로세스의 근원 프로세스 강제 종료 신호를 \fIarg2\fP (1..최대 범위의 신호값이나 0으로 지운다.)로 설정한다.
+이것은 현재 프로세스가 그것의 근원 프로세스가 종료 되는 때를 알게 해주는 신호이다. 이 값은 fork()에서 초기화 된다.
+.TP
+.B PR_GET_PDEATHSIG
+(리눅스 2.3.15 이후)
+근원 프로세스의 강제종료 신호의 현제 값을 (int *) \fIarg2\fP에서 읽는다.
+.SH 반환값
+성공 시, 0을 반환한다.
+에러 시, \-1 을 반환한다. 그리고
+.I errno
+는 적절히 설정된다.
+.SH 에러
+.TP
+.B EINVAL
+.I option
+의 값이 알려지지 않았다거나, 그것이
+.B PR_SET_PDEATHSIG
+이고,
+.I arg2
+가 0 혹은 signal number가 아니다.
+.SH 호환
+이 호출은 리눅스에 특화 되어 있다..
+IRIX 는 prctl 시스템 호출을 기본형
+.BI "ptrdiff_t prctl(int " option ", int " arg2 ", int " arg3 );
+으로, 그리고 사용자당 최대 프로세스 할당하고, 호출한 프로세스가 사용할 수 있는 최대 프로세스 할당하고, 현재 어떤 프로세스가 폐쇄되어 있는지 알려주고, 최대 스텍 크기를 잡고 설정하는 등등을 옵션으로 
+가지고 있다.(또한, 리눅스 2.1.44 에서는 MIPS 구조상에서의 irix_prctl로 소개되었다.),
+.SH AVAILABILITY
+prctl() 시스템 호출은 리눅스 2.1.57에서 소개되었다.
+아직 prctl() 라이브러리 호출은 없다.
+.SH 관련 항목
+.BR signal (2)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 26

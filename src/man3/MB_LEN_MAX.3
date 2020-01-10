@@ -1,0 +1,37 @@
+.\" Copyright (c) Bruno Haible <haible@clisp.cons.org>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" References consulted:
+.\"   GNU glibc-2 source code and manual
+.\"   Dinkumware C library reference http://www.dinkumware.com/
+.\"   OpenGroup's Single Unix specification http://www.UNIX-systems.org/online.html
+.\"
+.\" Modified, aeb, 990824
+.\"
+.TH MB_LEN_MAX 3 "1999년 7월 4일" "리눅스" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+MB_LEN_MAX \- 사용할 수 있는 모든 로케일에서 문자의 최대 바이트 수
+.SH 사용법
+.nf
+.B #include <limits.h>
+.fi
+.SH 설명
+.B MB_LEN_MAX
+매크로는 모든 로케일에 걸쳐서 한 문자를 표현하는데 필요한 바이트 수의
+상한이다. 
+.SH "반환 값"
+1 이상의 정수형 상수.
+.SH 호환
+ANSI C, POSIX.1
+.SH 주의
+.BR MB_LEN_MAX "의 내용과 " sizeof(wchar_t) "의 결과는"
+전혀 관계 없다. 예를 들어 GNU libc에서,
+\fBMB_LEN_MAX\fR의 값은 6인데 반해 \fBsizeof(wchar_t)\fR의 결과는 4이다.
+.SH "관련 항목"
+.BR MB_CUR_MAX (3)
+.SH 역자
+류정욱 <compiler@kldp.org>, 2000년 4월 19일

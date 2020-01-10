@@ -1,0 +1,162 @@
+.\"{{{}}}
+.\"{{{  Title
+.TH SHUTDOWN 8 "May 31, 1996" "" "Linux System Administrator's Manual"
+.\"}}}
+.\"{{{  Name
+.SH NAME
+shutdown \- 시스템 종료하기
+.\"}}}
+.\"{{{  Synopsis
+.SH SYNOPSIS
+.B /sbin/shutdown
+.RB [ \-t
+.IR sec ]
+.RB [ \-rkhncf ]
+.I time
+.RI [ warning-message ]
+.\"}}}
+.\"{{{  Description
+.SH DESCRIPTION
+.B Shutdown
+명령은 보안차원에서 시스템을 끌 때 사용하는 명령이다. 
+현재 접속중인 모든 사용자는 시스템이 종료된다는 소식을 
+받게되고 \fIlogin(1)\fP 작업이 중지된다. 
+이 풀그림은 즉시 시스템을 종료할 수도 있고, 특정 시간에 
+종료 할 수도 있다. 
+모든 프로세스는 시그날 \s-2SIGTERM\s0에 의해서 시스템이 종료된다는 
+소식을 접하게 된다. \fIvi(1)\fP와 같은 풀그림은 편집중인 파일을 
+저장 할 수 있게 시간을 부여해 주며, mail과 news 같은 풀그림은 
+기타 나머지 처리를 할 수 있게 한다. \fBShutdown\fP은 
+\fBinit\fP 프로세서의 시스날 처리에 의해서 수행되며, 
+\fIrunlevel\fP 바꾸기를 요청한다. \fIRunlevel 0\fP은 시스템 종료에(halt),
+\fIrunlevel 6\fP은 시스템 리부팅에, \fIrunlevel 1\fP은 단일 사용자 모드에 
+사용된다. \fIrunlevel 1\fP은 \fBshutdown\fP \fI-h\fP 또는 \fI-r\fP 
+옵션 없이 사용될 때 실행되는 초기값이다.
+시스템 halt나 reboot에 대한 처리부분은 \fI/etc/inittab\fP 파일 안에 
+있는 \fIrunlevels\fP 부분을 참조한다.
+.\"}}}
+.\"{{{  Options
+.SH OPTIONS
+.\"{{{  -t sec
+.IP "\fB\-t\fP \fIsec\fP"
+다른 \fIrunlevel\fP로 바뀌기 전에 경고를 보내는 프로세스와 kill 시스날
+사이의 기다리는 시간은 \fIsec\fP 로 지정한다.
+.\"}}}
+.\"{{{  -k
+.IP \fB\-k\fP
+실질적으로 shutdown을 하는게 아니라, 단지 모든 사용자에게 경고 메시지만을
+보낸다.
+.\"}}}
+.\"{{{  -r
+.IP \fB\-r\fP
+shutdown 후 리부팅.
+.\"}}}
+.\"{{{  -h
+.IP \fB\-h\fP
+shutdown 후 시스템 종료.
+.\"}}}
+.\"{{{  -n
+.IP \fB\-n\fP
+[주의] shutdown을 하기 위해서 init를 호출하지 않고, 
+자체적으로 shutdown한다. 이 옵션은 시스템 제어 불가능 상태일 때, 
+사용되며, 그 결과에 대해서는 기대했던 것과 다르게 나타날 수도 있다.
+.\"}}}
+.\"{{{  -f
+.IP \fB\-f\fP
+`빠른' 리부트.
+.\"}}}
+.\"{{{  -c
+.IP \fB\-c\fP
+이미 shutdown 중이 것을 취소한다. 
+이 옵션을 사용할 때는 \fBtime\fP 인자값을 사용할 수 없다.
+하지만, 명령행에서 설명하는 메시지를 사용해 모든 사용자에게 
+전달 할 수는 있다.
+.\"}}}
+.\"{{{  time
+.IP \fItime\fP
+shutdown 할 시간
+.\"}}}
+.\"{{{  warning-message
+.IP \fIwarning-message\fP
+모든 사용자에게 보낼 메시지
+.\"}}}
+.PP
+\fItime\fP에 지정할 값은 여러가지 방식을 사용할 수 있다. 
+첫째, 절대적인 시간 형식 \fIhh:mm\fP으로 지정할 수 있다. 
+\fIhh\fP에는 시간(1,2 같은 숫자), \fImm\fP에는 분(두자리 숫자)이 온다.
+둘째, 현재 시간부터 셧다운을 시작할 시간 사이의 상대적인 시간. 
+\fB+\fP\fIm\fP 형식으로 사용되는데, \fIm\fP 분 만큼 기다리게 된다.
+바로 \fBnow\fP는 \fB+0\fP의 다른 표현인 것이다.
+.PP
+\fB\-f\fP 옵션은 `빠른 리부트'에서 사용된다. 이 명령은 시스템이 
+리부팅될 때, 시스템에 의해서 검사되는 \fB/fastboot\fP 라는 참조 
+파일만을 만든다. 다음 부팅 될 때, rc 파일에서 이 파일을 검사 할 수 
+있고, 정당한 방법으로 시스템이 셧다운 되었을 때 \fIfsck(1)\fP 명령을 
+실행하지 않게 결정할 수도 있다. 그 다음, boot 프로세스는 \fB/fastboot\fP
+파일을 지울 것이다.
+.PP
+\fB-n\fP 옵션을 사용하면, init를 호출하지 않고, 스스로 모든 
+실행중인 프로세스를 닫는다. \fBshutdown\fP은 
+\fI/etc/rc.d/rc.halt fast\fP 형식으로 스크립트를 실행할 것이다. 
+이것은 또한 \fIrc.0\fP, \fIrc.6\fP 파일의 검사도한다. 
+만약 이 스크립트가 없거나 실행할 수 없는 상태라면, 
+\fIquota\fP, \fIaccounting\fP을 끄고, 
+\fIswapping\fP 해제, 모든 파일 시스템을 \fIunmount\fP 한다.
+.\"}}}
+.\"{{{  Files
+.SH Access Control
+\fBCTRL-ALT-DEL\fP 글쇠가 눌려지면 \fBinit\fP(8)에 의해서 
+\fBShutdown\fP은 실행된다. 이 글쇠에 대한 기능의 지정은 
+\fI/etc/inittab\fP 파일에서 하고 있다. 
+이것은 콘솔 키보드에 물리적인 접근이 가능한 모든 사람들은 
+시스템을 리부팅 할 수 있다는 것을 의미한다. 
+이것을 방지하게 하려면, 
+\fBshutdown\fP은 가상 콘솔 중 하나에 로그인한 사람이 시스템을 
+종료할 수 있는 권한이 있는지를 검사할 수 있다. 
+\fBshutdown\fP이 \fBinit\fP에 의해서 호출되면, 
+먼저 \fI/etc/shutdown.allow\fP 파일이 있는지 확인을 하고, 
+그 파일안에 있는 목록과 \fI/var/run/utmp\fP 파일을 바탕으로 
+가상 콘솔에 로그인한 사람의 이름과 비교를 한다. 
+그래서 일치하면 셧다운이 일어나고, 그렇지 않으면 다음 메시지를 보인다.
+.sp 1
+.nf
+\fBshutdown: no authorized users logged in\fP
+.fi
+.sp 1
+\fI/etc/shutdown.allow\fP 파일은 한줄에 한 사용자의 이름만 있으면 된다.
+빈줄과 주석문(#로 시작한 글)도 사용할 수 있다. 
+현재 이 파일의 최대 등록 인원은 32명이다. 
+.SH FILES
+.nf
+/fastboot
+/etc/inittab
+/etc/rc.d/rc.halt
+/etc/rc.d/rc.reboot
+/etc/shutdown.allow
+.fi
+.\"}}}
+.SH BUGS
+실질적인 버그는 아직 발견되지 않았지만, 
+대부분의 사용자는 \fItime\fP 값 지정을 잊어버리고는 
+\fBshutdown\fP에서 보여주는 메시지를 오류 메시지로 착각한다. 
+이 값이 지정되지 않으면, runlevel 1을 수행한다는 것을 
+잊지 말기 바란다. 그리고 이 값은 90%가 \fBnow\fP를 사용할 것이다.
+.\"{{{  Author
+.SH AUTHOR
+Miquel van Smoorenburg, miquels@cistron.nl
+.\"}}}
+.\"{{{  See also
+.SH "SEE ALSO"
+fsck(8), init(1), halt(8), reboot(8)
+.\"}}}
+
+
+
+
+
+
+
+
+
+
+

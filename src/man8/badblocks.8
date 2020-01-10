@@ -1,0 +1,75 @@
+.\" -*- nroff -*-
+.TH BADBLOCKS 8 "1996년 5월" "E2fsprogs 버전 1.04"
+.SH 이름
+badblocks \- 장치의 배드블럭을 검색한다.
+.SH 개요
+.B badblocks
+[
+.B \-b
+블럭크기
+]
+[
+.B \-o
+출력화일
+]
+[
+.B \-v
+]
+[
+.B \-w
+]
+장치명
+블럭갯수
+.SH 설명
+.B badblocks
+은 보통 디스크 파티션에 해당하는 장치 상의 배드 블럭을 찾는데 사용된다.
+.br
+.I 장치명
+은 예를 들어 /dev/hdXX와 같이 어떤 장치에 해당하는 특수한 화일이다.
+.br
+.I 블럭갯수
+장치 상의 블럭갯수이다.
+.SH 옵션
+.TP
+.I -b 블럭크기
+블럭크기를 바이트 수로 나타낸다.
+.TP
+.I -o 출력화일
+배드 블럭의 목록을 지정한 화일에 쓴다. 이 옵션이 없는 경우
+.B badblocks
+는 표준출력으로 목록을 표시한다.
+.TP
+.I -v
+자세한 출력 모드.
+.TP
+.I -w
+쓰기 모드 테스트 사용하기. 이 옵션을 사용하면
+.B badblocks
+은 0xaa, 0x55, 0xff, 0x00 등의 몇 가지 패턴을 장치 상의 모든 블럭에 써보고
+다시 읽어서 내용을 비교함으로써 배드블럭을 찾아낸다.
+.SH 주의
+화일 시스템을 포함하고 있는 장치에서는 `-w' 옵션을 절대 사용하지 말라.
+화일 시스템의 내용이 지워지기 때문이다.
+.SH 저자
+.B badblocks
+은 ext2 화일시스템의 개발자이자 관리책임자인 Remy Card <card@masi.ibp.fr>씨가
+만들었다.
+.SH 버그
+본인은 배드블럭을 리매핑해주는 IDE 드라이브를 사용하므로 이 프로그램을
+실제적으로 테스트해 본 적이 없다. 플로피에 대해서 몇 번의 테스트를 해보았을
+뿐이다.
+.SH 구할 수 있는 곳
+.B badblocks
+은 ftp.ibp.fr 또는 tsx-11.mit.edu 에서 익명 ftp 를 통하여 
+/pub/linux/packages/ext2fs 디렉토리에서 구할 수 있다.
+.SH 참고
+.BR e2fsck (8),
+.BR mke2fs (8)
+
+.SH 번역자
+.br
+이 만 용
+.B <geoman@nownuri.nowcom.co.kr>
+.br
+.B "         <freeyong@soback.kornet.nm.kr>"
+

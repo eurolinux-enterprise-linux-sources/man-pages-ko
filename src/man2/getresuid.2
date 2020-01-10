@@ -1,0 +1,59 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (C) 1997 Andries Brouwer (aeb@cwi.nl)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH GETRESUID 2 "1997년 7월 16일" "리눅스 2.1.44" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+getresuid, getresgid \- get 실제(real), 유효(effective), 복구(saved) 유저나
+                        그룹의 ID를 알 수있다.
+.SH 사용법
+.B #include <unistd.h>
+.sp
+.BI "int getresuid(uid_t *" ruid ", uid_t *" euid ", uid_t *" suid );
+.br
+.BI "int getresgid(gid_t *" rgid ", gid_t *" egid ", gid_t *" sgid ); 
+.SH 설명
+.B getresuid
+와
+.B getresgid
+(둘다 리눅스 2.1.44에서 처음 소개되었다.)
+는 현 프로세스의 실제, 유효, 복구 유저 ID를 알수 있다.
+
+.SH 반환값
+성공시, 0을 반환한다. 실패시, \-1을 반환하고, errno는 적절하게 설정된다.
+.SH 에러
+.TP
+.B EFAULT
+인수중 하나는 호출된 프로그램의 주소공간 밖에 지정한다.
+.SH 호환
+이 호출은 리눅스에서만 쓰인다.
+.SH 관련 항목
+.BR getuid (2),
+.BR setuid (2),
+.BR getreuid (2),
+.BR setreuid (2),
+.BR setresuid (2)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29일

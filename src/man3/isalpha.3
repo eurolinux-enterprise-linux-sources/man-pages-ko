@@ -1,0 +1,154 @@
+.\" (c) 1993 by Thomas Koenig (ig25@rz.uni-karlsruhe.de)
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\" License.
+.\"
+.\" Modified Sat Jul 24 19:10:00 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sun Aug 21 17:51:50 1994 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Sat Sep  2 21:52:01 1995 by Jim Van Zandt <jrv@vanzandt.mv.com>
+.\" Modified Mon May 27 22:55:26 1996 by Martin Schulze (joey@linux.de)
+.\"
+.TH ISALPHA 3  "1995년 9월 2일" "GNU" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+isalnum, isalpha, isascii, isblank, iscntrl, isdigit, isgraph, islower, 
+isprint, ispunct, isspace, isupper, isxdigit \- 문자 유형별 루틴들
+.SH 사용법
+.nf
+.B #include <ctype.h>
+.sp
+.BI "int isalnum (int " "c" ");"
+.nl
+.BI "int isalpha (int " "c" ");"
+.nl
+.BI "int isascii (int " "c" ");"
+.nl
+.BI "int isblank (int " "c" ");"
+.nl
+.BI "int iscntrl (int " "c" ");"
+.nl
+.BI "int isdigit (int " "c" ");"
+.nl
+.BI "int isgraph (int " "c" ");"
+.nl
+.BI "int islower (int " "c" ");"
+.nl
+.BI "int isprint (int " "c" ");"
+.nl
+.BI "int ispunct (int " "c" ");"
+.nl
+.BI "int isspace (int " "c" ");"
+.nl
+.BI "int isupper (int " "c" ");"
+.nl
+.BI "int isxdigit (int " "c" ");"
+.fi
+.SH 설명
+이들 함수들은 
+.B unsigned char
+나
+.BR EOF 값을
+가져야만 하는 
+.IR c 가
+현재 로케일에 따라 어떤 문자 종류에 들어 있는지를 검사한다.
+.TP 
+.B "isalnum()"
+알파벳 등의 문자와 숫자를 검사한다.; 이 함수는 
+.BI "(isalpha(" c ") || isdigit(" c "))" \fR
+과 동일하다.
+.TP
+.B "isalpha()"
+알파벳 문자를 검사한다; 표준 \fB"C"\fP 로케일에서, 
+.BI "(isupper(" c ") || islower(" c "))" \fR
+과 동일하다.
+몇몇 로케일에서, 
+.B  isalpha()
+가 참인 추가적인 문자들이 있다--대문자나 소문자도 아닌 문자들.
+.TP
+.B "isascii()"
+\fIc\fP가 ASCII 문자 집합에 속하는 
+7-bit
+.I unsigned char
+인지를 검사한다.
+이 함수는 BSD 확장이며 또한 SVID 확장이다.
+.TP
+.B "isblank()"
+blank 문자인지 검사한다.; 즉, 스페이스나 탭.
+이 함수는 GNU 확장이다.
+.TP
+.B "iscntrl()"
+제어 문자인지 검사한다.
+.TP
+.B "isdigit()"
+숫자(0-9)인지 검사한다.
+.TP
+.B "isgraph()"
+스페이스를 제외한 프린트 가능 문자인지 검사한다.
+.TP
+.B "islower()"
+소문자인지 검사한다.
+.TP
+.B "isprint()"
+스페이스를 포함한 프린트 가능 문자인지 검사한다.
+.TP
+.B "ispunct()"
+스페이스나 알파벳등 문자와 숫자가 아닌 프린트 가능 문자인지 검사한다.
+.TP
+.B "isspace()"
+white-space문자를 검사한다.
+.B """C"""
+와
+.B """POSIX"""
+로케일에서, 여기에는: 스페이스, form-feed
+.RB ( '\ef' ),
+뉴 라인
+.RB ( '\en' ),
+캐리지 리턴
+.RB ( '\er' ),
+수평 탭
+.RB ( '\et' ),
+그리고 수직 탭
+.RB ( '\ev' ).
+.TP
+.B "isupper()"
+대문자인지 검사한다.
+.TP
+.B "isxdigit()"
+16진수 숫자인지를 검사한다. 즉
+.nl
+.BR "0 1 2 3 4 5 6 7 8 9 a b c d e f A B C D E F" .
+.SH 반환값
+리턴 값은 만일 문자
+.I c
+가 테스트되는 종류이면 0이 아닌값이 그렇지 않으면 0 값을 반환한다.
+.SH 호환
+ANSI - C, BSD 4.3.
+\fBisascii()\fP 는 BSD 확장이며 또한 SVID 확장이다.
+\fBisblank()\fP 는 GNU 확장이다.
+.SH 주의
+클래스에 속한 문자들의  세부사항은 현재 로케일에 의존한다. 예를 들어,
+.B isupper()
+는 A를 인시하지 못한다.-- 기본 
+.B "C"
+로케일에서 대문자로써 umlaut
+.SH 관련 항목
+.BR tolower "(3), " toupper "(3), " setlocale "(3), " ascii "(7), " locale (7)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2001년 2월 25일

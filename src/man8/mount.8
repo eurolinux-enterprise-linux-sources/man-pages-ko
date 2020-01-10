@@ -1,0 +1,908 @@
+.\" Copyright (c) 1996 Andries Brouwer
+.\"
+.\" This page is somewhat derived from a page that was
+.\" (c) 1980, 1989, 1991 The Regents of the University of California
+.\" and had been heavily modified by Rik Faith and myself.
+.\" (Probably no BSD text remains.)
+.\" Fragments of text were written by Werner Almesberger, Remy Card,
+.\" Stephen Tweedie and Eric Youngdale.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.\" 960705, aeb: version for mount-2.5k
+.\"
+.\" 번역자 이만용 <geoman@nownuri.nowcom.co.kr>
+.TH MOUNT 8 "1996년 7월 5일" "리눅스 버전 2.0" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+mount \- 화일 시스템 마운트
+.SH 개요
+.BI "mount [\-hV]"
+.LP
+.BI "mount \-a [\-fnrvw] [\-t " 화일시스템유형 ]
+.br
+.BI "mount [\-fnrvw] [\-o " 옵션 " [,...]] " "장치 " | " 디렉토리"
+.br
+.BI "mount [\-fnrvw] [\-t " 화일시스템유형 "] [\-o " 옵션 "] " "장치 디렉토리"
+.SH 설명
+유닉스 시스템의 모든 화일들은 하나의 거대한 나무 구조로 이루어져 있고
+그 뿌리는 
+.BR / 
+이다.
+이 화일들은 여러 장치에 나뉘어 저장될 수 있다.
+.B mount
+명령은 각 장치에 구성된 화일 시스템을 전체 화일 나무구조에 붙이는 명령
+이다. 이와 반대로 
+.BR umount (8)
+명령은 나무구조로부터 떼어놓는 명령이다.
+
+.B mount
+명령의 기본적인 사용법은
+.RS
+.br
+.BI "mount \-t" " type device dir"
+.RE
+이렇게 하면 커널로 하여금 화일 시스템 유형
+.IR type 
+을 갖는 장치
+.I device
+를
+.IR dir
+로 지정한 디렉토리에 부착한다.
+이전에 어떤 내용이 있었다 하더라도 
+.I dir
+의 소유자, 모드는 가려지며 화일 시스템이 마운트되어 있는 상태에서
+.I dir
+이라는 경로명은 
+.IR device
+장치 상의 루트를 가리키게 된다.
+
+다음 3 가지 방식으로 실행하면 어떠한 것도 마운트하지는 않는다:
+.RS
+.br
+.B "mount \-h"
+.RE
+도움말을 보여준다;
+.RS
+.br
+.B "mount \-V"
+.RE
+버전을 보여준다; 그리고 다음과 같이
+.RS
+.BI "mount [-t" " type" ]
+.RE
+라고 하면 마운트된 모든 시스템을 보여준다.(
+.IR type
+을 지정하면 해당 유형만 보여준다 )
+- 다음을 참고하기 바란다.
+
+.I proc
+화일시스템은 어떠한 장치와도 연관되어 있지 않으며, 마운트할 때는
+예를 들어
+.I proc
+과 같은 단어 등 아무 단어로든 장치명으로 사용하면 된다.
+( 하지만 
+.I none
+이라고 주는 것은 안된다: 
+.B umount
+로부터 `none busy'라는 에러 메세지를 받게 되는데
+전혀 의미없는 내용이다. )
+
+대부분의 장치는 화일명으로 지칭하는데( 특별한 블럭 장치명 )
+.IR /dev/sda1 ,
+과 같은 이름이 사용된다.
+예를 들어 NFS 마운트의 경우에는 
+.I device
+명을 
+.IR knuth.cwi.nl:/dir
+와 같은 식으로 써주게 된다.
+
+.I /etc/fstab
+(
+.BR fstab (5)
+을 참고),
+화일에서는 어떤 장치를 어디에 그리고 어떤 옵션으로 마운트할 것인지
+적어두고 있다. 이 화일은 다음 3 가지 방법으로 사용가능하다:
+.LP
+(i) 다음과 같이 실행할 때
+.RS
+.br
+.BI "mount \-a [-t" " type" ]
+.RE
+(보통 부팅 과정에서 실행) 라고 하면
+.I fstab
+에서 기술되어 있는 모든 화일 시스템을 마운트시킨다.
+하지만
+.B noauto
+라는 키워드를 사용한 줄은 제외한다.
+.LP
+(ii) 
+.IR fstab
+에 기술된 화일 시스템을 마운트할 때는 그냥 장치명만 써주거나 또는
+마운트 포인트(마운트될 디렉토리)만 적어주면 된다.
+.LP
+(iii) 일반적으로는 오로지 수퍼유저만 화일시스템 마운트를 할 수 있다.
+하지만
+.I fstab
+에
+.B user
+라는 옵션이 붙어있는 경우 어느 누구든 마운트 가능하다.
+.LP
+따라서 다음과 같이
+.RS
+.br
+.B "/dev/cdrom  /cd  iso9660  ro,user,noauto,unhide"
+.RE
+라고 적혀 있다면 어떤 사용자든 
+.RS
+.br
+.B "mount /dev/cdrom"
+.RE
+라고 입력하거나
+.RS
+.br
+.B "mount /cd"
+.RE
+함으로써 각자의 시디롬에 있는 iso9660 화일시스템을 마운트할 수 있다.
+더욱 자세한 사항은
+.BR fstab (5)
+을 보기 바란다.
+
+.B mount
+와
+.B umount
+는 
+.IR /etc/mtab 
+라는 화일에 현재 마운트되어 있는 화일 시스템의 목록을 기록해둔다.
+
+만약
+.BR mount
+명령을 내릴 때 어떤 옵션도 주지 않으면
+이 목록이 표시될 것이다.
+.I proc
+화일시스템이 마운트될 때( 
+.IR /proc 이라는 디렉토리에 ),
+.I /etc/mtab
+과
+.I /proc/mounts
+는 비슷한 내용을 가지게 된다. 전자는 마운트 옵션 등 더욱 자세한 정보를
+지니고 있지만 항상 최신 정보를 지니고 있는 것은 아니다.
+(cf. 
+.B \-n
+옵션을 참고 바람).
+
+.SH OPTIONS
+.B mount
+를 사용하면 우선
+.I fstab
+화일에 기술되어 있는 옵션을 적용한 후
+.B \-o
+옵션에서 주어진 것을 적용하고 마지막으로
+.BR \-r " 또는 " \-w
+이 있다면 그것을 적용한다.
+
+.B mount
+명령에서 사용할 수 있는 옵션은 다음과 같다:
+.TP
+.B \-v
+자세한 출력 모드.
+.TP
+.B \-f
+실제 시스템 호출은 하지 않고 마운트할 수 있는지 점검한다.
+보통
+.B \-v
+플래그를 써서 
+.B mount
+명령의 결과를 알고자 할 때 유용하다.
+.TP
+.B \-n
+.IR /etc/mtab 
+화일에 쓰기 작업을 하지 않고 마운트한다.
+.I /etc
+가 읽기전용 화일 시스템인 경우에 필요하다.
+.TP
+.B \-r
+읽기만 가능하게 마운트한다. 같은 옵션으로는
+.BR "\-o ro" 
+이 있다.
+.TP
+.B \-w
+읽기/쓰기 모드로 마운트한다. 기본 설정값이다. 같은 옵션으로는
+.BR "\-o rw"
+이 있다.
+.TP
+.BI \-t " vfstype"
+.B \-t
+다음에 쓰이는 인수는 화일 시스템의 유형을 지시한다.
+현재 지원되고 있는 화일 시스템 유형은
+.IR linux/fs/filesystems.c 
+에 적혀있다:
+.IR minix ", " ext ", " ext2 ", " xiafs ", " hpfs ,
+.IR fat ", " msdos ", " umsdos ", " vfat ,
+.IR proc ", " nfs ", " iso9660 ", " smb ", " ncp ", " affs ", " ufs ,
+.IR sysv ", " xenix ", " coherent .
+마지막 3 개는 같은 것이며
+.I xenix
+와
+.I coherent
+는 조만간 사라질 것이다.
+\(em 
+.I sysv
+을 사용하라.
+
+.I iso9660
+은 기본 설정치이다. 만약 
+.B \-t
+옵션 다음에 다른 것이 주어지거나 또는
+.B auto
+라고 명시되면 화일 시스템의 수퍼블럭을 조사하게 된다.
+.RI ( minix ", " ext ", " ext2 ", " xia ", " iso9660
+이 지원되고 있음).
+만약 조사가 실패하고
+.I /proc/filesystems
+이 존재한다면, "nodev"라고 적힌 것을 제외한 모든 화일 시스템을 조사
+하게 된다.
+(예를 들어,
+.I proc
+와
+.IR nfs ).
+
+.B auto
+유형은 사용자 마운트 플로피 등에 유용하다.
+주의: 자동조사는 몇 가지 특수한 표시를 사용하는데 잘못 인식하는 경우가
+발생할 수 있다.
+
+콤마로 분리하여 하나 이상의 유형을 명시할 수 있다.
+화일 시스템 유형 앞에
+.B no
+을 붙이면 아무런 작용도 하지 못하게 만드는 것이다.
+(This can be meaningful with the
+( 보통 
+.B \-a
+이라는 옵션을 사용할 때 쓸모있다. )
+
+예를 들어, 다음과 같이 한다고 치자:
+.RS
+.RS
+.B "mount \-a \-t nomsdos,ext"
+.RE
+이 명령은
+.I msdos
+와
+.IR ext
+을 제외한 모든 화일 시스템을 마운트한다.
+.RE
+.TP
+.B \-o
+.B \-o
+플래그 뒤에 콤마로 분리한 옵션을 적어준다.
+이들 중 몇몇은 
+.I /etc/fstab
+화일에서만 사용할 수 있다.
+다음 옵션들은 마운트될 어떤 화일 시스템에서든 사용할 수 있는 것이다:
+.RS
+.TP
+.B async
+화일 시스템에 대한 I/O가 비동기적으로 이뤄지도록 한다.
+.TP
+.B auto
+.B \-a
+옵션으로 마운트 가능하게 한다.
+.TP
+.B defaults
+다음과 같은 기본 옵션을 사용하게 한다:
+.BR rw ", " suid ", " dev ", " exec ", " auto ", " nouser ", and " async.
+.TP
+.B dev
+화일 시스템 상의 문자, 블럭 특수 장치를 해석한다.
+.TP
+.B exec
+바이너리의 실행은 허가한다.
+.TP
+.B noauto
+명시적으로만 마운트 가능하다.( 즉, 
+.B \-a
+옵션으로는 마운트되지 않는다. )
+.TP
+.B nodev
+화일 시스템 상의 문자, 블럭 장치에 대한 해석을 하지 않는다.
+.TP
+.B noexec
+마운트된 화일 시스템 상의 어떤 바이너리도 실행을 허가하지 않는다.
+자신이 지원하지 않는 바이너리를 포함하는 화일 시스템에 대해 유용하다.
+.TP
+.B nosuid
+set-UID, set-GID 를 무시하게 한다.
+.TP
+.B nouser
+일반 사용자( 즉, 루트 아닌 )가 마운트할 수 있도록 허용하지 않는다.
+기본 설정치이다.
+.TP
+.B remount
+이미 마운트된 화일 시스템을 다시 마운트한다. 보통 읽기 전용 화일 시스템을
+읽기/쓰기 모드로 전환하는 등 화일 시스템에 대한 플래그를 바꿀 때 사용된다.
+.TP
+.B ro
+화일 시스템을 읽기만 가능하게 한다.
+.TP
+.B rw
+읽기/쓰기 모두 가능하게 마운트한다.
+.TP
+.B suid
+set-UID, set-GID 가 효력을 발휘할 수 있게 해준다.
+.TP
+.B sync
+화일 시스템에 대한 I/O가 동기적으로 이뤄지게 한다.
+.TP
+.B user
+Allow an ordinary user to mount the file system.  This option implies
+일반 사용자도 마운트할 수 있게 허용한다. 이 옵션은 다음
+.BR noexec ", " nosuid ", 와 " nodev
+도 효력을 발휘하게 한다.
+( 같은 줄에서 
+.BR user,exec,dev,suid 
+등의 옵션을 주지 않는다면 ).
+.RE
+
+.SH "화일 시스템 개별적인 마운트 옵션"
+다음 옵션은 몇몇 화일 시스템에만 적용된다. 화일 시스템별로 정리를 한다.
+모두
+.B \-o
+플래그 뒤에 쓰이는 옵션이다.
+
+.SH "affs 화일 시스템에 대한 옵션"
+.TP
+\fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
+화일 시스템의 루트에 대한 소유자와 그룹을 설정한다.( 기본값은 : uid=gid=0,
+이다. 하지만
+.B uid
+와
+.B gid
+을 아무 설정값없이 적으면 현재 프로세스의 uid, gid를 따른다.)
+.TP
+\fBsetuid=\fP\fIvalue\fP and \fBsetgid=\fP\fIvalue\fP
+모든 화일의 소유자와 그룹을 설정한다.
+.TP
+.BI mode= value
+원래의 퍼미션을 무시하고 모든 화일에 대한 모드를
+.IR value " & 0777"
+한 값으로 설정한다.
+그리고 읽기 퍼미션을 갖는 디렉토리에 대하여 검색 퍼미션을 부여한다.
+값은 8 진수로 적는다.
+.TP
+.B protect
+화일 시스템의 보호 비트에 어떤 변화도 허용치 않는다.
+.TP
+.B usemp
+첫번째 sync, umount 하자마자 마운트 포인트의 uid, gid 로 화일 시스템의
+uid, gid 를 설정한다. 그리고 나서 다시 이 값을 지운다.
+약간은 이상한 옵션이다...
+.TP
+.B verbose
+각 마운트 행위에 대한 정보를 출력한다.
+.TP
+.BI prefix= string
+심볼릭 링크를 따라갈 때 볼륨명 앞에 prefix 를 사용한다.
+.TP
+.BI volume= string
+심볼릭 링크를 따라갈 때 '/' 앞에다 최대 30 자의 prefix 를 사용한다.
+.TP
+.BI reserved= value
+(기본값: 2.) 장치의 시작부터 수치만큼의 블럭이 사용되지 않음.
+.TP
+.BI root= value
+루트 블럭의 위치를 명시한다.
+.TP
+.BI bs= value
+블럭사이즈를 지정한다. 512, 1024, 2048, 4096 이라는 수치를 넣을 수 있다.
+.TP
+.BR grpquota " / " noquota " / " quota " / " usrquota
+이 옵션을 사용할 수는 있으나 무시된다.
+
+.SH "coherent 화일 시스템에 대한 옵션"
+없음.
+
+.SH "ext 화일 시스템에 대한 옵션"
+없음.
+`ext' 화일 시스템은 이제 쓰이지 않는다. 쓰지 말라.
+
+.SH "ext2 화일 시스템에 대한 옵션"
+`ext2' 화일 시스템은 표준 리눅스 화일 시스템이다.
+커널 버그로 인해, 아무런 마운트 옵션으로든 마운트될 수 있다.
+(Linux 2.0).
+.TP
+.BR bsddf " / " minixdf
+.I statfs
+시스템 호출의 행동 방식을 결정한다.
+.B minixdf
+의 경우
+.I f_blocks
+필드에 화일 시스템의 전체 블럭 수를 반환하게 한다. 
+.B bsddf
+의 경우에는 ( 기본 설정치 ) ext2 화일 시스템 자체의 의해 사용되고 화일
+저장에는 사용되지 않는 블럭 수를 뺀 값을 반환한다.
+예를 들자면,
+.RE
+.nf
+
+% mount /k -o minixdf; df /k; umount /k
+Filesystem   1024-blocks  Used Available Capacity Mounted on
+/dev/sda6      2630655   86954  2412169      3%   /k
+% mount /k -o bsddf; df /k; umount /k
+Filesystem   1024-blocks  Used Available Capacity Mounted on
+/dev/sda6      2543714      13  2412169      0%   /k
+
+.fi
+( 위 옵션은 
+.IR /etc/fstab 
+화일에서 줄 수도 있다.)
+
+.TP
+.BR check " / " check=normal " / " check=strict
+점검 수준을 결정한다. 옵션 중 하나가 사용되면(
+.B check=normal
+이 기본 설정치 ) 마운트할 때 아이노드, 블럭을 조사하게 된다.
+is set by default) the inodes and blocks bitmaps are checked upon mount
+(커다란 디스크인 경우 30 초 정도 걸리기도 한다.)
+엄격한(strict) 점검인 경우 자료 영역에서 해제해야 하는 블록을 점검해준다.
+.TP
+.BR check=none " / " nocheck
+아무런 점검도 하지 않는다.
+.TP
+.B debug
+마운트, 리마운트마다 정보를 출력한다.
+.TP
+.BR errors=continue " / " errors=remount-ro " / " errors=panic
+오류가 발생했을 때의 반응양식을 정의한다.
+(오류를 무시하고 화일 시스템에 이상이 있더라도 그냥 사용하게 하거나
+화일 시스템을 읽기 전용으로 마운트 또는 시스템을 패닉 상태로 두어
+중지하도록 할 수 있다.)
+기본 설정치는 화일 시스템의 수퍼블럭에 저장되며
+.BR tune2fs (8)
+를 사용하여 변경할 수 있다.
+.TP
+.BR grpid " 또는 " bsdgroups " / " nogrpid " 또는 " sysvgroups
+새롭게 생성되는 화일에 부여될 기본 그룹 ID 를 정의한다.
+.BR grpid
+가 설정되어 있다면, 속한 디렉토리의 그룹 ID 를 취한다;
+그렇지 않은 경우( 기본 설정치 ), 디렉토리에 setgid 가 설정되어 있지 않는
+한 현재 프로세스의 fsgid 를 따른다. 상위 디렉토리에 setgid 가 설정되어
+있는 경우 화일은 상위 디렉토리의 gid 를 따르고 디렉토리가 생성되면 또
+다시 setgid 설정을 갖는다.
+.TP
+\fBresgid=\fP\fIn\fP 와 \fBresuid=\fP\fIn\fP
+ext2 화일 시스템은 화일 시스템의 일정 퍼센트를 다른 용도로 사용한다.
+( 기본적으로 5% 인데
+.BR mke2fs (8)
+와
+.BR tune2fs (8)
+을 참고하기 바란다).
+이 옵션은 예약된 블럭을 누가 사용할 수 있는지 결정한다.
+(대략 UID, GID 를 갖는 누구든 사용할 수 있다고 할 수 있다.)
+.TP
+.BI sb= n
+블럭 1 을 사용하지 않고 불럭
+.I n
+을 수퍼블럭으로 사용한다. 만약 화일 시스템이 손상을 입었을 경우 유용하다.
+보통 수버 블럭의 복사본은 매 8192 블럭마다 있다: 따라서 1 번 블럭, 8193
+블럭, 16385 블럭 등이다.
+(따라서 커다란 화일 시스템인 경우 수백 심지어 수천 개의 수퍼블럭 복사본을
+갖는다. 본인은mke2fs 를 통해 복사본 숫자를 줄이는 방법에 대하여 모른다. )
+.TP
+.BR grpquota " / " noquota " / " quota " / " usrquota
+옵션을 쓸 수는 있으나 그냥 무시된다.
+
+.SH "fat 화일 시스템에 대한 옵션"
+.TP
+.BR blocksize=512 " / " blocksize=1024
+블럭 사이즈를 결정한다.( 기본 설정치 512 ).
+.TP
+\fBuid=\fP\fIvalue\fP 와 \fBgid=\fP\fIvalue\fP
+모든 화일의 솟유자와 그룹을 설정한다.( 기본값: 현재 프로세스의 UID, GID가
+된다.)
+.TP
+.BI umask= value
+umask값을 설정한다.(기본적으로 설정되지
+.B 않을 
+퍼미션값을 말한다.)
+기본 umask 값은 현재 프로세스의 값을 따른다.
+이 값은 8 진수로 주어야 한다.
+.TP
+.BI check= value 
+화일 이름에 대한 3 가지 옵션이 있다.
+.RS
+.TP
+.B r[elaxed]
+대소문자를 쓸 수 있으며, 긴 이름은 잘려나간다.( 예.
+.I verylongname.foobar
+이라는 이름은
+.IR verylong.foo 
+이 된다.),
+화일명 앞, 중간의 공백문자도 받아들인다.( 화일명과 확장자 )
+.TP
+.B n[ormal]
+"relaxed"와 마찬가지이지만 특수문자들( *, ?, <, 스페이스 등 )은 사용할 수
+없다. 이것이 기본값이다.
+.TP
+.B s[trict]
+"normal"과 같으나 이름을 길게 쓸 수 없으며 리눅스에서 많이 사용되는 있으며
+MS-DOS에서는 사용할 수 없는 특수 문자는 사용할 수 없다. 
+(+, =, 공백 등 )
+.RE
+.TP
+.BR conv=b[inary] " / " conv=t[ext] " / " conv=a[uto]
+.I fat
+화일 시스템은  커널 수준에서 CRLF<--->NL 변환을 한다.
+( MS-DOS 텍스트를 유닉스 텍스트 형식으로 변환)
+다음 변환이 가능하다:
+.RS
+.TP
+.B binary
+아무런 변환도 일어나지 않는다. 기본값.
+.TP
+.B text
+모든 화일에 대하여 CRLF<-->NL 변환을 수행한다.
+.TP
+.B auto
+이미 잘 알려진 확장자를 제외한 화일에 대해서는 CRLF<--->NL 변환을 한다.
+잘 알려진 확장자 목록은 
+.I fs/fat/misc.c
+의 첫부분에 나열되어 있다.
+(버전 2.0 목록은 다음과 같다: exe, com, bin, app, sys, drv, ovl, ovr, obj,
+lib, dll, pif, arc, zip, lha, lzh, zoo, tar, z, arj, tz, taz, tzp, tpz,
+gz, tgz, deb, gif, bmp, tif, gl, jpg, pcx, tfm, vf, gf, pk, pxl, dvi).
+.PP
+프로그램 내부적으로 lseek 를 사용한다면 커널 내부의 텍스트 변환은 좋지 않다.
+그러니 주의하기 바란다.
+
+바이너리 모드로 마운트된 화일 시스템에 대해서는 변환 도구(fromdos/todos)를
+사용하면 된다.
+.RE
+.TP
+.B debug
+.I debug
+플래그를 작동시킨다. 화일 시스템의 버전과 파라미터 목록을 보여준다.
+(파라미터값이 제대로 맞지 않을 때도 출력된다.)
+.TP
+.BR fat=12 " / " fat=16
+12 비트 fat 인지 16 비트 fat 인지 명시한다. 자동 FAT 형 감지를 하지 못하게
+한다. 주의하여 사용하기 바란다.
+.TP
+.B quiet
+.I quiet
+플래그를 설정한다. chown, chmod 명령이 실패한다 할 지라도 에러를 출력하지
+않는다. 주의하여 사요하기 바란다.
+.TP
+.B "sys_immutable, showexec, dots, nodots, dotsOK=[yes|no]"
+FAT 화일시스템에 유닉스 또는 DOS 규칙을 무리하게 적용하려할 때 사용한다.
+
+.SH "hpfs 화일 시스템에 대한 옵션"
+.TP
+\fBuid=\fP\fIvalue\fP 와 \fBgid=\fP\fIvalue\fP
+모든 화일의 소유자와 그룹을 설정한다.( 기본값: 현재 프로세스의 UID, GID를
+따른다.)
+.TP
+.BI umask= value
+umask값을 설정한다.(기본적으로 설정되지
+.B 않을 
+퍼미션값을 말한다.)
+기본 umask 값은 현재 프로세스의 값을 따른다.
+이 값은 8 진수로 주어야 한다.
+.TP
+.BR case=lower " / " case=asis
+화일명은 모두 소문자로 바꾸거나 아니면 그래도 둔다.
+(기본값:
+.BR case=lower .)
+.TP
+.BR conv=binary " / " conv=text " / " conv=auto
+.BR conv=text
+인 경우 화일을 읽으면 CR 을 지워준다.( 특히 NL 다음의 CR 을 지운다 )
+.BR conv=auto
+인 경우 
+.BR conv=binary " 와 " conv=text
+중간쯤의 변환을 해준다.
+.BR conv=binary
+인 경우 화일을 있는 그대로 읽는다. 기본값.
+.TP
+.B nocheck
+화일 시스템에서 자료 불일치 점검에 실패하더라도 마운트를 중지하지 않는다.
+
+.SH "iso9660 화일 시스템에 대한 옵션"
+Normal
+.I iso9660
+화일명이 8.3 형식으로 나타나게 한다.( 즉 DOS 식 화일명 제한을 사용한다. )
+그리고 모두 대문자로 표시되게 한다. 또한 소유권, 허가권, 링크 수, 블럭/문자
+장치 표시 등의 필드를 없앤다.
+
+락 릿지(Rock Ridge)는 iso9660 시스템에 유닉스의 모든 기능을 제공하는 확장
+기능이다. 기본적으로 각 디렉토리마다 추가 정보를 위한 공간이 마련되어 있기
+때문에 락 릿지를 사용하면 유닉스 화일 시스템과 거의 구별할 수 없을 정도로
+된다.( 물론 읽기 전용이지만 )
+.TP
+.B norock
+락 릿지가 가능해도 그것을 사용하지 않게 한다. Cf.\&
+.BR map .
+.TP
+.BR check=r[elaxed] " / " check=s[trict]
+.BR check=relaxed 
+옵션과 같이 쓰이면 화일명이 우선 소문자로 변환된다.
+.B norock
+와
+.BR map=normal
+이 같이 쓰일 때만 의미를 갖는다.
+(기본값:
+.BR check=strict .)
+.TP
+\fBuid=\fP\fIvalue\fP 와 \fBgid=\fP\fIvalue\fP
+화일 시스템의 모든 화일에 주어진 UID, GID 를 부여한다.
+락 릿지 확장 기능의 정보를 덮어쓸 수 있다.
+(기본값:
+.BR uid=0,gid=0 .)
+.TP
+.BR map=n[ormal] " / " map=o[ff]
+락 릿지가 아닌 시스템에 대하여 대문자를 소문자로 변환하고 끝에 나오는 `;1'
+문자를 떼어내고 `;'는 `.'로 변환한다.
+.B map=off
+을 함께 사용하면 화일명 변환이 이뤄지지 않는다.
+.BR norock .
+을 보기 바란다.
+(기본값:
+.BR map=normal .)
+.TP
+.BI mode= value
+락 릿지 아닌 시스템에서 모든 화일에 주어진 모드를 설정한다.
+(기본값: 모든 사람에게 읽기 허가권 )
+.TP
+.B unhide
+히든 화일, 관련 화일 또한 보여준다.
+.TP
+.B block=[512|1024|2048]
+블럭 사이즈를 주어진 값을 설정한다.
+(기본값:
+.BR block=1024 .)
+.TP
+.BR conv=a[uto] " / " conv=b[inary] " / " conv=m[text] " / " conv=t[ext]
+(기본값:
+.BR conv=binary .)
+리눅스 버전 1.3.54 이후로 이 옵션은 더 이상 효력을 발휘하지 않는다.
+(binary 이외의 설정은 매우 위험하다.)
+.TP
+.B cruft
+화일 길이의 상위 바이트에 다른 무의미한 정보가 들어있는 경우,
+이 옵션을 주어서 화일 길이의 상위 비트를 무시하도록 한다.
+이렇게 하면 화일은 16 메가를 넘어갈 수 없다.
+전체 시디롬이 음수 또는 800 메가 이상의 이상한 크기를 갖는 경우에
+`cruft' 옵션이 자동으로 사용된다. 또한 볼륨 시퀀스 번호가 0 또는 1이
+아닌 경우에도 자동으로 사용된다.
+
+.SH "minix 화일 시스템에 대한 옵션"
+없음.
+
+.SH "화일 시스템에 대한 옵션"
+fat 화일 시스템에 대한 옵션을 보기 바란다.
+.I msdos
+화일 시스템에 어떤 이상이 있는 경우 에러를 내고 읽기 전용으로 만든다.
+다시 마운트하면 쓰기가 가능하다.
+
+.SH "ncp 화일 시스템에 대한 옵션"
+.IR nfs " 와 마찬가지로 " ncp
+는 마운트 시 바이너리 옵션을 필요로 한다.(
+.IR "struct ncp_mount_data" )
+전달인수는 
+.BR ncpmount (8)
+에 의해 만들어지고 현재 버전의
+.B mount
+(2.5k) 는 ncp 에 대한 것을 인식하지 못한다.
+
+.SH "nfs 화일 시스템에 대한 옵션"
+텍스트 옵션을 쓰지 않고
+.I nfs
+화일 시스템은
+.IR "struct nfs_mount_data" 
+자료형의 바이너리 옵션을 필요로 한다.
+.B mount
+프로그램은 `tag=value'라는 형식으로 처리하고 위에서 말한 구조체에
+값을 설정한다.
+.BI rsize= n,
+.BI wsize= n,
+.BI timeo= n,
+.BI retrans= n,
+.BI acregmin= n,
+.BI acregmax= n,
+.BI acdirmin= n,
+.BI acdirmax= n,
+.BI actimeo= n,
+.BI retry= n,
+.BI port= n,
+.BI mountport= n,
+.BI mounthost= name,
+.BI mountprog= n,
+.BI mountvers= n,
+.BI nfsprog= n,
+.BI nfsvers= n,
+.BI namlen= n.
+The option
+.BI addr= n
+을 쓸 수는 있으나 무시된다.
+다음의 논리적 참거짓(Boolean) 옵션 앞에는 
+.B no
+를 붙일 수 있다:
+.BR bg ,
+.BR fg ,
+.BR soft ,
+.BR hard ,
+.BR intr ,
+.BR posix ,
+.BR cto ,
+.BR ac ,
+.BR tcp ,
+.BR udp .
+세부 사항은 
+.BR nfs (5)
+을 보기 바란다.
+
+특별히 유용한 옵션으로는 다음이 있다.
+.TP
+.B rsize=8192,wsize=8192
+기본 버터 사이트 1024 보다는 더 빠른 접속 속도를 위해 필요하다.
+.TP
+.B soft
+이 옵션을 주면 일정 시간 동안 반응하지 않는 nfs 서버에 대해서는 타임아웃이
+걸리도록 하며 그렇지 않은 경우 계속 마운트하고 있는다. 시간 설정은
+.BR timeo=time 
+을 사용한다.
+이 옵션은 때때로 여러분의 nfs 서버가 반응하지 않거나 서버로부터 화일을 받는
+도중 리부팅할 때 사용된다.
+
+.SH "proc 화일 시스템에 대한 옵션"
+.TP
+\fBuid=\fP\fIvalue\fP 와 \fBgid=\fP\fIvalue\fP
+인식을 하지만 본인이 보기에 어떤 다른 영향도 미치지 않는다.
+
+.SH "smb 화일 시스템에 대한 옵션"
+.IR nfs "와 마찬가지로, " smb
+또한 바이너리 전달인수를 필요로 한다.
+(
+.IR "struct smb_mount_data" )
+.BR smbmount (8)
+명령을 가지고 만들 수 있으며 현재 버전의
+.B mount
+(2.5k) 은 smb 에 대한 것을 인식하지 않는다.
+
+.SH "sysv 화일 시스템에 대한 옵션"
+없음.
+
+.SH "ufs 화일 시스템에 대한 옵션"
+없음.
+
+.SH "umsdos 화일 시스템에 대한 옵션"
+msdos 에 대한 옵션을 보기 바람.
+
+.SH "vfat 화일 시스템에 대한 옵션"
+일단 fat 에 대한 옵션을 인식하며 다음 옵션도 사용가능하다.
+.TP
+.B uni_xlate
+처리되지 않는 유니코드 문자를 특수한 이스케이프 시퀀스로 변환한다.
+유니코드 문자로 화일명을 쓴 화일을 백업/복원할 수 있도록 해준다.
+이 옵션이 없는 경우 '?'이라는 문자가 사용된다. vfat 화일 시스템에서는
+이스케이프 문자를 ':'으로 사용한다. u 가 유니코드 ㅁ누자라면 이스케이프
+시퀀스는 다음과 같다.
+ ':', (u & 0x3f), ((u>>6) & 0x3f), (u>>12).
+.TP
+.B posix
+대소문자만 다른 화일명을 허용한다.
+.TP
+.B nonumtail
+.IR name~num.ext
+라는 화일명을 쓰기 전에
+시퀀스 번호를 사용하지 않는 짧은 이름을 먼저 시도해본다.
+
+.SH "xenix 화일 시스템에 대한 옵션"
+없음.
+
+.SH "xiafs 화일 시스템에 대한 옵션"
+없음. xiafs 에 어떤 문제가 있는 것은 아니지만 많이 사용되고 있지 않으며
+관리도 되고 있지 않다. 이것을 사용하지 말기 바란다.
+
+.SH "루프 장치(THE LOOP DEVICE)"
+또 다른 타입 중 하나로서 루트 장치를 통한 마운트를 들 수 있다. 예를 들어,
+다음과 같이 한다고 하자.
+
+.nf
+.B "  mount /tmp/fdimage /mnt -t msdos -o loop=/dev/loop3,blocksize=1024"
+.fi
+
+이 명령은 루프 장치인
+.I /dev/loop3
+을 
+.IR /tmp/fdimage 
+이라는 화일에 연관시킨다. 그리고 나서 이 장치를 
+.IR /mnt 
+에 마운트한다.
+다음 3 가지 옵션을 인식한다.
+.BR loop ", " offset " 와 " encryption
+이 옵션들은 실제로는
+.BR losetup (8)
+에 대한 옵션이라 할 수 있다.
+If no explicit loop device is mentioned
+루프 장치가 명시되지 않으면 
+( 또는 `\fB\-o loop\fP' 라는 옵션만 주면),
+.B mount
+는 사용되지 않은 루프 장치를 찾아서 사용한다.
+
+.SH 관련 화일
+.I /etc/fstab
+화일 시스템 테이블
+.br
+.I /etc/mtab
+마운트된 화일 시스템에 대한 테입르
+.br
+.I /etc/mtab~
+잠금(lock) 화일
+.br
+.I /etc/mtab.tmp
+임시 화일
+.SH "참고"
+.BR mount (2),
+.BR umount (2),
+.BR fstab (5),
+.BR umount (8),
+.BR swapon (8),
+.BR nfs (5),
+.BR mountd (8),
+.BR nfsd (8),
+.BR mke2fs (8),
+.BR tune2fs (8),
+.BR losetup (8)
+.SH 버그
+깨진 화일 시스템을 사용하는 경우 시스템 다운이 될 수도 있다.
+.PP
+몇 가지 리눅스 화일 시스템은
+.B "\-o sync"
+(ext2fs는
+.B sync 
+옵션을 사용하여 마운트하는 경우
+동기적 갱신( BSD에서처럼 )을
+.I 지원함
+)
+.PP
+.B "\-o remount"
+를 통하여 마운트 파라미터에 변화를 줄 수 있다.(모든 
+.BR  sb 
+를 제외한
+.I ext2fs
+화일 시스템의 모든 파라미터 값을 바굴 수 있다. 하지만
+.IR fatfs
+에 대해서는 
+.B gid
+또는
+.B umask
+를 변경할 수 없다)
+.SH HISTORY
+A
+.B mount
+명령은 AT&T UNIX 버전 6 에서 생겼다.
+
+.SH 번역자
+.br
+이 만 용
+.B <geoman@nownuri.nowcom.co.kr>
+.br
+.B "         <freeyong@soback.kornet.nm.kr>"

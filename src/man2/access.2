@@ -1,0 +1,134 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" This manpage is Copyright (C) 1992 Drew Eckhardt;
+.\"                               1993 Michael Haardt, Ian Jackson.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\" Modified Wed Jul 21 19:36:29 1993, Rik Faith (faith@cs.unc.edu)
+.\" Modified 21 Aug 1994 by Michael Chastain (mec@shell.portal.com):
+.\"   Removed note about old kernel (pre-1.1.44) using wrong id on path.
+.\" Modified 18 Mar 1996 by Martin Schulze (joey@infodrom.north.de):
+.\"   Stated more clearly how it behaves with symbolic links.
+.\" Added correction due to Nick Duffek (nsd@bbc.com), aeb, 960426
+.\" Modified Sat Sep 07 18:17:26 MET DST 1996 by Michael Haardt:
+.\"   Restrictions for NFS
+.\" Modified by Joseph S. Myers <jsm28@cam.ac.uk>, 970909
+.\" Modified Tue Jan 13 21:21:03 MET 1998 by Michael Haardt:
+.\"   Using access is often insecure
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH ACCESS 2 "1998년 1월 13일" "리눅스" "시스템 호출"
+.SH 이름
+access \- 파일의 사용자 권한을 체크한다.
+.SH 사용법
+.nf
+.B #include <unistd.h>
+.sp
+.BI "int access(const char *" pathname ", int " mode );
+.fi
+.SH 설명
+.B access
+는 프로세스가 파일에 읽고,쓰고 것이 가능한지 체크한다. 
+만일 경로명이 심볼릭링크라면 링크 테스트로 원본 파일을
+체크하게 된다.
+
+.I mode
+는 하나이상의 R_OK , W_OK , X_OK and F_OK로 구성된 허상(mask)
+이다.
+
+.BR R_OK ", " W_OK " and " X_OK
+는 각각 파일의 존재, 읽기, 쓰기, 실행권한 체크를 요구한다. F_OK는
+단지 파일의 존재유무의 체크만을 요구한다.
+
+테스트는 파일이 위치하고 있는 디렉토리의 권한에 의존하고, 디렉토리와 심
+볼릭 링크 파일도 같은 이치이다.
+
+커널에의해 실행될때의 id보다는 프로세스의 실제 UID나 GID를 체크하게 된다.
+이것은 set-UID프로그램실행을 허락하기 위함이다.
+
+파일 타입이나 내용이 아닌 억세스 비트(access bits)만을 체트한다. 그러므로, 
+만일 디렉토리가 "쓰기 가능"이라면,  디렉토리안에 파일을 생성할 수 있지만,
+디렉토리가 파일로써 쓰여질수 있는것은 아니다.
+
+.SH 반환값
+모든 요구하는 권한이 받아들여져 성공하게 되면, 0이 반환된다. 
+적어도 하나 이상이 거절되거나 에러가 나면 -1이 반환되고, errno가 적절하게 셋팅된다.
+
+.SH 에러
+.TP
+.B EACCES
+요구한 접근이 파일에 의해 거절되거나 경로명안의 어느 한 디렉토리에 의해 거절되었다.
+.TP
+.B EROFS
+쓰기 권한이 read-only인 파일 시스템에 의해 거절되었다.
+.TP
+.B EFAULT
+.I 경로명
+의 위치가 당신이 접근할 수 있는 주소공간 밖에 있다.
+.TP
+.B EINVAL
+.I 모드
+가 적절하지 않다.
+.TP
+.B ENAMETOOLONG
+.I 경로명
+이 너무길다.
+.TP
+.B ENOENT
+.I 경로명
+의 디렉토리 구성이 접근 가능하지만 존재하지 않거나 깨진 링크이다.
+.TP
+.B ENOTDIR
+.I 경로명
+의 디렉토리가 실제 디렉토리가 아니다.
+.TP
+.B ENOMEM
+커널 메모리가 부족하다.
+.TP
+.B ELOOP
+너무많은 심볼릭링크가 
+.IR 경로명
+안에 존재한다.
+.TP
+.B EIO
+I/O 에러.
+.SH RESTRICTIONS
+.B access
+는 요구한 접근타입(access types)의 호출이 실패하면, 다른 타입이 성공
+한다하더라도 에러를 반환한다.
+.PP
+.B access
+는 UID 맵핑이 가능한 NFS파일 시스템에서 작동하지 않을 수 있다. 왜냐하면
+UID맵핑은 사용자가 볼 수없는 서버에서 실행되기 때문이다.
+
+.SH 호환
+SVID, AT&T, POSIX, X/OPEN, BSD 4.3
+.SH 관련 항목
+.BR stat (2),
+.BR open (2),
+.BR chmod (2),
+.BR chown (2),
+.BR setuid (2),
+.BR setgid (2)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29일

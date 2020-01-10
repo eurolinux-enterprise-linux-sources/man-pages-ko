@@ -1,0 +1,134 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (C) Markus Kuhn, 1996
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" 1996-04-10  Markus Kuhn <mskuhn@cip.informatik.uni-erlangen.de>
+.\"             First version written
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH NANOSLEEP 2 "1996-04-10" "Linux 1.3.85" "Linux Programmer's Manual"
+.SH 이름
+nanosleep \- 지정한 시간에 실행을 잠시 멈춘다.
+.SH 사용법
+.B #include <time.h>
+.sp
+\fBint nanosleep(const struct timespec *\fIreq\fB, struct timespec *\fIrem\fB);
+.fi
+.SH 설명
+.B nanosleep
+은 적어도 
+.IR *req 
+에 지정된 시간만큼 프로그램 실행을 늦춘다. 시그널이 프로세스로 전달됐다면
+그런 기능은 더 빨리 반환할 수 있다. 그 기능은 시그널이 프로세스에 전달되었다면 
+더 빨리 반환할 수 있다. \-1이 반환되는 경우 
+.BR EINTR 
+로 \fIerrno\fR를 설정하고, 
+.I rem
+이 
+.BR NULL 
+이 아니라면 
+.IR rem
+이 가리키는 곳에 남은 시간을 기록한다.
+그후 
+.I *rem
+값은 다시 
+.B nanosleep
+오출에 사용될 수 있다.
+
+.I timespec
+은 나노초의 정밀도를 가진 시간 간격을 지정하는데 사용된다.
+그것은 
+.I <time.h>
+에 지정되고 
+.sp
+.RS
+.nf
+.ne 12
+.ta 8n 16n 32n
+struct timespec
+{
+	time_t	tv_sec;			/* seconds */
+	long	tv_nsec;		/* nanoseconds */
+};
+.ta
+.fi
+.RE
+.PP
+의 형태를 갖는다.
+
+나노초필드 값은 에서 999 999 999의 범위안에 들어야 한다.
+
+.BR sleep  (3)
+와
+.BR usleep (3)
+를 비교한다면, 
+.B nanosleep
+는 모든 POSIX 표준인 시그널에 영향을 주지 않는 잇점이 있다. 그것은 높은 
+시간 분석을 제공하고, 더 쉽게 시그널에 의해 중단된 계속적인 대기상태를 
+허락한다.
+.SH 에러
+에러나 예외(exception)의 경우,
+.B nanosleep
+시스템 호출은 0대신 \-1을 반환하고 다음 값중 하나로
+.I errno
+를 설정한다:
+.TP
+.B EINTR
+일시 중지는 프로세스에 전달된 비블록화 시그널에 의해 중단된다.
+남은 대기 시간은 프로세스가 쉽게 
+.B nanosleep
+를 다시 호출할 수 있도록 *\fIrem\fR에 기록되고, 일시정지는 계속된다.
+.TP
+.B EINVAL
+.I tv_nsec
+필드안의 값은 0에서 999\ 999\ 999범위가 아니거나
+.I tv_sec
+가 음수이다.
+.SH 버그
+.B nanosleep
+의 현재 구현은 1/\fIHZ\fR\ s (i.e, 10\ ms on Linux/i386 and 1\ ms on Linux/Alpha)
+의 resolution을 가지고 있는 표준의 커널 타이머 메카니즘을 기본으로한다.
+그러므로, 
+.B nanosleep
+는 적어도 지정된 시간만큼 항상 일시 정지한다. 그러나 그것은 프로세스가 다시 실행가능
+해지기까지 지정된것 보다 10ms이상 더 걸릴 수 있다. 같은 이유로, *\fIrem\fR에 전달된 시그
+널의 반환값은 대개 1/\fIHZ\fR\ s정도 된다.
+
+더욱더 정확한 일시정지가 필요한 응용프로그램처럼
+.B nanosleep
+도 또한 매우정확한 일시정지가 가능하다. 프로세스가 
+.I SCHED_FIFO
+나
+.IR SCHED_RR 
+와 같은 실제시간정책에서 스케쥴링되었다면,
+2ms이상의 일시정지는 마이크로초의 정밀도를 가진다.
+.SH 호환
+POSIX.1b (formerly POSIX.4).
+.SH 관련 항목
+.BR sleep (3),
+.BR usleep (3),
+.BR sched_setscheduler (2),
+.BR timer_create (2)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29

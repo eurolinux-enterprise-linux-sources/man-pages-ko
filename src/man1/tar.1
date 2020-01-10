@@ -1,0 +1,375 @@
+.\" @(#)tar.1 1.11.1 93/09/22 PJV;
+.\"
+.\" Korean version revision history
+.\" r1.5 2004-03-14 20:19:22 +1-2  윤현호
+.\" r1.4 2004-03-09 12:41:25 +5-2  윤현호
+.\" r1.3 2004-03-09 11:46:06 +0-2  211.106.173.185
+.\" r1.2 2004-03-08 20:39:19 +7-7  검은해
+.\" r1.1 2004-03-08 11:57:41       윤현호
+.\"
+.TH TAR 1 "22 September 1993"
+.SH 이름
+tar \- GNU 버전 tar 저장 도우미
+.SH 사용법
+.B tar
+[
+.B \-
+]
+.B A --catenate --concatenate \||\| c --create \||\| d --diff --compare \||\| r --append \||\| t --list \||\| u --update \||\| x -extract --get
+[
+.B --atime-preserve
+]
+[
+.B -b, --block-size N
+]
+[
+.B -B, --read-full-blocks
+]
+[
+.B -C, --directory DIR
+]
+[
+.B --checkpoint
+]
+[
+.B -f, --file [HOSTNAME:]F
+]
+[
+.B --force-local
+]
+[
+.B -F, --info-script F --new-volume-script F
+]
+[
+.B -G, --incremental
+]
+[
+.B -g, --listed-incremental F
+]
+[
+.B -h, --dereference
+]
+[
+.B -i, --ignore-zeros
+]
+[
+.B -j, --bzip2
+]
+[
+.B --ignore-failed-read
+]
+[
+.B -k, --keep-old-files
+]
+[
+.B -K, --starting-file F
+]
+[
+.B -l, --one-file-system
+]
+[
+.B -L, --tape-length N
+]
+[
+.B -m, --modification-time
+]
+[
+.B -M, --multi-volume
+]
+[
+.B -N, --after-date DATE, --newer DATE
+]
+[
+.B -o, --old-archive, --portability
+]
+[
+.B -O, --to-stdout
+]
+[
+.B -p, --same-permissions, --preserve-permissions
+]
+[
+.B -P, --absolute-names
+]
+[
+.B --preserve
+]
+[
+.B -R, --record-number
+]
+[
+.B --remove-files
+]
+[
+.B -s, --same-order, --preserve-order
+]
+[
+.B --same-owner
+]
+[
+.B --numeric-owner
+]
+[
+.B -S, --sparse
+]
+[
+.B -T, --files-from F
+]
+[
+.B --null
+]
+[
+.B --totals
+]
+[
+.B -v, --verbose
+]
+[
+.B -V, --label NAME
+]
+[
+.B --version
+]
+[
+.B -w, --interactive, --confirmation
+]
+[
+.B -W, --verify
+]
+[
+.B --exclude=FILE
+]
+[
+.B -X, --exclude-from FILE
+]
+[
+.B -Z, --compress, --uncompress
+]
+[
+.B -z, --gzip, --ungzip
+]
+[
+.B --use-compress-program PROG
+]
+[
+.B --block-compress
+]
+[
+.B --rsh-command=CMD
+]
+[
+.B -[0-7][lmh]
+]
+.TP
+.I filename1 [ filename2, ... filenameN ]
+.TP
+.I directory1 [ directory2, ...directoryN ]
+.SH 설명
+.LP
+이 설명서는
+.IR tarfile
+이라고 알려진 저장 파일을 묶거나
+풀 수 있도록 만들어 진 GNU 버전
+.B tar
+저장 프로그램에 대한 설명이다.
+.IR tarfile
+은 테이프 드라이브에 저장할 수도 있고,
+.IR tarfile
+을 일반적인 보통 파일로 쓸 수도 있다.
+.B tar
+의 첫번째 인수로는 반드시 
+.BR Acdrtux
+중 하나의 옵션이 들어가야 하고,
+다른 선택적인 기능이 덧붙여진다.
+.B tar
+의 마지막 인수로는 압축될 파일이나 디렉토리의 이름이 오게 된다.
+디렉토리 이름이 사용될 경우 언제나 하위 디렉토리가 함께 저장된다.
+.SH 예제
+.TP
+.B tar -xvvf foo.tar
+foo.tar 파일을 푼다.
+.TP
+.B tar -xvvzf foo.tar.gz
+gzip으로 압축된 foo.tar.gz 파일을 푼다.
+.TP
+.B tar -cvvf foo.tar foo/
+foo 디렉토리에 있는 내용물을 foo.tar 파일로 묶는다.
+.SH "기능 옵션"
+.TP
+.B 반드시 아래 옵션들 중 하나가 들어가야 한다.
+.TP
+.B -A, --catenate, --concatenate
+저장 파일에 tar 파일을 추가한다.
+.TP
+.B -c, --create
+새 저장 파일을 만든다.
+.TP
+.B -d, --diff, --compare
+저장 파일 혹은 파일 시스템 간의 다른 점을 찾는다.
+.TP
+.B --delete
+저장 파일에서 지운다. (자기 테이프에는 쓰면 안됨!)
+.TP
+.B -r, --append
+저장 파일의 끝에 파일을 덧붙인다.
+.TP
+.B -t, --list
+저장 파일의 내용 목록을 보여준다.
+.TP
+.B -u, --update
+저장 파일에 저장된 사본보다 새로운 파일만을 덧붙인다.
+.TP
+.B -x, --extract, --get
+저장된 것에서 풀어낸다.
+.SH "부가적인 옵션"
+.TP
+.B --atime-preserve
+덤프된 파일의 접근 시간을 바꾸지 않는다.
+.TP
+.B -b, --block-size N
+블럭 크기를 N x 512 바이트로 정한다. (기본값 N = 20)
+.TP
+.B -B, --read-full-blocks
+읽은 만큼 블럭을 재지정한다. (4.2BSD 파이프를 읽기 위함)
+.TP
+.B -C, --directory DIR
+DIR 디렉토리로 바꾸고 작업을 한다.
+.TP
+.B --checkpoint
+저장 파일을 읽는 동안 디렉토리 이름을 출력한다.
+.TP
+.B -f, --file [HOSTNAME:]F
+저장 파일 혹은 장치 파일 F에 저장한다. (기본 "-", 표준입/출력을 나타낸다.)
+.TP
+.B --force-local
+colon 문자가 있더라도 저장 파일을 지역 파일로 처리한다.
+.TP
+.B -F, --info-script F --new-volume-script F
+run script at end of each tape (implies -M)
+테이프의 끝에 도달하면 스크립트를 실행한다. (-M 이 포함된다.)
+.TP
+.B -G, --incremental
+이전 GNU 형식으로 incremental 백업을 만들거나 목록을 보거나 풀어낸다.
+.TP
+.B -g, --listed-incremental F
+새로운 GNU 형식으로 incremental 백업을 만들거나 목록을 보거나 풀어낸다.
+.TP
+.B -h, --dereference
+심볼릭 링크를 묶지 않는다. 그것이 가리키는 파일을 묶는다.
+.TP
+.B -i, --ignore-zeros
+크기가 0인 것은 무시한다. (보통 EOF를 의미한다.)
+.TP
+.B -j, --bzip2
+bzip2 필터를 사용하여 .bz2 파일을 푼다.
+.TP
+.B --ignore-failed-read
+읽을 수 없는 파일이 있더라도 종료 코드 0을 출력하지 않는다.
+.TP
+.B -k, --keep-old-files
+기존에 있는 파일을 유지한다. 파일이 있으면 덮어쓰지 않는다.
+.TP
+.B -K, --starting-file F
+저장 파일에 있는 파일 F에서부터 시작한다.
+.TP
+.B -l, --one-file-system
+저장 파일을 만들 때 로컬 파일 시스템 안의 놓는다.
+.TP
+.B -L, --tape-length N
+N * 1024 바이트를 쓴 다음 테이프를 바꾼다.
+.TP
+.B -m, --modification-time
+파일의 변경 시간 정보를 유지하지 않는다.
+.TP
+.B -M, --multi-volume
+여러 개로 나눠진 저장 파일로 만들거나 목록을 보거나 풀어낸다.
+.TP
+.B -N, --after-date DATE, --newer DATE
+주어진 DATE 보다 새로운 파일만 저장한다.
+.TP
+.B -o, --old-archive, --portability
+ANSI 형식 대신 V7 형식으로 저장한다.
+.TP
+.B -O, --to-stdout
+표준 출력으로 파일들을 풀어낸다.
+.TP
+.B -p, --same-permissions, --preserve-permissions
+모든 퍼미션 정보를 유지한다.
+.TP
+.B -P, --absolute-paths
+파일 이름의 맨 앞 `/' 문자를 버리지 않는다.
+.TP
+.B --preserve
+-p 옵션과 -s 옵션을 함께 사용한 것과 같다.
+.TP
+.B -R, --record-number
+저장 파일의 레코드 번호를 각각의 메시지로 보여준다.
+.TP
+.B --remove-files
+파일을 저장 파일에 덧붙인 다음 파일을 지운다.
+.TP
+.B -s, --same-order, --preserve-order
+저장 파일 목록과 똑같은 순서로 풀어낸다.
+.TP
+.B --same-owner
+같은 사용자 소유권으로 파일들을 풀어낸다.
+.TP
+.B --numeric-owner
+user/group 이름으로 항상 숫자를 사용한다.
+.TP
+.B -S, --sparse
+듬성한 파일을 효율적으로 다룬다.
+.TP
+.B -T, --files-from F
+파일 F에서 목록을 읽어 추출하거나 만든다.
+.TP
+.B --null
+-T reads null-terminated names, disable -C
+-C를 비활성화하고, -T로 읽을 때 null로 끝나는 이름을 읽는다.
+.TP
+.B --totals
+--create로 만들어진 바이트 총합을 출력한다.
+.TP
+.B -v, --verbose
+처리중인 파일을 자세하게 보여준다.
+.TP
+.B -V, --label NAME
+저장 파일의 볼륨 이름을 NAME으로 한다.
+.TP
+.B --version
+tar 프로그램의 버전 정보를 출력한다.
+.TP
+.B -w, --interactive, --confirmation
+각각을 처리할 때 마다 물어본다.
+.TP
+.B -W, --verify
+attempt to verify the archive after writing it
+저장 파일을 쓴 후에 저장 파일을 점검한다.
+.TP
+.B --exclude=FILE
+FILE을 제외한다.
+.TP
+.B -X, --exclude-from FILE
+FILE 목록에 있는 것을 제외한다.
+.TP
+.B -Z, --compress, --uncompress
+compress로 압축하거나 푼다.
+.TP
+.B -z, --gzip, --ungzip
+gzip으로 압축하거나 푼다.
+.TP
+.B --use-compress-program PROG
+PROG로 저장 파일을 다시 처리한다. (PROG은 반드시 -d를 처리해야 한다.)
+.TP
+.B --block-compress
+테이프에 저장할 때 압축 프로그램의 출력을 막는다.
+.TP
+.B --rsh-command=CMD
+`rsh' 대신 원격 COMMAND를 사용한다. 이 옵션은 표준 `rsh' 대신
+원격 장치에 접근할 수 있는 다른 것(예를 들어, Kerberized `rsh')을
+사용하는 사람들을 위해 필요하다.
+.TP
+.B -[0-7][lmh]
+드라이브와 밀도를 지정한다.
+.SH 번역
+한글 Manpage 프로젝트 (http://man.kldp.org), 2004년 3월 9일

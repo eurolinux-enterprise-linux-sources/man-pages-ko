@@ -1,0 +1,166 @@
+.\" -*- nroff -*-
+.\" Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
+.\" This file may be copied under the terms of the GNU Public License.
+.\" 
+.TH DEBUGFS 8 "1996년 5월" "E2fsprogs 버전 1.04"
+.SH 이름
+debugfs \- ext2 화일시스템 디버거
+.SH 개요
+.B debugfs
+[
+[
+.B \-w
+]
+장치명
+]
+.SH 설명
+.B debugfs
+은 화일 시스템 디버거이다. ext2 화일시스템의 상태를 조사하고 변화시킬 수
+있다.
+.br
+.I 장치명
+은 예를 들어 /dev/hdXX 와 같이 어떤 장치에 해당하는 특수 화일명이다.
+.SH 옵션
+.TP
+.I -w
+화일시스템을 읽기/쓰기 모드로 열도록 한다. 옵션이 없는 경우에는 기본적으로
+읽기 전용 모드로 열린다.
+.SH 명령
+.B debugfs
+은 대화형 디버거이다. 다음과 같은 많은 명령을 이해한다.
+.TP
+.I cat <화일명>
+아이노드 하나의 내용을 표준출력으로 덤프한다.
+.TP
+.I cd <디렉토리>
+작업 디렉토리를 변경한다.
+.TP
+.I chroot <디렉토리>
+지정한 아이노드로 루트 디렉토리를 변화시킨다.
+.TP
+.I close
+열려진 화일 시스템을 닫는다.
+.TP
+.I clri <화일명>
+.I file
+에 해당하는 아이노드의 내용을 지운다.
+.TP
+.I dump <화일명> <출력 화일명>
+아이노드의 내용을 화일로 덤프한다.
+.TP
+.I expand_dir <화일명>
+디렉토리를 확장한다.
+.TP
+.I find_free_block [목표]
+.I 목표
+로부터 시작해서 첫번째 빈 블럭을 찾아 할당한다.
+.TP
+.I find_free_inode [dir [mode]]
+빈 아이노드를 찾아서 할당한다.
+.TP
+.I freeb <블럭>
+블럭을 할당되지 않은 것으로 표시한다.
+.TP
+.I freei <화일명>
+.I 화일명
+에 해당하는 아이노드를 해제한다.
+.TP
+.I help
+.BR debugfs (8)
+가 인식하는 명령어 목록을 출력한다.
+.TP
+.I icheck <블럭>
+블럭 --> 아이노드 변환을 수행한다.
+.TP
+.I iname <아이노드>
+.I 아이노드
+에 해당하는 화일명을 출력한다.
+(현재로서는 구현되어 있지 않음 - ncheck 을 참고).
+.TP
+.I initialize <장치명> <블럭크기>
+.I 장치명
+에 ext2 화일 시스템을 생성
+.TP
+.I kill_file <화일명>
+화일을 삭제하고 사용한 블럭을 해제한다.
+.TP
+.I ln <원본 화일> <목표 화일>
+링크를 만든다.
+.TP
+.I ls [경로명]
+.BR ls (1)
+명령을 에뮬레이트한다.
+.TP
+.I modify_inode <화일명>
+.I 화일명
+에 해당하는 아이노드의 내용을 수정한다.
+.TP
+.I mkdir <화일명>
+디렉토리를 생성한다.
+.TP
+.I mknod <화일명> [p|[[c|b] <major> <minor>]]
+특별한 장치 화일을 생성한다.
+.TP
+.I ncheck <아이노드>
+아이노드 --> 이름 변환을 수행한다.
+.TP
+.I open [-w] <장치명>
+화일 시스템을 연다.
+.TP
+.I pwd
+현재 작업 디렉토리를 출력한다.
+.TP
+.I quit
+.B debugfs
+를 종료
+.TP
+.I rm <화일명>
+화일을 지운다.
+.TP
+.I rmdir <디렉토리>
+디렉토리를 삭제한다.
+.TP
+.I setb <블럭>
+블럭을 할당된 것으로 표시한다.
+.TP
+.I seti <화일명>
+.I 화일명
+에 해당하는 아이노드를 사용 중이라고 표시한다.
+.TP
+.I show_super_stats
+수퍼블럭의 내용을 보여준다.
+.TP
+.I stat <화일명>
+.I 화일명
+에 해당하는 아이노드의 내용을 덤프한다.
+.TP
+.I testb <블럭>
+블럭이 할당되어 있다고 표시되어 있는지 확인
+.TP
+.I testi <화일명>
+.I 화일명
+에 해당하는 아이노드가 할당되어 있다고 표시되어 있는지 확인
+.TP
+.I unlink <화일>
+링크를 지운다.
+.TP
+.I write 원본 화일 <화일명>
+.IR 화일명
+을 갖는 화일 시스템에 화일 하나를 만들고 나서
+.I 원본 화일
+의 내용을 목표 화일에 복사한다.
+.SH 저자
+.B debugfs
+은 Theodore Ts'o <tytso@mit.edu>씨가 만들었다.
+.SH 참고
+.BR dumpe2fs (8),
+.BR e2fsck (8),
+.BR mke2fs (8)
+
+.SH 번역자
+.br
+이 만 용
+.B <geoman@nownuri.nowcom.co.kr>
+.br
+.B "         <freeyong@soback.kornet.nm.kr>"
+

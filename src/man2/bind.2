@@ -1,0 +1,213 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Portions extracted from /usr/include/sys/socket.h, which does not have
+.\" any authorship information in it.  It is probably available under the GPL.
+.\"
+.\" Permission is granted to make and distribute verbatim copies of this
+.\" manual provided the copyright notice and this permission notice are
+.\" preserved on all copies.
+.\"
+.\" Permission is granted to copy and distribute modified versions of this
+.\" manual under the conditions for verbatim copying, provided that the
+.\" entire resulting derived work is distributed under the terms of a
+.\" permission notice identical to this one
+.\" 
+.\" Since the Linux kernel and libraries are constantly changing, this
+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
+.\" responsibility for errors or omissions, or for damages resulting from
+.\" the use of the information contained herein.  The author(s) may not
+.\" have taken the same level of care in the production of this manual,
+.\" which is licensed free of charge, as they might when working
+.\" professionally.
+.\" 
+.\" Formatted or processed versions of this manual, if unaccompanied by
+.\" the source, must acknowledge the copyright and authors of this work.
+.\"
+.\"
+.\" Other portions are from the 6.9 (Berkeley) 3/10/91 man page:
+.\"
+.\" Copyright (c) 1983 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"     This product includes software developed by the University of
+.\"     California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\" Modified Mon Oct 21 23:05:29 EDT 1996 by Eric S. Raymond <esr@thyrsus.com>
+.\" Modified 1998 by Andi Kleen
+.\" $Id: bind.2,v 1.1.1.1 2002/07/18 10:40:11 hhyoon Exp $
+.TH BIND 2 "1998년 10월 3일" "Linux 2.2" "리눅스 프로그래머 매뉴얼"
+.SH 이름
+bind \- 소켓에 이름을 묶는다.
+.SH 사용법
+.B #include <sys/types.h>
+.br
+.B #include <sys/socket.h>
+.sp
+.BI "int bind(int " sockfd ", struct sockaddr *" my_addr ", socklen_t " addrlen );
+.SH 설명
+.B bind
+는 소켓
+.I sockfd
+와 로컬 주소
+.IR my_addr 를
+준다.
+.I my_addr
+는 long 형
+.I addrlen
+바이트이다.
+전통적으로, 이것은 \(lq이름을 소켓에 할당하기\(rq 라고 불리어진다.
+소켓이
+.BR socket (2)으로
+생성되었을때, 그것은 이름 공간(address family)에 존재하지만 할당된 이름을 
+가지고 있는것은 아니다.
+.PP
+.B SOCK_STREAM
+소켓이 연결들을 받기 전에 
+.B bind
+를 사용하여 로컬 주소를 할당하는 것이 보통 필수적이다.
+.BR accept (2)를
+참조해라).
+.SH 주의
+이름 묶기시 사용되는 규칙들은 주소 가족(address families)들마다 다르다.
+세부 사항을 위해서 Section 7에 있는 메뉴얼을 참조해라.
+.B AF_INET
+를 위해서는
+.BR ip (7)를,
+.B AF_UNIX
+를 위해서는 
+.BR unix (7)를,
+.B AF_APPLETALK
+를 위해서는 
+.BR ddp (7)를,
+.B AF_PACKET
+를 위해서는
+.BR packet (7)를,
+.B AF_X25
+를 위해서는 
+.BR x25 (7)를
+그리고
+.B AF_NETLINK
+를 위해서는 
+.BR netlink (7)를
+참고해라.
+
+.SH 반환값
+성공시, 0이 반환된다. 에러시, \-1이 반환되며, 
+.I errno
+는 적당한 값으로 설정된다.
+.SH 에러
+.TP
+.B EBADF
+.I sockfd
+가 유효한 기술자가 아니다.
+.TP
+.B EINVAL
+소켓가 이미 묶여져 있다.
+이것은 앞으로 바뀔것이다:세부 사항을 볼려면
+.I linux/unix/sock.c
+를 참고해라.
+.TP
+.B EACCES
+주소가 보호되어 있으며, 사용자는 슈퍼 유저가 아니다. 
+.TP
+.B ENOTSOCK
+인자가 소켓이 아니라 파일을 위한 기술자이다.
+.PP
+다음 에러들은 UNIX 도메인
+.RB ( AF_UNIX )소켓들을 
+위한 것들이다.:
+.TP
+.B EINVAL
+.I addrlen
+가 잘못되거나, 소켓이 
+.B AF_UNIX
+가족이 아니다.
+.TP
+.B EROFS
+소켓 아이노드가 읽기-전용 파일 시스템에 있다.
+.TP
+.B EFAULT
+.I my_addr
+가 사용자가 접근할수 있는 조소 공간외를 가리키고 있다.
+.TP
+.B ENAMETOOLONG
+.I my_addr
+가 너무 길다.
+.TP
+.B ENOENT
+파일이 존재하지 않는다.
+.TP
+.B ENOMEM
+이용할수 있는 커널 메모리가 충분하지 않다.
+.TP
+.B ENOTDIR
+경로 접두사 요소가 디렉토리가 아니다.
+.TP
+.B EACCES
+경로 접두사 요소에 대한 검색 허가권이 거부되었다.
+.TP
+.B ELOOP
+너무 많은 상징 연결들을
+.IR my_addr 시에
+만났다.
+.SH 버그
+투명한 프록시 옵션들은 기술되지 않았다.
+.SH 호환
+SVr4, 4.4BSD (
+.B bind
+함수는 BSD4.2에서 처음 나타났다.) SVr4는 추가적으로 
+.BR EADDRNOTAVAIL , 
+.BR EADDRINUSE를, 그리고
+일반적 에러 조건들인
+.B ENOSR 
+를, 그리고 Unix-도메인 에러 조건들인
+.BR EIO , 
+.B EISDIR 
+그리고
+.B EROFS 
+를 문서화 했다.
+.SH 주의
+.B bind
+의 3번째 인자는 실제로 int이다.(그리고 이것은 BSD 4.* 와 libc4, libc5가 
+가지고 있는 것이다.)
+몇몇 POSIX 들은 현재의 socklen_t 때문에 약간 혼란스럽다.
+표준은 아직 채택되지 않았지만, glibc2는 이미 그것을 따르고 있고 또한
+socklen_t를 가지고 있다. 
+.BR accept (2)를
+참고해라.
+.SH 관련 항목
+.BR accept (2),
+.BR connect (2),
+.BR listen (2),
+.BR socket (2),
+.BR getsockname (2),
+.BR ip (7),
+.BR socket (7)
+.SH 역자
+정강훈 <skyeyes@soback.kornet.net>, 2000년 7월 2일

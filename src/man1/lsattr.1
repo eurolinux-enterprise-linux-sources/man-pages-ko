@@ -1,0 +1,48 @@
+.\" -*- nroff -*-
+.TH LSATTR 1 "1996년 5월" "E2fsprogs 버전 1.04"
+.SH 이름
+lsattr \-  리눅스 개정 확장 화일시스템의 화일 속성을 보여준다.
+.SH 개요
+.B lsattr
+[
+.B \-Radv
+]
+[
+화일들...
+]
+.SH 설명
+.B lsattr
+은 개정 확장 화일시스템의 화일 속성을 보여준다.
+.SH 옵션
+.TP
+.I -R
+디렉토리와 그 안의 내용에 대해 회귀적으로 속성값을 출력한다.
+.TP
+.I -a
+`.'로 시작하는 화일을 포함한 디렉토리 내 모든 화일을 열거한다.
+.TP
+.I -d
+디렉토리를 보여줄 때 그 안에 든 화일을 보여주는 것이 아니라 일반 화일과
+마찬가지로 보여준다.
+.TP
+.I -v
+화일 버전을 출력한다.
+.SH 저자
+.B lsattr
+은 ext2 화일시스템의 개발자이자 관리책임자인 Remy Card <card@masi.ibp.fr>씨가
+만들었다.
+.SH BUGS
+버그 없음 :-).
+.SH 구할 수 있는 곳
+.B lsattr
+은 ftp.ibp.fr 또는 tsx-11.mit.edu 에서 익명 ftp 를 통하여 
+/pub/linux/packages/ext2fs 디렉토리에서 구할 수 있다.
+.SH 참고
+.BR chattr (1)
+.SH 번역자
+.br
+이 만 용
+.B <geoman@nownuri.nowcom.co.kr>
+.br
+.B "         <freeyong@soback.kornet.nm.kr>"
+

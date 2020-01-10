@@ -1,0 +1,101 @@
+.\" Hey Emacs! This file is -*- nroff -*- source.
+.\"
+.\" Copyright (c) 1995 Michael Chastain (mec@shell.portal.com), 15 April 1995.
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" Modified Fri Jan 31 16:14:33 1997 by Eric S. Raymond <esr@thyrsus.com>
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH BDFLUSH 2 "1995년 4월 15일" "리눅스 1.2.4" "리눅스 프로그래머 메뉴얼"
+.SH 이름
+bdflush \- start, flush, buffer-dirty-flush데몬은 조정한다.
+.SH 사용법
+.nf
+.BI "int bdflush(int"  " func, " "long *" "address);"
+.BI "int bdflush(int"  " func, " "long" " data);"
+.fi
+.SH 설명
+.B bdflush
+는 starts, flushes, buffer-dirty-flush데몬은 조정한다.
+단지 수퍼유저만이 
+.BR bdflush
+를 호출할 수 있다.
+.PP
+.I func
+가 음수이거나 0, 그리고 어떠한 데몬도 실행되지 않았다면
+.B bdflush
+는 데몬 코드를 입력하고 반환하지 않는다.
+.PP
+.I func
+가 1이면 몇몇 dirty buffer가 디스크에 기록된다.
+.PP
+.I func
+가 2이상이고 짝수이면,
+.I address
+는 길어지고, 튜닝매개변수 번호
+.RI "(" "func" "\-2)/2"
+는 그 주소에 호출자로 반환된다.
+.PP
+If
+.I func
+가 3이상이고 홀수이면,
+.I data
+는 길어지고, 커널은 설정튜닝 매개변수 번호 
+.RI "(" "func" "\-3)/2"
+에 그 값을 설정한다.
+.PP
+매개변수의 설정, 그것들의 값과 그것들의 허용된 범위는 커널 소스파일
+.IR fs/buffer.c 
+에 정의된다.
+.SH 반환값
+If
+.I func
+는 음수이거나 0이고 데몬이 성공적으로 시작했다.
+.B bdflush
+는 반환하지 않는다.
+그 외에, 반환값은 성공시 0이고 실패시 
+.I errno
+는 에러를 나타내도록 설정되면서 \-1을 반환한다.
+.SH 에러
+.TP
+.B EPERM
+호출자(Caller)가 수퍼유저가 아니다.
+.TP
+.B EFAULT
+.I 주소
+가 당신이 접근할 수 있는 주소공간 밖에 있다.
+.TP
+.B EBUSY
+시도는 다른 프로세스가 이미 입력된 후에 데몬코드가 입력되게 만든다.
+.TP
+.B EINVAL
+시도는 무효의 매개변수 번호에 읽거나 쓰도록 만들거나 매개변수에 무효값은 쓴다.
+.SH 호환
+\fBbdflush\fP는 리눅스에서만 쓰고 이식하기 위한 프로그램에는 쓰이지 않아야만 한다.
+.SH 관련 항목
+.BR fsync (2),
+.BR sync (2),
+.BR update (8),
+.BR sync (8)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29일

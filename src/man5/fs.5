@@ -1,0 +1,142 @@
+.\" Copyright 1996 Daniel Quinlan (Daniel.Quinlan@linux.org)
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH FILESYSTEMS 5 "25 March 1996" "" "Linux Programmer's Manual"
+.nh
+.SH 이름
+filesystems \- Linux filesystem types: minix, ext, ext2, xia, msdos,
+umsdos, vfat, proc, nfs, iso9660, hpfs, sysv, smb, ncpfs
+.SH 설명
+.I /proc/filesystems
+파일에서 당신의 커널에서 지원하는 파일 시스템을 찾을 수 있다.
+(현제 지원되지 않는 것을 원한다면, 대응하는 모듈을 넣거나, 커널을 다시 컴파일 하라)
+
+아래는 여러 가지 파일 시스템에 대한 설명이다.
+
+.TP
+.\"----------------------------------------------------------------------
+.B "minix"
+은 Minix 운영체제에서 쓰이는 Linux에서 사용할 수 있는 파일 시스템이다.
+이것은 몇가지 결점이 있다: 64MB 파티션 크기 제한, 짧은 파일 이름 등..sp
+하지만 플로피나 RAM 디스크에는 유용하다.
+.\"----------------------------------------------------------------------
+.TP
+.B ext
+는 
+.B minix
+파일 시스템의 정교한 확장이다. 이것은 두번째 버전의 확장 파일 시스템
+.RB ( ext2 )
+에 완전히 대체되었고 결국 커널에서 지워졌다.
+.\"----------------------------------------------------------------------
+.TP
+.B ext2
+는 고정 디스크를 리무버블 미디어와 마찬가지로 리눅스 상에서 사용되는 고 성는 디스크 파일 시스템이다.
+.sp
+두번째 확장 파일 시스템은 확장 파일 시스템의 확장형태로 디자인 되었다.
+.RB ( ext ).
+.B ext2
+는 리눅스상에서 지원되는 파일 시스템의 최고의 성능을(속도와 CPU활용상에서) 제공한다.
+.\"----------------------------------------------------------------------
+.TP
+.B xiafs
+는 Minix 파일시스템 코드를 확장함으로써 안정성을 중심으로 디자인 되었고, 또 충족시키고 있다
+
+.B xia
+파일 시스템은 더 이상 활발히 계발 되거나 유지되지 않고 있다.
+이것이 사용되는 것은 드물다.
+.\"----------------------------------------------------------------------
+.TP
+.B msdos
+는 DOS, Window와 몇몇 OS/2 컴퓨터에서 사용되는 파일 시스템이다.
+.B msdos
+파일 시스템은 홉션에 따른 8 글자의 파일명과 3 글자의 확장명만이 가능하다.
+ 
+.\"----------------------------------------------------------------------
+.TP
+.B umsdos
+는 리눅스에서 사용되는 확장 도스 파일 시스템이다. 이것은 긴 파일 이름과 UID/GID, POSIX, 특수 파일(devices, named popes, etc)을 도스 파일 시스템상에서 도스의 기능을 희생하지 않고 사용 할 수 있다.
+.\"----------------------------------------------------------------------
+.TP
+.B vfat
+는 MS Window95와 Window NT에서 사용되는 도스 파일 시스템이다.
+VFAT는 MS 도스 파일 시스템에 긴 파일 이름 기능을 추가하였다.
+.\"----------------------------------------------------------------------
+.TP
+.B proc
+는 읽기나 인터페이싱 보단 커널 데이터 구조를 위한 인터페이스로 사용되는 pseudo 파일 시스템이다. 
+.IR /dev/kmem .
+특이하게 이 파일은 디스크 공간을 차지하지 않는다. proc(5)를 참조하라.
+.\"----------------------------------------------------------------------
+.TP
+.B iso9660
+는 ISO 9660 표준을 따르는 CD-ROM 파일 시스템 형태이다.
+.RS
+.TP
+.B "High Sierra"
+리눅스는 ISO 9660 표준의 전신인 High Sierra를 지원한다
+.B iso9660
+파일 시스템에서 자동으로 인식된다.
+.TP
+.B "Rock Ridge"
+Linux는 Rock Ridge 교환 프로토콜로 분류되는 System Use Sharing Protocol 역시 지원한다. 그것들은 더 나아가서 유닉스 호스트에게 
+.B iso9660
+파일 시스템상에서 파일을 알리고, 긴 파일이름이나 UID/GID, POSIX 인가, 그리고 디바이스와 같은 정보를 알린다. 이것은 자동으로
+.B iso9660
+파일 시스템상에서 인식된다.
+.RE
+.\"----------------------------------------------------------------------
+.TP
+.B hpfs
+는 OS/2에서 쓰이는 고성능 파일 시스템이다. 이것은 리눅스상에서는 가능한 문서의 부족 때문에 읽기만 가능하다.
+.\"----------------------------------------------------------------------
+.TP
+.B sysv
+는 리눅스를 위한 SystemV/Coherent 실행 시스템이다. 
+이것은 모든 Xenix FS, SystemV/386 FS, Coherent FS을 실행한다.
+.\"----------------------------------------------------------------------
+.TP
+.B nfs
+는 원거리 컴퓨터에 있는 디스크에 접근할 때 쓰이는 네트웍 파일 시스템이다.
+.TP
+.\"----------------------------------------------------------------------
+.B smb
+는 Windows Workgroups, Windows NT, Lan Manager에서 쓰이는 SMB 프로토콜을 지원하는 네트웍 파일 시스템이다.
+.sp
+.B smb
+파일 시스템을 사용하기 위해선 ksmbfs 패키지에서 구할 수 있는 특별한 마운트 프로그램이 필요하다  패키지는 아래에서 구할 수 있다.
+.IR ftp://sunsite.unc.edu/pub/Linux/system/Filesystems/smbfs .
+.\"----------------------------------------------------------------------
+.TP
+.B ncpfs
+는 Novell NetWare에서 사용하는 NCP 프로토콜을 지원하는 네트웍 파일 시스템이다.
+.sp
+.BR ncpfs ,
+를 사용하기 위해선 아래에서 구할 수 있는 특별한 프로그램이 필요하다.
+.IR ftp://linux01.gwdg.de/pub/ncpfs .
+.\"----------------------------------------------------------------------
+.SH 관련 항목
+.BR proc (5),
+.BR fsck (8),
+.BR mkfs (8),
+.BR mount (8).

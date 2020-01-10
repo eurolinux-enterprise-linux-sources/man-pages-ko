@@ -1,0 +1,41 @@
+.\" Copyright (c) 1995 Dirk Eddelbuettel (Dirk.Eddelbuettel@qed.econ.queensu.ca)
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH ACCT 5 "1995년 10월 31일" "Debian/GNU Linux"
+.SH 이름
+acct \- 실행 연산파일.
+.SH 사용법
+.B #include <sys/acct.h>
+.SH 설명
+커널은 모든 프로세스들을 위해 연산정보구조를 유지한다. 프로세스가 종료되고
+연산이 가능해지면, 커널은 연산 프로세스를 위해 추가하고 기록할 수 있도록
+.BR acct (2)
+함수를 호출한다. 연산 구조
+.B "구조체 acct"
+는 또한 
+.IR /usr/include/linux/acct.h 
+파일에 기술한다.
+.SH 관련 항목
+.BR acct (2),
+.BR sa (1).

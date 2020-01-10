@@ -1,0 +1,168 @@
+.\" Copyright (c) 1983, 1991 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"	This product includes software developed by the University of
+.\"	California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\"     $Id: getsockopt.2,v 1.1.1.1 2002/07/18 10:40:11 hhyoon Exp $
+.\"
+.\" Modified Sat Jul 24 16:19:32 1993 by Rik Faith (faith@cs.unc.edu)
+.\" Modified Mon Apr 22 02:29:06 1996 by Martin Schulze (joey@infodrom.north.de)
+.\" Modified Tue Aug 27 10:52:51 1996 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Thu Jan 23 13:29:34 1997 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified Sun Mar 28 21:26:46 1999 by Andries Brouwer (aeb@cwi.nl)
+.\" Modified 1999 by Andi Kleen <ak@muc.de>. Removed most stuff because it is in socket.7 
+.\" now.
+.\"
+.\" 한국어 번역 : ASPLINUX<man@asp-linux.co.kr>    2000년 7월 29일
+.\"
+.TH GETSOCKOPT 2 "24 May 1999" "Linux Man Page" "Linux Programmer's Manual"
+.SH 이름
+getsockopt, setsockopt \- 소켓의 옵션을 얻고 설정한다.
+.SH 사용법
+.B #include <sys/types.h>
+.br
+.B #include <sys/socket.h>
+.sp 2
+.BI "int getsockopt(int " s ", int " level ", int " optname ,
+.BI "void *" optval ", socklen_t *" optlen );
+.sp
+.BI "int setsockopt(int " s ", int " level ", int " optname ,
+.BI "const void *" optval ", socklen_t " optlen );
+.SH 설명
+.B Getsockopt
+와
+.B setsockopt
+는 소켓과 일치하는
+manipulate the
+.I options
+을 다룬다. 옵션은 다중 프로토콜레벨에 존재할런지 모른다; 그 프로토콜레벨들은 항상
+최상의
+.B 소켓
+레벨에 있다.
+
+소켓옵션을 조작할때, 옵션 지정과 옵션의 이름이 있는 레벨은 지정되어야 한다.
+소켓레벨에서 옵션을 조작하기 위해,
+.I level
+은
+.BR SOL_SOCKET 
+처럼 지정되어야 한다.
+
+매개변수
+.I optval
+와
+.I optlen
+는 
+.BR setsockopt 
+를 위해 옵션값을 접근하곤한다. 
+.B getsockopt
+때문에 그것들은 요청한 옵션이 반환되는동안 값이 있는 버퍼를 확인한다.
+.BR getsockopt ,
+때문에 
+.I optlen
+는 
+.IR optval 
+가 처음에 가리키는 버퍼의 크기를 포함하는 결과값 매개인수이고, 
+반환값의 실제 크기를 나타내는 반환을 수정한다. 옵션값이 제공되거나 반환되지
+않는다면, 
+.I optval
+는 NULL값 일런지 모른다.
+
+.I Optname
+와 다른 지정된 옵션은 해석을 위해 적절한 프로토콜 모듈에 해석이 안되는 것은 넘어간다.
+파일
+.I <sys/socket.h>
+은 아래 설명된 소켓레벨 옵션을 위한 정의를 포함한다. 다른 프로토콜 레벨에 옵션은
+포맷과 이름이 다르다; 메뉴얼의 세션 4에 적절한 기재사항을 참고한다.
+
+대부분 소켓-레벨 옵션은 
+.IR optval
+를 위해 
+.I int
+배개변수 사용한다.
+
+.BR setsockopt 
+를 위해, 매개변수는 boolean옵션이 가능하기위해 0이 아니어야 한다. 혹은 옵션이 불가능
+하면 0이다.
+
+.PP
+유효 소켓 옵션의 디스크립터는 
+.BR socket (7)
+과 적당한 프로토콜 맨페이지를 본다..
+
+.SH 반환값
+성공시, 0이 반환된다. 실패시, -1이 반환되고, 
+.I errno
+는 적절히 설정된다.
+.SH 에러
+.TP
+.B EBADF
+인수 
+.I s
+는 유효한 디스크립터가 아니다.
+.TP
+.B ENOTSOCK
+인수
+.I s
+는 소켓이 아니고, 파일이다.
+.TP
+.B ENOPROTOOPT
+옵션은 지정된 레벨에 알려지지 않았다.
+.TP
+.B EFAULT
+The address pointed to by 
+.I optval
+가 가리키는 주소는 프로세스 주소공간의 유효한 부분이 아니다. 
+.BR getsockopt 
+때문에 
+.I optlen
+가 프로세스 주소공간의 유효한 부분이 아니라면, 이 에러는 또한 반환될런지 모른다.
+.SH 호환
+SVr4, 4.4BSD (이러한 시스템 호출은 4.2BSD에서 처음 보였다).
+SVr4 는 추가적으로 ENOMEM와 ENOSR 에러코드를 문서화했지만, 
+.BR SO_SNDLOWAT ", " SO_RCVLOWAT ", " SO_SNDTIMEO ", " SO_RCVTIMEO
+옵션은 문서화되지 않았다.
+.SH 주의
+.BR getsockopt " 와 " setsockopt
+의 다섯번째 인수는 실제 int [*]에 있다. 
+초안 표준(draft standard)는 아직 채택되지 않았지만, glibc2는 이미 따르고 있고, 
+socklen_t [*]를 갖는다.
+.BR accept (2)
+를 본다.
+.SH 버그
+소켓옵션의 다수는 시스템의 저수준 레벨에서 다뤄져야한다.
+.SH 관련 항목
+.BR ioctl (2),
+.BR socket (2),
+.BR getprotoent (3),
+.BR protocols (5),
+.BR socket (7),
+.BR unix (7),
+.BR tcp (7)
+.SH 역자
+ASPLINUX<man@asp-linux.co.kr>, 2000년 7월 29일
