@@ -1,7 +1,7 @@
 Summary: Korean(Hangul) Man(manual) Pages from the Korean Manpage Project
 Name: man-pages-ko
 Version: 20050219
-Release: 24%{?dist}
+Release: 25%{?dist}
 License: Copyright only
 Epoch: 2
 Group: Documentation
@@ -70,6 +70,9 @@ cp -a man? $RPM_BUILD_ROOT%{_mandir}/ko/
 %{_mandir}/ko/man*/*
 
 %changelog
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 2:20050219-25
+- Mass rebuild 2013-12-27
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2:20050219-24
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
